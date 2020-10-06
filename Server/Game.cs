@@ -4,7 +4,8 @@ using System.Text;
 
 namespace Server
 {
-    class Game
+    public class Game
     {
+        private List<User> players;
     }
 }
