@@ -4,7 +4,18 @@ using System.Text;
 
 namespace UNO
 {
-    class Chat
+    public class Chat
     {
+        private string Message;
+    }
+
+    public class Move
+    {
+
+    }
+
+    public class System
+    {
+        private int statuscode;
     }
 }

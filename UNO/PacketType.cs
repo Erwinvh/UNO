@@ -4,7 +4,10 @@ using System.Text;
 
 namespace UNO
 {
-    class PacketType
+    public enum PacketType
     {
+        CHAT,
+        MOVE,
+        SYSTEM,
     }
 }

@@ -4,7 +4,26 @@ using System.Text;
 
 namespace UNO
 {
-    class Client
+    public class Client
     {
+        public void read()
+        {
+
+        }
+
+        public void write()
+        {
+
+        }
+
+        public void connect()
+        {
+
+        }
+
+        public void disconnect()
+        {
+
+        }
     }
 }
