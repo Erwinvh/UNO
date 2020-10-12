@@ -6,5 +6,12 @@ namespace Server
 {
     class Card
     {
+        public Color color { get; set; }
+        public int number { get; set; }
+
+        public Card()
+        {
+
+        }
     }
 }

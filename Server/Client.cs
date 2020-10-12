@@ -12,7 +12,7 @@ namespace Server
         private NetworkStream stream;
         private Server server;
         public string UserName { get; set; }
-        
+        public User user;
 
         public Client(TcpClient tcpClient, Server server)
         {
