@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Newtonsoft.Json.Linq;
 
 namespace Server
 {
@@ -53,7 +54,12 @@ namespace Server
 
             switch (id)
             {
-
+                case "CHAT":
+                    //TODO: implement incoming Chat 
+                    break;
+                case "MOVE":
+                    //TODO: implement incoming move
+                    break;
             }
         }
 

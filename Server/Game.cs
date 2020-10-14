@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SharedDataClasses;
+
 
 namespace Server
 {
@@ -58,7 +60,7 @@ namespace Server
                     {
                         index++;
                         break;
-                    }5
+                    }
                     index--;
                         break;
                 case TurnAround:
