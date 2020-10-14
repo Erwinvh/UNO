@@ -10,9 +10,15 @@ namespace Server
 
         public string name { get; set; }
 
-        public User()
+        public User(string name)
         {
+            this.name = name;
+            hand = new List<Card>();
+        }
 
+        public void addCardToHand(Card card)
+        {
+            hand.Add(card);
         }
     }
 }

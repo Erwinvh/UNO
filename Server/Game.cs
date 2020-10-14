@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Server
 {
-    public class Game
+    class Game
     {
         private List<User> players;
         private bool isClockwise = true;
@@ -58,7 +58,7 @@ namespace Server
                     {
                         index++;
                         break;
-                    }
+                    }5
                     index--;
                         break;
                 case TurnAround:
