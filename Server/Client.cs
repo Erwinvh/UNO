@@ -60,18 +60,19 @@ namespace Server
         {
             Console.WriteLine($"Got a packet: {packetData}");
             JObject pakket = JObject.Parse(packetData);
-            string id = (string) pakket.GetValue("ID");
+            MessageID messageId;
+            Enum.TryParse((string)pakket.GetValue("MessageID"), out messageId);
 
-            switch (id)
+            switch (messageId)
             {
-                case "CHAT":
+                case MessageID.CHAT:
                     Broadcast(packetData);
                     sendSystemMessage(101);
                     break;
-                case "GAME":
+                case MessageID.GAME:
                     //TODO: switch case: startgame, left game, ready
                     break;
-                case "MOVE":
+                case MessageID.MOVE:
                     JObject JCard = (JObject)pakket.GetValue("playedCard");
                     Card playedCard = JCard.ToObject<Card>();
                     MoveMessage move;

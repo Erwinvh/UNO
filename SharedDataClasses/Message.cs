@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using SharedDataClasses;
 
 namespace SharedDataClasses
 {
+    public enum MessageID{
+        CHAT,
+        TURN,
+        SYSTEM,
+        MOVE,
+        GAME
+    }
+
+
     class TurnMessage
     {
         //This message dictates the turning of the player turn, who was the last player and who is the next. and it also adds the 
-        private string ID = "TURN";
+        private MessageID MessageID = MessageID.TURN;
 
         public List<Card> addedCards { get; set; }
         public string lastplayer { get; set; }
@@ -27,7 +33,7 @@ namespace SharedDataClasses
 
     class MoveMessage
     {
-        private string ID = "MOVE";
+        private MessageID MessageID = MessageID.MOVE;
         public Card playedCard { get; set; }
         public string UserName { get; set; }
 
@@ -40,7 +46,7 @@ namespace SharedDataClasses
 
     class GameMessage
     {
-        private string ID = "GAME";
+        private MessageID MessageID = MessageID.GAME;
 
         public string username { get; set; }
         public string gameMessage { get; set; }
@@ -55,7 +61,7 @@ namespace SharedDataClasses
 
     class ChatMessage
     {
-        private string ID = "CHAT";
+        private MessageID MessageID = MessageID.CHAT;
         public string message { get; set; }
         public string sender { get; set; }
         public DateTime DToS { get; set; }
@@ -70,7 +76,7 @@ namespace SharedDataClasses
 
     class SystemMessage
     {
-        private string ID = "SYSTEM";
+        private MessageID MessageID = MessageID.SYSTEM;
 
         public int status { get; set; }
 
