@@ -17,8 +17,10 @@ namespace Server
     class Server
     {
         private TcpListener listener;
-        private List<Client> clients = new List<Client>();
+        public List<Client> clients = new List<Client>();
         public FileSystem fileSystem { get; }
+        public bool isPlaying { get; set; }
+        public Game Game { get; set; }
 
         //The constructor of the server
         public Server()
@@ -34,6 +36,7 @@ namespace Server
         //The callback method to connect the clients
         private void OnConnect(IAsyncResult ar)
         {
+            //TODO: if in game user has to wait to connect, seperate list of clients
             var tcpClient = listener.EndAcceptTcpClient(ar);
             Console.WriteLine($"Client connected from {tcpClient.Client.RemoteEndPoint}");
             clients.Add(new Client(tcpClient, this));
@@ -56,6 +59,8 @@ namespace Server
                 client.Write(packet);
             }
         }
+
+
 
         public bool checkClientsForUser(string username)
         {

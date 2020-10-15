@@ -4,6 +4,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json.Linq;
+using SharedDataClasses;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Server
 {
@@ -23,6 +25,14 @@ namespace Server
             listernerThread.Start();
         }
 
+
+
+
+
+        //
+        //--Incomingt data--
+        //
+        
         private void Listener()
         {
             Byte[] lengtebytes = new byte[2];
@@ -55,12 +65,60 @@ namespace Server
             switch (id)
             {
                 case "CHAT":
-                    //TODO: implement incoming Chat 
+                    Broadcast(packetData);
+                    sendSystemMessage(101);
+                    break;
+                case "GAME":
+                    //TODO: switch case: startgame, left game, ready
                     break;
                 case "MOVE":
-                    //TODO: implement incoming move
+                    JObject JCard = (JObject)pakket.GetValue("playedCard");
+                    Card playedCard = JCard.ToObject<Card>();
+                    MoveMessage move;
+                    if (!server.Game.checkMove(playedCard))
+                    {
+                        move = new MoveMessage(null, UserName);
+                        MoveMessage addCard = new MoveMessage(server.Game.drawCard(UserName), UserName);
+                        Write(JsonSerializer.Serialize(addCard));
+                    }
+                    else
+                    {
+                        move = new MoveMessage(playedCard, UserName);
+                    }
+                    sendSystemMessage(101);
+                    Broadcast(JsonSerializer.Serialize(move));
+                    if (server.Game.Checkhand())
+                        {
+                            GameMessage EGM = new GameMessage(UserName, "Win");
+                            Broadcast(JsonSerializer.Serialize(EGM));
+                        }else if (server.Game.checkUNO())
+                        {
+                            GameMessage gm = new GameMessage(UserName, "UNO!");
+                            Broadcast(JsonSerializer.Serialize(gm));
+                        }
+                    TurnMessage turn = server.Game.GenerateTurn();
+                    Broadcast(JsonSerializer.Serialize(turn));
                     break;
             }
+        }
+
+       
+
+
+
+        //
+        //--Outgoing data
+        //
+ public void Broadcast(string pakketdata)
+        {
+            foreach (Client client in server.clients)
+            {
+                Write(pakketdata);
+            }
+        }
+     public void sendSystemMessage(int message)
+        {
+            Write(JsonSerializer.Serialize(new SystemMessage(message)));
         }
 
         public void Write(string data)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using SharedDataClasses;
 
@@ -25,61 +26,149 @@ namespace Server
         public Game()
         {
             //new game starts
-            //set server in playing mode
-            //foreach loop give each player 7 cards.
-            while (isOngoing)
+            //TODO: set server in playing mode
+            for (int i = 0; i < 5; i++)
             {
-                //game is played here
+                Shuffle();
             }
-            //finish game
+            foreach (User player in players)
+            {
+                for (int i = 0; i < 7; i++)
+                {
+                    drawCard(player.name);
+                }
+            }
+            Shuffle();
+            lastPlayedCard = deck[deck.Count - 1];
+            pile.Add(lastPlayedCard);
+            deck.Remove(lastPlayedCard);
         }
 
-        public void checkMove(Card playedCard)
+        public TurnMessage firstTurn()
+        {
+            TurnMessage firstTurn = new TurnMessage("Deck", players[0].name, null);
+            return firstTurn;
+        }
+
+        public bool checkMove(Card playedCard)
         {
             if (playedCard==null)
             {
-                //players[index].hand.add(randomCard());
+                return false;
             }
             else
             {
-                //TODO: check if played card have same number or color as lastPlayedCard
-                //TODO: check current players hadn if he has 1 or 0 card left.
+                if (playedCard.color==lastPlayedCard.color||playedCard.number==lastPlayedCard.number)
+                {
+                    if (!players[index].hand.Contains(playedCard))
+                    {
+                        return false;
+                    }
+                    players[index].hand.Remove(playedCard);
+                    lastPlayedCard = playedCard;
+                    if (playedCard.number==Wild||playedCard.number==Plus4)
+                    {
+                        playedCard.color = Card.Color.BLACK;
+                    }
+                    pile.Add(playedCard);
+                    return true;
+                }
+                return false; 
             }
-            //TODO: send current player that played confirm
-            //TODO: broadcast current player amount of cards
-            //TODO: Go to proccess effect
         }
 
-        public void ProcessEffect()
+        public Card drawCard(string player)
         {
-            //TODO: Process the effect of the lastplayed card for the next user
+            DeckCheck();
+            Card drawedCard = deck[deck.Count - 1];
+            deck.Remove(drawedCard);
+            players[findIndexofPLayer(player)].hand.Add(drawedCard);
+            Shuffle();
+            return drawedCard;
+        }
+
+        private int findIndexofPLayer(string player)
+        {
+            foreach (User gameplayer in players)
+            {
+                if (gameplayer.name==player)
+                {
+                    return players.IndexOf(gameplayer);
+                }
+            }
+
+            return -1;
+        }
+
+        public List<Card> ProcessEffect()
+        {
+            List<Card> addCards = new List<Card>();
             switch (lastPlayedCard.number)
             {
                 case SkipTurn:
                     if (isClockwise)
                     {
                         index++;
-                        break;
+                        return null;
                     }
                     index--;
-                        break;
+                    return null;
                 case TurnAround:
                     isClockwise = !isClockwise;
-                    break;
+                    return null;
                 case Plus2:
-                    //TODO: add 2 to next player
-                    break;
-                case Wild:
-                    //TODO: change the color to currents player chosen color.
-                    break;
+                    if (isClockwise)
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            addCards.Add(drawCard(players[index + 1].name));
+                        }
+                        return addCards;
+                    }
+                    for (int i = 0; i < 2; i++)
+                    {
+                        addCards.Add(drawCard(players[index - 1].name));
+                    }
+                    return addCards;
                 case Plus4:
-                    //TODO: add 4 cards to next player
-                    break;
+                    if (isClockwise)
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            addCards.Add(drawCard(players[index + 1].name));
+                        }
+                        return addCards;
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        addCards.Add(drawCard(players[index - 1].name));
+                    }
+                    return addCards;
             }
-            //TODO: next turn
+            return null;
         }
 
-        public void DeckCheck()
+        internal bool Checkhand()
+        {
+            if (players[index].hand.Count==0)
+            {
+                isOngoing = false;
+                //TODO: have server finish other things, dont know what right now
+                return true;
+            }
+            return false;
+        }
+
+        internal bool checkUNO()
+        {
+            if (players[index].hand.Count == 1)
+            {
+                return true;
+            }
+            return false;
+        }
+
+      public void DeckCheck()
         {
             if (deck.Count==0)
             {
@@ -110,21 +199,25 @@ namespace Server
             }
         }
 
+  internal TurnMessage GenerateTurn()
+  {
+      string lastplayer = players[index].name;
+            List<Card> addedCards = ProcessEffect();
+            nextTurn();
+            TurnMessage turn = new TurnMessage(lastplayer,players[index].name, addedCards);
+            return turn;
+  }
+
         public void nextTurn()
         {
-
-
             if (isClockwise)
             {
                 index++;
             }
             else
             {
-index--;
+                index--;
             }
-            //let user play
         }
-
-
     }
 }

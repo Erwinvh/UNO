@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using SharedDataClasses;
 
-namespace Server
+namespace SharedDataClasses
 {
     class User
     {
         public List<Card> hand { get; set; }
 
         public string name { get; set; }
+        public bool isHost { get; set; }
 
         public User(string name)
         {
