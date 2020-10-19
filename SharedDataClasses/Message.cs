@@ -48,12 +48,12 @@ namespace SharedDataClasses
     {
         private MessageID MessageID = MessageID.GAME;
 
-        public string username { get; set; }
+        public string Username { get; set; }
         public string gameMessage { get; set; }
 
         public GameMessage(string username, string gameMessage)
         {
-            this.username = username;
+            this.Username = username;
             this.gameMessage = gameMessage;
         }
     }
