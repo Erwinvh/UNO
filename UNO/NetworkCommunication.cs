@@ -14,9 +14,15 @@ namespace UNO
 {
     public class NetworkCommunication
     {
+        //--Coms-related--
         private TcpClient client;
-        private User user;
         private NetworkStream stream;
+
+
+        //--Game related--
+        private User user;
+        private Card pileCard;
+        private bool isplaying;
 
         public NetworkCommunication(string hostname, int port)
         {
@@ -75,16 +81,27 @@ namespace UNO
             switch (id)
             {
                 case "MOVE":
+                    bool isvoid = (bool) pakket.GetValue("isVoidMove");
+                    Card cardmoved = JsonSerializer.Deserialize<Card>((string) pakket.GetValue("playedCard"));
                     if (messageUsername == user.name)
                     {
-                        Card cardmoved = JsonSerializer.Deserialize<Card>((string) pakket.GetValue("playedCard"));
-                        if (user.hand.Contains((cardmoved)))
+                        if (!isvoid)
                         {
                             user.hand.Remove(cardmoved);
+                            //TODO: update ui
                         }
                         else
                         {
                             user.hand.Add(cardmoved);
+                            //TODO: update ui
+                        }
+                    }
+                    else
+                    {
+                        if (!isvoid)
+                        {
+                            pileCard = cardmoved;
+                            //TODO: update ui
                         }
                     }
                     break;
@@ -115,15 +132,16 @@ namespace UNO
                 case "TURN":
                     //TODO: Implement TURN
                     if (user.name == (string)pakket.GetValue("nextPlayer"))
-                    {                        
-                        //TODO: convert jobject to List<Card>
-                        List<Card> added = new List<Card>();
+                    {
+                        //TODO: if cards isnt empty do they still play?
+                        List<Card> added = JsonSerializer.Deserialize<List<Card>>((string) pakket.GetValue("addedCards"));
                         user.hand.AddRange(added);
+                        isplaying = true;
                         //TODO: set player ui to playing
-
                     }
                     else if (user.name == (string)pakket.GetValue("lastPlayer"))
                     {
+                        isplaying = false;
                         //TODO: set player ui to NOT playing
                     }
                     break;

@@ -78,9 +78,7 @@ namespace Server
                     MoveMessage move;
                     if (!server.Game.checkMove(playedCard))
                     {
-                        move = new MoveMessage(null, UserName);
-                        MoveMessage addCard = new MoveMessage(server.Game.drawCard(UserName), UserName);
-                        Write(JsonSerializer.Serialize(addCard));
+                        move = new MoveMessage(server.Game.drawCard(UserName), UserName, true);
                     }
                     else
                     {
@@ -89,16 +87,21 @@ namespace Server
                     sendSystemMessage(101);
                     Broadcast(JsonSerializer.Serialize(move));
                     if (server.Game.Checkhand())
-                        {
+                    {
                             GameMessage EGM = new GameMessage(UserName, "Win");
                             Broadcast(JsonSerializer.Serialize(EGM));
-                        }else if (server.Game.checkUNO())
-                        {
+                    }else if (server.Game.checkUNO())
+                    {
                             GameMessage gm = new GameMessage(UserName, "UNO!");
                             Broadcast(JsonSerializer.Serialize(gm));
-                        }
-                    TurnMessage turn = server.Game.GenerateTurn();
+                    }
+                    TurnMessage turn = server.Game.GenerateTurn(false);
                     Broadcast(JsonSerializer.Serialize(turn));
+                    if (turn.addedCards.Count>0)
+                    {
+                        TurnMessage forfeitTurnMessage = server.Game.GenerateTurn(true);
+                        Broadcast(JsonSerializer.Serialize(forfeitTurnMessage));
+                    }
                     break;
             }
         }

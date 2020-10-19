@@ -36,11 +36,19 @@ namespace SharedDataClasses
         private MessageID MessageID = MessageID.MOVE;
         public Card playedCard { get; set; }
         public string UserName { get; set; }
+        public bool isVoidMove { get; set; }
 
         public MoveMessage(Card played, string byUserName)
         {
             UserName = byUserName;
             playedCard = played;
+            isVoidMove = false;
+        }
+        public MoveMessage(Card played, string byUserName, bool isVoid)
+        {
+            UserName = byUserName;
+            playedCard = played;
+            isVoidMove = isVoid;
         }
     }
 

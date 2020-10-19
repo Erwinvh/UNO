@@ -199,10 +199,15 @@ namespace Server
             }
         }
 
-  internal TurnMessage GenerateTurn()
+  internal TurnMessage GenerateTurn(bool isForfeitTurn)
   {
       string lastplayer = players[index].name;
-            List<Card> addedCards = ProcessEffect();
+      List<Card> addedCards = new List<Card>();
+      if (isForfeitTurn!)
+      {
+          addedCards = ProcessEffect();
+      }
+       
             nextTurn();
             TurnMessage turn = new TurnMessage(lastplayer,players[index].name, addedCards);
             return turn;
