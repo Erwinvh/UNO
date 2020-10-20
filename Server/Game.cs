@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
+using System.Threading.Tasks.Dataflow;
 using SharedDataClasses;
-
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Server
 {
@@ -23,32 +22,57 @@ namespace Server
         private const int Wild = 13;
         private const int Plus4 = 14;
 
-        public Game()
+        private Server server { set; get; }
+
+        public Game(Server server)
         {
+            this.server = server;
             //new game starts
-            //TODO: set server in playing mode
+            this.server.isPlaying = true;
             for (int i = 0; i < 5; i++)
             {
                 Shuffle();
             }
-            foreach (User player in players)
-            {
-                for (int i = 0; i < 7; i++)
-                {
-                    drawCard(player.name);
-                }
-                //TODO: send two turn events to each player. 1 with their hand of cards and the second with a nullifier to the play counter. 
-            }
-            
+            beginGame();
             Shuffle();
             lastPlayedCard = deck[deck.Count - 1];
             pile.Add(lastPlayedCard);
             deck.Remove(lastPlayedCard);
+            Shuffle();
+            firstTurn();
+        }
+
+        public void beginGame()
+        {            foreach (User player in players)
+            {
+                List<Card> addedCards = new List<Card>();
+                for (int i = 0; i < 7; i++)
+                {
+                   addedCards.Add(drawCard(player.name));
+                }
+                TurnMessage initialTurn = new TurnMessage("System", player.name, addedCards);
+                server.SendClientMessage(player.name, JsonSerializer.Serialize(initialTurn));
+                
+                TurnMessage nullifierTurn = new TurnMessage(player.name, "System", null);
+                server.SendClientMessage(player.name, JsonSerializer.Serialize(nullifierTurn));
+                
+            }
+        }
+
+        public GameMessage GeneratePlayerStatusMessage()
+        {
+            Dictionary<string, int> statusses = new Dictionary<string, int>();
+            foreach (User user in players)
+            {
+                statusses.Add(user.name, user.hand.Count);
+            }
+            GameMessage GM = new GameMessage(statusses);
+            return GM;
         }
 
         public TurnMessage firstTurn()
         {
-            TurnMessage firstTurn = new TurnMessage("Deck", players[0].name, null);
+            TurnMessage firstTurn = new TurnMessage("System", players[0].name, null);
             return firstTurn;
         }
 
