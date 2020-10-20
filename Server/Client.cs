@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -90,6 +89,17 @@ namespace Server
                     {
                             GameMessage EGM = new GameMessage(UserName, "Win");
                             Broadcast(JsonSerializer.Serialize(EGM));
+                            foreach (Client client in server.clients)
+                            {
+                                Score score = server.fileSystem.getScoreByUser(client.UserName);
+                                score.gameAmount++;
+                                if (score.username == UserName)
+                                {
+                                    score.winAmount++;
+                                }
+                                server.fileSystem.updateScore(score);
+                            }
+                            server.fileSystem.WritetoFile();
                     }else if (server.Game.checkUNO())
                     {
                             GameMessage gm = new GameMessage(UserName, "UNO!");

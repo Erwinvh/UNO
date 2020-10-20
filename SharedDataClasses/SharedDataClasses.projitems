@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Card.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Message.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Score.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)User.cs" />
   </ItemGroup>
 </Project>

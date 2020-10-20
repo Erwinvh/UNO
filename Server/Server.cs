@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharedDataClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -50,49 +51,15 @@ namespace Server
             Console.WriteLine("Client disconnected");
         }
 
-        //TODO: check if this is usefull
-        //this method allows the server to send to one specific client
-        internal void SendToUser(string user, string packet)
-        {
-            foreach (var client in clients.Where(c => c.UserName == user))
-            {
-                client.Write(packet);
-            }
-        }
-
-
-
-        public bool checkClientsForUser(string username)
+        internal void SendClientMessage(string username, string message)
         {
             foreach (Client client in clients)
             {
                 if (client.UserName == username)
                 {
-                    return true;
+                    client.Write(message);
                 }
             }
-            return false;
         }
-
-        public Client getClientByUser(string username)
-        {
-            foreach (Client client in clients)
-            {
-                if (client.UserName == username)
-                {
-                    return client;
-                }
-            }
-            return null;
-        }
-
-        public void Broadcast()
-        {
-
-        }
-
     }
-
-
-
 }
