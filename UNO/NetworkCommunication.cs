@@ -130,6 +130,9 @@ namespace UNO
                     }else if (gamemessage == "UNO!")
                     {
                         //TODO: display onto screen who has uno
+                    }else if (gamemessage == "statusUpdate")
+                    {
+                        //TODO: update left player info
                     }
 
                     break;

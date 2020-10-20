@@ -85,6 +85,7 @@ namespace Server
                     }
                     sendSystemMessage(101);
                     Broadcast(JsonSerializer.Serialize(move));
+                    Broadcast(JsonSerializer.Serialize(server.Game.GeneratePlayerStatusMessage()));
                     if (server.Game.Checkhand())
                     {
                             GameMessage EGM = new GameMessage(UserName, "Win");

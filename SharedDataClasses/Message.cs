@@ -58,11 +58,18 @@ namespace SharedDataClasses
 
         public string Username { get; set; }
         public string gameMessage { get; set; }
+        public Dictionary<string, int> playerstatus { get; set; }
 
         public GameMessage(string username, string gameMessage)
         {
             this.Username = username;
             this.gameMessage = gameMessage;
+        }
+
+        public GameMessage(Dictionary<string, int> statusPlayers)
+        {
+            this.playerstatus = statusPlayers;
+            this.gameMessage = "statusUpdate";
         }
     }
     
@@ -93,4 +100,6 @@ namespace SharedDataClasses
             this.status = status;
         }
     }
+
+
 }

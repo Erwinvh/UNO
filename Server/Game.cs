@@ -39,8 +39,7 @@ namespace Server
             pile.Add(lastPlayedCard);
             deck.Remove(lastPlayedCard);
             Shuffle();
-            TurnMessage initialTurn = new TurnMessage("System", players[0].name, null);
-            server.Broadcast(JsonSerializer.Serialize(initialTurn));
+            firstTurn();
         }
 
         public void beginGame()
@@ -60,9 +59,20 @@ namespace Server
             }
         }
 
+        public GameMessage GeneratePlayerStatusMessage()
+        {
+            Dictionary<string, int> statusses = new Dictionary<string, int>();
+            foreach (User user in players)
+            {
+                statusses.Add(user.name, user.hand.Count);
+            }
+            GameMessage GM = new GameMessage(statusses);
+            return GM;
+        }
+
         public TurnMessage firstTurn()
         {
-            TurnMessage firstTurn = new TurnMessage("Deck", players[0].name, null);
+            TurnMessage firstTurn = new TurnMessage("System", players[0].name, null);
             return firstTurn;
         }
 
