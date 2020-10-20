@@ -22,5 +22,10 @@ namespace SharedDataClasses
         {
             hand.Add(card);
         }
+
+        public override string ToString()
+        {
+            return this.name;
+        }
     }
 }

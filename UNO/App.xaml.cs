@@ -13,5 +13,29 @@ namespace UNO
     /// </summary>
     public partial class App : Application
     {
+        private LoginScreen loginScreen;
+        private MainWindow main;
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            loginScreen = new LoginScreen(this);
+            loginScreen.Show();
+
+            //base.OnStartup(e);
+            // MainWindow mainWindow = new MainWindow();
+            // ViewModel viewModel = new ViewModel();
+            //// ClientApp client = new ClientApp();
+
+            // mainWindow.DataContext = viewModel;
+            // mainWindow.Show();
+        }
+
+        public void AfterSuccesfullLogin()
+        {
+            main = new MainWindow();
+            main.Show();
+
+            loginScreen.Close();
+        }
     }
 }
