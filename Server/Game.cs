@@ -28,7 +28,6 @@ namespace Server
         {
             this.server = server;
             //new game starts
-            //TODO: set server in playing mode
             this.server.isPlaying = true;
             for (int i = 0; i < 5; i++)
             {
@@ -40,6 +39,8 @@ namespace Server
             pile.Add(lastPlayedCard);
             deck.Remove(lastPlayedCard);
             Shuffle();
+            TurnMessage initialTurn = new TurnMessage("System", players[0].name, null);
+            server.Broadcast(JsonSerializer.Serialize(initialTurn));
         }
 
         public void beginGame()

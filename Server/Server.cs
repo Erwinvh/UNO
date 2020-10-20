@@ -44,6 +44,14 @@ namespace Server
             listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
         }
 
+        internal void Broadcast(string Data)
+        {
+            foreach (Client client in clients)
+            {
+                client.Write(Data);
+            }
+        }
+
         //The disconnect method for the clients
         internal void Disconnect(Client client)
         {
