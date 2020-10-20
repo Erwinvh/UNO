@@ -37,7 +37,9 @@ namespace Server
                 {
                     drawCard(player.name);
                 }
+                //TODO: send two turn events to each player. 1 with their hand of cards and the second with a nullifier to the play counter. 
             }
+            
             Shuffle();
             lastPlayedCard = deck[deck.Count - 1];
             pile.Add(lastPlayedCard);

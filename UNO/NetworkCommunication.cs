@@ -46,6 +46,11 @@ namespace UNO
 
         }
 
+        public void updateUI()
+        {
+            //TODO: implement method
+        }
+
         //
         //--Incoming data--
         //
@@ -88,12 +93,12 @@ namespace UNO
                         if (!isvoid)
                         {
                             user.hand.Remove(cardmoved);
-                            //TODO: update ui
+                            updateUI();
                         }
                         else
                         {
                             user.hand.Add(cardmoved);
-                            //TODO: update ui
+                            updateUI();
                         }
                     }
                     else
@@ -101,7 +106,7 @@ namespace UNO
                         if (!isvoid)
                         {
                             pileCard = cardmoved;
-                            //TODO: update ui
+                            updateUI();
                         }
                     }
                     break;
@@ -114,14 +119,18 @@ namespace UNO
                     if (gamemessage=="Win")
                     {
                         //TODO: show win message
+                        user.hand = new List<Card>();
                         //TODO: return to the lobby
                     }
                     else if (gamemessage == "lose")
                     {
                         //TODO: show lose message
+                        user.hand = new List<Card>();
                         //TODO: return to the lobby
+                    }else if (gamemessage == "UNO!")
+                    {
+                        //TODO: display onto screen who has uno
                     }
-               
 
                     break;
                 case "CHAT":
@@ -133,16 +142,15 @@ namespace UNO
                     //TODO: Implement TURN
                     if (user.name == (string)pakket.GetValue("nextPlayer"))
                     {
-                        //TODO: if cards isnt empty do they still play?
                         List<Card> added = JsonSerializer.Deserialize<List<Card>>((string) pakket.GetValue("addedCards"));
                         user.hand.AddRange(added);
                         isplaying = true;
-                        //TODO: set player ui to playing
+                        updateUI();
                     }
                     else if (user.name == (string)pakket.GetValue("lastPlayer"))
                     {
                         isplaying = false;
-                        //TODO: set player ui to NOT playing
+                        updateUI();
                     }
                     break;
             }
