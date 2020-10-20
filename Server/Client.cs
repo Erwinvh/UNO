@@ -13,8 +13,8 @@ namespace Server
         private TcpClient tcpClient;
         private NetworkStream stream;
         private Server server;
-        public string UserName { get; set; }
         public User user;
+        public Lobby lobby;
 
         public Client(TcpClient tcpClient, Server server)
         {
@@ -23,10 +23,6 @@ namespace Server
             Thread listernerThread = new Thread(() => Listener());
             listernerThread.Start();
         }
-
-
-
-
 
         //
         //--Incomingt data--
@@ -64,6 +60,37 @@ namespace Server
 
             switch (messageId)
             {
+                case MessageID.LOBBY:
+                    string username = (string) pakket.GetValue("Username");
+                    string LobbyCode = (string) pakket.GetValue("LobbyCode");
+                    if (server.CheckUsers(username))
+                    {
+                        user = new User(username);
+                        //TODO: add username to user and continue
+                        if (server.LobbyExist(LobbyCode))
+                        {
+                            if (server.LobbyFill(LobbyCode))
+                            {
+                                //TODO: send systemmessage for full lobby
+                            }
+                            else
+                            {
+                                server.addUsertoLobby(username, LobbyCode);
+                                lobby = server.GetLobbybyCode(LobbyCode);
+                            }
+                        }
+                        else
+                        {
+                            lobby = new Lobby(username, LobbyCode, server);
+                            server.lobbyList.Add(lobby);
+                        }
+                    }
+                    else
+                    {
+                        sendSystemMessage(22222222);
+                        //TODO: send system message for already in use name
+                    }
+                    break;
                 case MessageID.CHAT:
                     Broadcast(packetData);
                     sendSystemMessage(101);
@@ -75,42 +102,42 @@ namespace Server
                     JObject JCard = (JObject)pakket.GetValue("playedCard");
                     Card playedCard = JCard.ToObject<Card>();
                     MoveMessage move;
-                    if (!server.Game.checkMove(playedCard))
+                    if (!lobby.gameSession.checkMove(playedCard))
                     {
-                        move = new MoveMessage(server.Game.drawCard(UserName), UserName, true);
+                        move = new MoveMessage(lobby.gameSession.drawCard(user.name), user.name, true);
                     }
                     else
                     {
-                        move = new MoveMessage(playedCard, UserName);
+                        move = new MoveMessage(playedCard, user.name);
                     }
                     sendSystemMessage(101);
                     Broadcast(JsonSerializer.Serialize(move));
-                    Broadcast(JsonSerializer.Serialize(server.Game.GeneratePlayerStatusMessage()));
-                    if (server.Game.Checkhand())
+                    Broadcast(JsonSerializer.Serialize(lobby.gameSession.GeneratePlayerStatusMessage()));
+                    if (lobby.gameSession.Checkhand())
                     {
-                            GameMessage EGM = new GameMessage(UserName, "Win");
+                            GameMessage EGM = new GameMessage(user.name, "Win");
                             Broadcast(JsonSerializer.Serialize(EGM));
                             foreach (Client client in server.clients)
                             {
-                                Score score = server.fileSystem.getScoreByUser(client.UserName);
+                                Score score = server.fileSystem.getScoreByUser(client.user.name);
                                 score.gameAmount++;
-                                if (score.username == UserName)
+                                if (score.username == user.name)
                                 {
                                     score.winAmount++;
                                 }
                                 server.fileSystem.updateScore(score);
                             }
                             server.fileSystem.WritetoFile();
-                    }else if (server.Game.checkUNO())
+                    }else if (lobby.gameSession.checkUNO())
                     {
-                            GameMessage gm = new GameMessage(UserName, "UNO!");
+                            GameMessage gm = new GameMessage(user.name, "UNO!");
                             Broadcast(JsonSerializer.Serialize(gm));
                     }
-                    TurnMessage turn = server.Game.GenerateTurn(false);
+                    TurnMessage turn = lobby.gameSession.GenerateTurn(false);
                     Broadcast(JsonSerializer.Serialize(turn));
                     if (turn.addedCards.Count>0)
                     {
-                        TurnMessage forfeitTurnMessage = server.Game.GenerateTurn(true);
+                        TurnMessage forfeitTurnMessage = lobby.gameSession.GenerateTurn(true);
                         Broadcast(JsonSerializer.Serialize(forfeitTurnMessage));
                     }
                     break;

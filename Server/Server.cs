@@ -17,11 +17,22 @@ namespace Server
 
     class Server
     {
+        //
+        //--Coms related--
+        //
         private TcpListener listener;
         public List<Client> clients = new List<Client>();
+
+        //
+        //--File related--
+        //
         public FileSystem fileSystem { get; }
-        public bool isPlaying { get; set; }
-        public Game Game { get; set; }
+
+        //
+        //--Game related--
+        //
+        public List<Lobby> lobbyList { get; set; }
+        public Dictionary<string, string> UserDictionary { get; set; }
 
         //The constructor of the server
         public Server()
@@ -32,6 +43,8 @@ namespace Server
             listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
             Console.WriteLine("Server is online");
             Console.ReadLine();
+            lobbyList = new List<Lobby>();
+            UserDictionary = new Dictionary<string, string>();
         }
 
         //The callback method to connect the clients
@@ -63,11 +76,49 @@ namespace Server
         {
             foreach (Client client in clients)
             {
-                if (client.UserName == username)
+                if (client.user.name == username)
                 {
                     client.Write(message);
                 }
             }
+        }
+
+        internal bool CheckUsers(string username)
+        {
+            return !UserDictionary.ContainsKey(username);
+        }
+
+
+        //
+        //--Lobby related--
+        //
+        
+        internal bool LobbyExist(string lobbyCode)
+        {
+            return GetLobbybyCode(lobbyCode) != null;
+        }
+
+        public Lobby GetLobbybyCode(string LobbyCode)
+        {
+            foreach (Lobby lobby in lobbyList)
+            {
+                if (lobby.LobbyCode == LobbyCode)
+                {
+                    return lobby;
+                }
+            }
+            return null;
+        }
+
+        internal bool LobbyFill(string lobbyCode)
+        {
+            return GetLobbybyCode(lobbyCode).players.Count>4;
+        }
+
+        internal void addUsertoLobby(string username, string lobbyCode)
+        {
+            GetLobbybyCode(lobbyCode).playerJoin(username);
+            UserDictionary[username] = lobbyCode;
         }
     }
 }

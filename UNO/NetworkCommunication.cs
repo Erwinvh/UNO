@@ -41,9 +41,10 @@ namespace UNO
             Thread listenerThread = new Thread(() => Listener());
             listenerThread.Start();
         }
+
         public void disconnect()
         {
-
+            //TODO: Implement method
         }
 
         public void updateUI()
@@ -178,6 +179,12 @@ namespace UNO
         {
             ChatMessage CM = new ChatMessage(user.name, message, DateTime.Now);
             write(JsonSerializer.Serialize(CM));
+        }
+
+        public void sendLobby(string LobbyCode)
+        {
+            LobbyMessage LM = new LobbyMessage(user.name, LobbyCode);
+            write(JsonSerializer.Serialize(LM));
         }
 
         public void write(string data)

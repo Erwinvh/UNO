@@ -8,7 +8,8 @@ namespace SharedDataClasses
         TURN,
         SYSTEM,
         MOVE,
-        GAME
+        GAME,
+        LOBBY
     }
 
 
@@ -101,5 +102,19 @@ namespace SharedDataClasses
         }
     }
 
+    class LobbyMessage
+    {
+        private MessageID MessageID = MessageID.LOBBY;
+
+        public string Username { get; }
+        public string LobbyCode { get; }
+
+        public LobbyMessage(string username, string lobbyCode)
+        {
+            Username = username;
+            LobbyCode = lobbyCode;
+        }
+
+    }
 
 }

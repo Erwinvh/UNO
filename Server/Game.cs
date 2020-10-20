@@ -27,8 +27,7 @@ namespace Server
         public Game(Server server)
         {
             this.server = server;
-            //new game starts
-            this.server.isPlaying = true;
+            fillDeck();
             for (int i = 0; i < 5; i++)
             {
                 Shuffle();
@@ -40,6 +39,11 @@ namespace Server
             deck.Remove(lastPlayedCard);
             Shuffle();
             firstTurn();
+        }
+
+        public void fillDeck()
+        {
+
         }
 
         public void beginGame()
