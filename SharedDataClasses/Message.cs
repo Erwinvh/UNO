@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 
 namespace SharedDataClasses
 {
@@ -16,7 +17,7 @@ namespace SharedDataClasses
     class TurnMessage
     {
         //This message dictates the turning of the player turn, who was the last player and who is the next. and it also adds the 
-        private MessageID MessageID = MessageID.TURN;
+        public MessageID MessageID = MessageID.TURN;
 
         public List<Card> addedCards { get; set; }
         public string lastplayer { get; set; }
@@ -34,7 +35,7 @@ namespace SharedDataClasses
 
     class MoveMessage
     {
-        private MessageID MessageID = MessageID.MOVE;
+        public MessageID MessageID = MessageID.MOVE;
         public Card playedCard { get; set; }
         public string UserName { get; set; }
         public bool isVoidMove { get; set; }
@@ -55,7 +56,7 @@ namespace SharedDataClasses
 
     class GameMessage
     {
-        private MessageID MessageID = MessageID.GAME;
+        public MessageID MessageID = MessageID.GAME;
 
         public string Username { get; set; }
         public string gameMessage { get; set; }
@@ -77,7 +78,7 @@ namespace SharedDataClasses
 
     class ChatMessage
     {
-        private MessageID MessageID = MessageID.CHAT;
+        public MessageID MessageID = MessageID.CHAT;
         public string message { get; set; }
         public string sender { get; set; }
         public DateTime DToS { get; set; }
@@ -92,7 +93,7 @@ namespace SharedDataClasses
 
     class SystemMessage
     {
-        private MessageID MessageID = MessageID.SYSTEM;
+        public MessageID MessageID = MessageID.SYSTEM;
 
         public int status { get; set; }
 
@@ -104,13 +105,14 @@ namespace SharedDataClasses
 
     class LobbyMessage
     {
-        private MessageID MessageID = MessageID.LOBBY;
+        public MessageID MessageID { get; }
 
         public string Username { get; }
         public string LobbyCode { get; }
 
         public LobbyMessage(string username, string lobbyCode)
         {
+            MessageID = MessageID.LOBBY;
             Username = username;
             LobbyCode = lobbyCode;
         }

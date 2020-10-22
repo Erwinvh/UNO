@@ -16,10 +16,12 @@ namespace UNO
         readonly App App;
         User user;
         public ICommand LoginCommand { get; set; }
+        private NetworkCommunication networkCommunication;
 
 
-        public LoginViewModel(App app)
+        public LoginViewModel(App app, NetworkCommunication NetworkCommunication)
         {
+            this.networkCommunication = NetworkCommunication;
             this.LoginCommand = new RelayCommand(() => { CanLogin(UserName); });
             this.App = app;
         }
@@ -38,16 +40,16 @@ namespace UNO
 
                 Debug.WriteLine(UserName);
 
-                LoginCheck();
+                Login();
             }
 
             return output;
         }
 
-        private void LoginCheck()
+        private void Login()
         {
             //Send username and await ack. (((SERVER)))
-
+            networkCommunication.sendLobby(UserName, "9999");
 
             this.App.AfterSuccesfullLogin();
         }

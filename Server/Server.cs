@@ -13,6 +13,7 @@ namespace Server
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+            Server server = new Server();
         }
     }
 
@@ -39,13 +40,14 @@ namespace Server
         public Server()
         {
             //this.fileSystem = fileSystem;
+            lobbyList = new List<Lobby>();
+            UserDictionary = new Dictionary<string, string>();
             listener = new TcpListener(IPAddress.Any, 15243);
             listener.Start();
             listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
             Console.WriteLine("Server is online");
             Console.ReadLine();
-            lobbyList = new List<Lobby>();
-            UserDictionary = new Dictionary<string, string>();
+            
         }
 
         //The callback method to connect the clients

@@ -15,19 +15,14 @@ namespace UNO
     {
         private LoginScreen loginScreen;
         private MainWindow main;
+        private NetworkCommunication NetworkCommunication;
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            loginScreen = new LoginScreen(this);
+            this.NetworkCommunication = new NetworkCommunication("localhost", 15241);
+            loginScreen = new LoginScreen(this, NetworkCommunication);
             loginScreen.Show();
 
-            //base.OnStartup(e);
-            // MainWindow mainWindow = new MainWindow();
-            // ViewModel viewModel = new ViewModel();
-            //// ClientApp client = new ClientApp();
-
-            // mainWindow.DataContext = viewModel;
-            // mainWindow.Show();
         }
 
         public void AfterSuccesfullLogin()
@@ -40,7 +35,7 @@ namespace UNO
 
         public void LeaveLobby()
         {
-            loginScreen = new LoginScreen(this);
+            loginScreen = new LoginScreen(this, NetworkCommunication);
             loginScreen.Show();
 
             main.Close();

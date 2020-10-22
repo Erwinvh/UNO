@@ -20,6 +20,7 @@ namespace Server
         {
             this.tcpClient = tcpClient;
             this.server = server;
+            this.stream = this.tcpClient.GetStream();
             Thread listernerThread = new Thread(() => Listener());
             listernerThread.Start();
         }

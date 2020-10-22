@@ -18,9 +18,9 @@ namespace UNO
     /// </summary>
     public partial class LoginScreen : Window
     {
-        public LoginScreen(App app)
+        public LoginScreen(App app, NetworkCommunication networkCommunication)
         {
-            LoginViewModel loginViewModel = new LoginViewModel(app);
+            LoginViewModel loginViewModel = new LoginViewModel(app, networkCommunication);
             this.DataContext = loginViewModel;
             InitializeComponent();
         }

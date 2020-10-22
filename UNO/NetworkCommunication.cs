@@ -73,17 +73,19 @@ namespace UNO
                 for (int i = 0; i < 2; i++)
                 {
                     lengtebytes[i] = (byte)stream.ReadByte();
+                    Console.WriteLine(lengtebytes[i]);
                 }
                 uint bytes = BitConverter.ToUInt16(lengtebytes);
+                bytes += 2;
                 Byte[] bytebuffer = new byte[bytes];
-                for (int i = -3; i < bytes; i++)
+                for (int i = 0; i < bytes; i++)
                 {
                     bytebuffer[i] = (byte)stream.ReadByte();
+                    Console.WriteLine(bytebuffer[i]);
                 }
-                string rawOutput = Encoding.ASCII.GetString(bytebuffer);
 
-                Console.WriteLine(rawOutput);
-                handleData(Decode(rawOutput));
+                Console.WriteLine("Received packet");
+                handleData(Encoding.ASCII.GetString(bytebuffer));
             }
         }
 
@@ -91,13 +93,14 @@ namespace UNO
         {
             Console.WriteLine($"Got a packet: {packetData}");
             JObject pakket = JObject.Parse(packetData);
-            string id = (string)pakket.GetValue("ID");
-            string messageUsername = (string) pakket.GetValue("Username");
-            switch (id)
+            MessageID messageId;
+            Enum.TryParse((string)pakket.GetValue("MessageID"), out messageId);
+            string messageUsername = (string)pakket.GetValue("Username");
+            switch (messageId)
             {
-                case "MOVE":
-                    bool isvoid = (bool) pakket.GetValue("isVoidMove");
-                    Card cardmoved = JsonSerializer.Deserialize<Card>((string) pakket.GetValue("playedCard"));
+                case MessageID.MOVE:
+                    bool isvoid = (bool)pakket.GetValue("isVoidMove");
+                    Card cardmoved = JsonSerializer.Deserialize<Card>((string)pakket.GetValue("playedCard"));
                     if (messageUsername == user.name)
                     {
                         if (!isvoid)
@@ -120,9 +123,9 @@ namespace UNO
                         }
                     }
                     break;
-                case "SYSTEM":
+                case MessageID.SYSTEM:
                     //TODO: Implement SYSTEM
-                    int code = (int) pakket.GetValue("status");
+                    int code = (int)pakket.GetValue("status");
                     switch (code)
                     {
                         case 101:
@@ -144,10 +147,10 @@ namespace UNO
                             break;
                     }
                     break;
-                case "GAME":
+                case MessageID.GAME:
                     //TODO: Implement GAME
-                    string gamemessage = (string) pakket.GetValue("gameMessage");
-                    if (gamemessage=="Win")
+                    string gamemessage = (string)pakket.GetValue("gameMessage");
+                    if (gamemessage == "Win")
                     {
                         //TODO: show win message
                         user.hand = new List<Card>();
@@ -158,25 +161,27 @@ namespace UNO
                         //TODO: show lose message
                         user.hand = new List<Card>();
                         //TODO: return to the lobby
-                    }else if (gamemessage == "UNO!")
+                    }
+                    else if (gamemessage == "UNO!")
                     {
                         //TODO: display onto screen who has uno
-                    }else if (gamemessage == "statusUpdate")
+                    }
+                    else if (gamemessage == "statusUpdate")
                     {
                         //TODO: update left player info
                     }
 
                     break;
-                case "CHAT":
+                case MessageID.CHAT:
                     //TODO: Implement CHAT
                     //TODO: show chatmessage on chat area
 
                     break;
-                case "TURN":
+                case MessageID.TURN:
                     //TODO: Implement TURN
                     if (user.name == (string)pakket.GetValue("nextPlayer"))
                     {
-                        List<Card> added = JsonSerializer.Deserialize<List<Card>>((string) pakket.GetValue("addedCards"));
+                        List<Card> added = JsonSerializer.Deserialize<List<Card>>((string)pakket.GetValue("addedCards"));
                         user.hand.AddRange(added);
                         isplaying = true;
                         updateUI();
@@ -187,9 +192,9 @@ namespace UNO
                         updateUI();
                     }
                     break;
-                case "LOBBY":
-                    string lobbyCode = (string) pakket.GetValue("LobbyCode");
-                    if (lobbyCode == ""||lobbyCode != lobby)
+                case MessageID.LOBBY:
+                    string lobbyCode = (string)pakket.GetValue("LobbyCode");
+                    if (lobbyCode == "" || lobbyCode != lobby)
                     {
                         playerDictionary.Remove(messageUsername);
                         updateLobbyUI();
@@ -236,10 +241,11 @@ namespace UNO
         public void write(string data)
         {
             string encodedData = Encode(data);
-            int length = encodedData.Length;
+            //int length = encodedData.Length;
+            int length = data.Length;
             Console.WriteLine(data);
             Byte[] lengteBytes = BitConverter.GetBytes(length);
-            var dataAsBytes = Encoding.ASCII.GetBytes(encodedData);
+            var dataAsBytes = Encoding.ASCII.GetBytes(data);
             Byte[] z = lengteBytes.Concat(dataAsBytes).ToArray();
             stream.Write(z, 0, z.Length);
             stream.Flush();
