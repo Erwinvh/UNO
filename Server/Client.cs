@@ -57,46 +57,72 @@ namespace Server
             JObject pakket = JObject.Parse(packetData);
             MessageID messageId;
             Enum.TryParse((string)pakket.GetValue("MessageID"), out messageId);
-
+            string username = (string) pakket.GetValue("Username");
             switch (messageId)
             {
                 case MessageID.LOBBY:
-                    string username = (string) pakket.GetValue("Username");
+                    
                     string LobbyCode = (string) pakket.GetValue("LobbyCode");
-                    if (server.CheckUsers(username))
+                    if (server.CheckUsers(username)||server.UserDictionary[username].Equals(""))
                     {
                         user = new User(username);
-                        //TODO: add username to user and continue
+                        if (!server.UserDictionary.ContainsKey(username))
+                        {
+                            server.UserDictionary.Add(username, "");
+                        }
+                        sendSystemMessage(101);
                         if (server.LobbyExist(LobbyCode))
                         {
                             if (server.LobbyFill(LobbyCode))
                             {
-                                //TODO: send systemmessage for full lobby
+                                sendSystemMessage(202);
                             }
                             else
                             {
                                 server.addUsertoLobby(username, LobbyCode);
                                 lobby = server.GetLobbybyCode(LobbyCode);
+                                sendSystemMessage(102);
+                                sendLobbyPlayers();
                             }
                         }
                         else
                         {
                             lobby = new Lobby(username, LobbyCode, server);
                             server.lobbyList.Add(lobby);
+                            server.UserDictionary[username] = LobbyCode;
                         }
                     }
                     else
                     {
-                        sendSystemMessage(22222222);
-                        //TODO: send system message for already in use name
+                        sendSystemMessage(201);
                     }
                     break;
                 case MessageID.CHAT:
                     Broadcast(packetData);
-                    sendSystemMessage(101);
+                    sendSystemMessage(103);
                     break;
                 case MessageID.GAME:
+                    string gamemessage = (string) pakket.GetValue("gameMessage");
+                    switch (gamemessage)
+                    {
+                        case "left Game":
+                            if (username == user.name)
+                            {
+                                Broadcast(JsonSerializer.Serialize(new GameMessage(user.name, "left Game")));
+                                //TODO: fix player in game
+                                lobby.gameSession.playerQuitCase(user.name);
+                                server.Disconnect(this);
+                            }
+                            else
+                            {
+                                Console.WriteLine(username + " player has left");
+                                
+
+                            }
+                            break;
+                    }
                     //TODO: switch case: startgame, left game, ready
+
                     break;
                 case MessageID.MOVE:
                     JObject JCard = (JObject)pakket.GetValue("playedCard");
@@ -148,16 +174,30 @@ namespace Server
 
 
 
+
         //
         //--Outgoing data
         //
- public void Broadcast(string pakketdata)
+
+        public void Broadcast(string pakketdata)
         {
-            foreach (Client client in server.clients)
+            foreach (string player in lobby.players)
             {
-                Write(pakketdata);
+                server.SendClientMessage(player, pakketdata);
             }
         }
+        
+        private void sendLobbyPlayers()
+        {
+            foreach (string player in lobby.players)
+            {
+                if (player != user.name)
+                {
+                    Write(JsonSerializer.Serialize(new LobbyMessage(player, lobby.LobbyCode)));
+                }
+            }
+        }
+
      public void sendSystemMessage(int message)
         {
             Write(JsonSerializer.Serialize(new SystemMessage(message)));

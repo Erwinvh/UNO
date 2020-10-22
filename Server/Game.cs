@@ -14,7 +14,6 @@ namespace Server
         private List<Card> deck { get; set; }
         private List<Card> pile { get; set; }
         private Card lastPlayedCard { get; set; }
-        private bool isOngoing = true;
 
         private const int SkipTurn = 10;
         private const int TurnAround = 11;
@@ -22,7 +21,7 @@ namespace Server
         private const int Wild = 13;
         private const int Plus4 = 14;
 
-        private Server server { set; get; }
+        private Server server { get; }
 
         public Game(Server server)
         {
@@ -178,11 +177,15 @@ namespace Server
             return null;
         }
 
+        internal void playerQuitCase(string name)
+        {
+            throw new NotImplementedException();
+        }
+
         internal bool Checkhand()
         {
             if (players[index].hand.Count==0)
             {
-                isOngoing = false;
                 //TODO: have server finish other things, dont know what right now
                 return true;
             }

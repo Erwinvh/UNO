@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media.Animation;
 using SharedDataClasses;
 using static SharedDataClasses.Encryption;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -23,11 +24,13 @@ namespace UNO
         private User user;
         private Card pileCard;
         private bool isplaying;
+        private string lobby;
+        private Dictionary<string, int> playerDictionary { get; set; }
 
         public NetworkCommunication(string hostname, int port)
         {
             client = new TcpClient();
-            user = new User(hostname);
+            
             client.BeginConnect(hostname, port, new AsyncCallback(OnConnect), null);
         }
 
@@ -51,6 +54,12 @@ namespace UNO
         {
             //TODO: implement method
         }
+
+        public void updateLobbyUI()
+        {
+            //TODO: implement method
+        }
+
 
         //
         //--Incoming data--
@@ -113,6 +122,27 @@ namespace UNO
                     break;
                 case "SYSTEM":
                     //TODO: Implement SYSTEM
+                    int code = (int) pakket.GetValue("status");
+                    switch (code)
+                    {
+                        case 101:
+                            Console.WriteLine("Username OK");
+
+                            break;
+                        case 102:
+                            Console.WriteLine("Lobby OK");
+                            playerDictionary = new Dictionary<string, int>();
+                            //TODO: send user to lobbyscreen
+                            break;
+                        case 201:
+                            Console.WriteLine("Username already in use");
+                            //TODO: show on screen via popup
+                            break;
+                        case 202:
+                            Console.WriteLine("Lobby full");
+                            //TODO: show on screen via popup
+                            break;
+                    }
                     break;
                 case "GAME":
                     //TODO: Implement GAME
@@ -157,6 +187,20 @@ namespace UNO
                         updateUI();
                     }
                     break;
+                case "LOBBY":
+                    string lobbyCode = (string) pakket.GetValue("LobbyCode");
+                    if (lobbyCode == ""||lobbyCode != lobby)
+                    {
+                        playerDictionary.Remove(messageUsername);
+                        updateLobbyUI();
+
+                    }
+                    else
+                    {
+                        playerDictionary.Add(messageUsername, -1);
+                        updateLobbyUI();
+                    }
+                    break;
             }
         }
 
@@ -181,8 +225,10 @@ namespace UNO
             write(JsonSerializer.Serialize(CM));
         }
 
-        public void sendLobby(string LobbyCode)
+        public void sendLobby(string Username, string LobbyCode)
         {
+            user = new User(Username);
+            lobby = LobbyCode;
             LobbyMessage LM = new LobbyMessage(user.name, LobbyCode);
             write(JsonSerializer.Serialize(LM));
         }

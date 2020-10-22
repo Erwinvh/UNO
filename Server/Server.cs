@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Server
 {
@@ -117,7 +118,12 @@ namespace Server
 
         internal void addUsertoLobby(string username, string lobbyCode)
         {
-            GetLobbybyCode(lobbyCode).playerJoin(username);
+            Lobby lobby = GetLobbybyCode(lobbyCode);
+            foreach (string player in lobby.players)
+            {
+                SendClientMessage(player, JsonSerializer.Serialize(new LobbyMessage(username, lobbyCode)));
+            }
+            lobby.playerJoin(username);
             UserDictionary[username] = lobbyCode;
         }
     }
