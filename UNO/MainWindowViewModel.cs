@@ -25,11 +25,11 @@ namespace UNO
             this.networkCommunication = networkCommunication;
             this.LeaveLobbyCommand = new RelayCommand(() => { LeaveLobby(); });
             this.app = app;
-            PlayerList = new ObservableCollection<User>();
-            PlayerList.Add(new User("PlayerOne"));
-            PlayerList.Add(new User("PlayerTwo"));
-            PlayerList.Add(new User("PlayerThree"));
-            PlayerList.Add(new User("PlayerFour"));
+            observableUsers = new ObservableCollection<User>();
+            observableUsers.Add(new User("PlayerOne"));
+            observableUsers.Add(new User("PlayerTwo"));
+            //PlayerList.Add(new User("PlayerThree"));
+            //PlayerList.Add(new User("PlayerFour"));
         }
 
         public void LeaveLobby()

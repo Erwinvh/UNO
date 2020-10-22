@@ -40,10 +40,12 @@ namespace UNO
 
         public NetworkCommunication(string hostname, int port)
         {
-            lobbyViewModel = new MainWindowViewModel(app, this);
+            mainWindowViewModel = new MainWindowViewModel(app,this);
             client = new TcpClient();
             client.BeginConnect(hostname, port, new AsyncCallback(OnConnect), null);
         }
+
+
 
         private void OnConnect(IAsyncResult ar)
         {
@@ -174,11 +176,12 @@ namespace UNO
                     {
                         case 101:
                             Debug.WriteLine("Username OK");
-
                             break;
                         case 102:
                             Debug.WriteLine("Lobby OK");
                             isLobbyReady = true;
+                            Thread.Sleep(30);
+                            Debug.WriteLine("User:" + user.name);
                             mainWindowViewModel.observableUsers.Add(user);
                             //TODO: send user to lobbyscreen
                             break;
@@ -246,10 +249,8 @@ namespace UNO
                     string lobbyCode = (string)pakket.GetValue("LobbyCode");
                     if (lobbyCode == "" || lobbyCode != lobby)
                     {
-                        ObservableCollection<User> users =new ObservableCollection<User>();
                         mainWindowViewModel.observableUsers.Remove(getUserObsColl(messageUsername));
                         updateLobbyUI();
-
                     }
                     else
                     {

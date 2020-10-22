@@ -134,9 +134,9 @@ namespace Server
         internal void addUsertoLobby(string username, string lobbyCode)
         {
             Lobby lobby = GetLobbybyCode(lobbyCode);
-            foreach (string player in lobby.players)
+            foreach (User player in lobby.players)
             {
-                SendClientMessage(player, JsonSerializer.Serialize(new LobbyMessage(username, lobbyCode)));
+                SendClientMessage(player.name, JsonSerializer.Serialize(new LobbyMessage(username, lobbyCode)));
             }
             lobby.playerJoin(username);
             UserDictionary[username] = lobbyCode;
