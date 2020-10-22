@@ -67,7 +67,7 @@ namespace Server
             Dictionary<string, int> statusses = new Dictionary<string, int>();
             foreach (User user in players)
             {
-                statusses.Add(user.name, user.hand.Count);
+                statusses.Add(user.name, server.getClient(user.name).hand.Count);
             }
             GameMessage GM = new GameMessage(statusses);
             return GM;
@@ -89,11 +89,11 @@ namespace Server
             {
                 if (playedCard.color==lastPlayedCard.color||playedCard.number==lastPlayedCard.number)
                 {
-                    if (!players[index].hand.Contains(playedCard))
+                    if (!server.getClient(players[index].name).hand.Contains(playedCard))
                     {
                         return false;
                     }
-                    players[index].hand.Remove(playedCard);
+                    server.getClient(players[index].name).hand.Remove(playedCard);
                     lastPlayedCard = playedCard;
                     if (playedCard.number==Wild||playedCard.number==Plus4)
                     {
@@ -111,7 +111,7 @@ namespace Server
             DeckCheck();
             Card drawedCard = deck[deck.Count - 1];
             deck.Remove(drawedCard);
-            players[findIndexofPLayer(player)].hand.Add(drawedCard);
+            server.getClient(player).hand.Add(drawedCard);
             Shuffle();
             return drawedCard;
         }
@@ -184,7 +184,7 @@ namespace Server
 
         internal bool Checkhand()
         {
-            if (players[index].hand.Count==0)
+            if (server.getClient(players[index].name).hand.Count==0)
             {
                 //TODO: have server finish other things, dont know what right now
                 return true;
@@ -194,7 +194,7 @@ namespace Server
 
         internal bool checkUNO()
         {
-            if (players[index].hand.Count == 1)
+            if (server.getClient(players[index].name).hand.Count == 1)
             {
                 return true;
             }

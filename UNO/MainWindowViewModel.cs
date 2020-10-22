@@ -1,9 +1,11 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 using System.Windows.Input;
+using SharedDataClasses;
 
 namespace UNO
 {
@@ -13,6 +15,7 @@ namespace UNO
         public ICommand LaunchGameCommand { get; set; }
         public ICommand LeaveLobbyCommand { get; set; }
         private NetworkCommunication networkCommunication;
+        internal ObservableCollection<User> observableUsers;
 
         public MainWindowViewModel(App app, NetworkCommunication networkCommunication)
         {

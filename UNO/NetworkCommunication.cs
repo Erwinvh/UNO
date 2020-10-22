@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -15,21 +16,27 @@ using System.Diagnostics;
 namespace UNO
 {
     public class NetworkCommunication
-    {
+    {  
+        public User user { get; set; }
         //--Coms-related--
         private TcpClient client;
         private NetworkStream stream;
+        public bool running = true;
 
-
-        //--Game related--
-        public User user { get; set; }
-        private Card pileCard;
-        private bool isplaying;
-        private string lobby;
-        private Dictionary<string, int> playerDictionary { get; set; }
+        //--GUI related--
         public App app { get; set; }
         public bool? isLobbyReady { get; set; }
-        public bool running = true;
+
+        //--LobbyRelated--
+  private string lobby;
+
+
+  //--Game related--
+        private Card pileCard;
+        private bool isplaying;
+        private MainWindowViewModel mainWindowViewModel;
+
+        public List<Card> hand { get; set; }
 
         public NetworkCommunication(string hostname, int port)
         {
@@ -142,12 +149,12 @@ namespace UNO
                     {
                         if (!isvoid)
                         {
-                            user.hand.Remove(cardmoved);
+                            hand.Remove(cardmoved);
                             updateUI();
                         }
                         else
                         {
-                            user.hand.Add(cardmoved);
+                            hand.Add(cardmoved);
                             updateUI();
                         }
                     }
@@ -173,7 +180,7 @@ namespace UNO
                         case 102:
                             Debug.WriteLine("Lobby OK");
                             isLobbyReady = true;
-                            playerDictionary = new Dictionary<string, int>();
+                            mainWindowViewModel.observableUsers.Add(user);
                             //TODO: send user to lobbyscreen
                             break;
                         case 201:
@@ -193,13 +200,13 @@ namespace UNO
                     if (gamemessage == "Win")
                     {
                         //TODO: show win message
-                        user.hand = new List<Card>();
+                        hand = new List<Card>();
                         //TODO: return to the lobby
                     }
                     else if (gamemessage == "lose")
                     {
                         //TODO: show lose message
-                        user.hand = new List<Card>();
+                        hand = new List<Card>();
                         //TODO: return to the lobby
                     }
                     else if (gamemessage == "UNO!")
@@ -209,6 +216,10 @@ namespace UNO
                     else if (gamemessage == "statusUpdate")
                     {
                         //TODO: update left player info
+                    }
+                    else if (gamemessage == "ToggleReady")
+                    {
+                        getUserObsColl(messageUsername).isReady = !getUserObsColl(messageUsername).isReady;
                     }
 
                     break;
@@ -222,7 +233,7 @@ namespace UNO
                     if (user.name == (string)pakket.GetValue("nextPlayer"))
                     {
                         List<Card> added = JsonSerializer.Deserialize<List<Card>>((string)pakket.GetValue("addedCards"));
-                        user.hand.AddRange(added);
+                        hand.AddRange(added);
                         isplaying = true;
                         updateUI();
                     }
@@ -236,17 +247,30 @@ namespace UNO
                     string lobbyCode = (string)pakket.GetValue("LobbyCode");
                     if (lobbyCode == "" || lobbyCode != lobby)
                     {
-                        playerDictionary.Remove(messageUsername);
+                        ObservableCollection<User> users =new ObservableCollection<User>();
+                        mainWindowViewModel.observableUsers.Remove(getUserObsColl(messageUsername));
                         updateLobbyUI();
 
                     }
                     else
                     {
-                        playerDictionary.Add(messageUsername, -1);
+                        mainWindowViewModel.observableUsers.Add(new User(messageUsername));
                         updateLobbyUI();
                     }
                     break;
             }
+        }
+
+        public User getUserObsColl(string username)
+        {
+            foreach (User player in mainWindowViewModel.observableUsers)
+            {
+                if (player.name == username)
+                {
+                    return player;
+                }
+            }
+            return null;
         }
 
 
@@ -278,6 +302,13 @@ namespace UNO
             LobbyMessage LM = new LobbyMessage(user.name, LobbyCode);
             write(JsonSerializer.Serialize(LM));
         }
+
+        public void sendToggleReady()
+        {
+            GameMessage GM = new GameMessage(user.name, "ToggleReady");
+            write(JsonSerializer.Serialize(GM));
+        }
+
 
         public void write(string data)
         {

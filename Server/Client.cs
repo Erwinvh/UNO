@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -16,6 +17,7 @@ namespace Server
         public User user;
         public Lobby lobby;
         public bool running = true;
+        public List<Card> hand { get; set; }
 
         public Client(TcpClient tcpClient, Server server)
         {
@@ -133,6 +135,13 @@ namespace Server
 
                             }
                             break;
+                        case "ToggleReady":
+
+                                GameMessage GM = new GameMessage(user.name, "ToggleReady");
+                                Broadcast(JsonSerializer.Serialize(GM));
+                            
+
+                            break;
                     }
                     //TODO: switch case: startgame, left game, ready
 
@@ -189,8 +198,8 @@ namespace Server
                     break;
             }
         }
+        
 
-       
 
 
 
@@ -201,19 +210,19 @@ namespace Server
 
         public void Broadcast(string pakketdata)
         {
-            foreach (string player in lobby.players)
+            foreach (User player in lobby.players)
             {
-                server.SendClientMessage(player, pakketdata);
+                server.SendClientMessage(player.name, pakketdata);
             }
         }
         
         private void sendLobbyPlayers()
         {
-            foreach (string player in lobby.players)
+            foreach (User player in lobby.players)
             {
-                if (player != user.name)
+                if (player.name != user.name)
                 {
-                    Write(JsonSerializer.Serialize(new LobbyMessage(player, lobby.LobbyCode)));
+                    Write(JsonSerializer.Serialize(new LobbyMessage(player.name, lobby.LobbyCode)));
                 }
             }
         }

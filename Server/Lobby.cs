@@ -8,15 +8,15 @@ namespace Server
     class Lobby
     {
         public string LobbyCode { get; set; }
-        public List<string> players { get; set; }
+        public List<User> players { get; set; }
         private Server server { get; set; }
         public Game gameSession { get; set; }
 
         public Lobby(string username, string lobbyCode, Server server)
         {
             LobbyCode = lobbyCode;
-            players = new List<string>();
-            players.Add(username);
+            players = new List<User>();
+            players.Add(new User(username));
             this.server = server;
         }
 
@@ -32,12 +32,29 @@ namespace Server
 
         public void playerJoin(string username)
         {
-            players.Add(username);
+            players.Add(new User(username));
         }
 
         public void playerQuit(string username)
         {
-            players.Remove(username);
+            players.Remove(getUSer(username));
+            gameSession.playerQuitCase(username);
+            //TODO: remove all player stuff
+
+
+        }
+
+        public User getUSer(string username)
+        {
+            foreach (User user in players)
+            {
+                if (user.name==username)
+                {
+                    return user;
+                }
+            }
+
+            return null;
         }
     }
 }

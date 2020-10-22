@@ -75,6 +75,19 @@ namespace Server
             Console.WriteLine("Client disconnected");
         }
 
+        internal Client getClient(string name)
+        {
+            foreach (Client client in clients)
+            {
+                if (client.user.name == name)
+                {
+                    return client;
+                }
+            }
+
+            return null;
+        }
+
         internal void SendClientMessage(string username, string message)
         {
             foreach (Client client in clients)
