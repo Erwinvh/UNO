@@ -89,6 +89,7 @@ namespace Server
                             {
                                 server.addUsertoLobby(username, LobbyCode);
                                 lobby = server.GetLobbybyCode(LobbyCode);
+                                sendScoreboard();
                                 sendSystemMessage(102);
                                 //sendLobbyPlayers();
                             }
@@ -98,6 +99,7 @@ namespace Server
                             lobby = new Lobby(username, LobbyCode, server);
                             server.lobbyList.Add(lobby);
                             server.UserDictionary[username] = LobbyCode;
+                            sendScoreboard();
                             sendSystemMessage(102);
                             Console.WriteLine("LOBBY OK!");
                         }
@@ -198,7 +200,15 @@ namespace Server
                     break;
             }
         }
-        
+
+        private void sendScoreboard()
+        {
+            List<Score> scores = server.fileSystem.scoreBoard;
+            ScoreMessage ScoreMess = new ScoreMessage(scores);
+            Write(JsonSerializer.Serialize(ScoreMess));
+            Console.WriteLine("sent");
+        }
+
 
 
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 
@@ -11,7 +11,21 @@ namespace SharedDataClasses
         MOVE,
         GAME,
         LOBBY,
+        SCORE,
         VOID
+    }
+
+   
+    public class ScoreMessage
+    {
+        public MessageID MessageID { get; }
+        public List<Score> Scores { get; set; }
+        public ScoreMessage(List<Score> scores)
+        {
+            MessageID = MessageID.SCORE;
+            Scores = scores;
+        }
+
     }
 
 

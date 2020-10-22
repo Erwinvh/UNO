@@ -10,11 +10,13 @@ namespace Server
 {
     class FileSystem
     {
-        private List<Score> scoreBoard { get; }
+        public List<Score> scoreBoard { get; }
 
         public FileSystem()
         {
-            scoreBoard = ReadFile();
+            //scoreBoard = ReadFile();
+            scoreBoard = new List<Score>();
+            scoreBoard.Add(new Score("tester", 10,20));
         }
 
         public void WritetoFile()
@@ -30,13 +32,13 @@ namespace Server
             if (isFile)
             {
                 path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-                          + $@"\RHServerDB\UNO\Scoreboard.json";
+                          + $@"\CUNOServerDB\UNO\Scoreboard.json";
              
             }
             else
             {
                 path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-                              + $@"\RHServerDB\UNO";
+                              + $@"\CUNOServerDB\UNO";
             }
             return path;
         }

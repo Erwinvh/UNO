@@ -12,6 +12,9 @@ using SharedDataClasses;
 using static SharedDataClasses.Encryption;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.Serialization.Json;
+using Newtonsoft.Json;
 
 namespace UNO
 {
@@ -28,7 +31,8 @@ namespace UNO
         public bool? isLobbyReady { get; set; }
 
         //--LobbyRelated--
-  private string lobby;
+        private string lobby;
+        public List<Score> Scoreboard { get; set; }
 
 
   //--Game related--
@@ -45,7 +49,10 @@ namespace UNO
             client.BeginConnect(hostname, port, new AsyncCallback(OnConnect), null);
         }
 
-
+        internal List<Score> getScoreBoard()
+        {
+            throw new NotImplementedException();
+        }
 
         private void OnConnect(IAsyncResult ar)
         {
@@ -183,6 +190,7 @@ namespace UNO
                             Thread.Sleep(30);
                             Debug.WriteLine("User:" + user.name);
                             mainWindowViewModel.observableUsers.Add(user);
+                            
                             //TODO: send user to lobbyscreen
                             break;
                         case 201:
@@ -257,6 +265,10 @@ namespace UNO
                         mainWindowViewModel.observableUsers.Add(new User(messageUsername));
                         updateLobbyUI();
                     }
+                    break;
+                case MessageID.SCORE:
+                    ScoreMessage score = pakket.ToObject<ScoreMessage>();
+                    Scoreboard = score.Scores;
                     break;
             }
         }

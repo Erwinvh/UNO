@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace SharedDataClasses
 {
-    class Score
+  
+    public class Score
     {
         public string username { get; set; }
         public int winAmount { get; set; }
@@ -16,7 +17,5 @@ namespace SharedDataClasses
             winAmount = wins;
             gameAmount = total;
         }
-
-
     }
 }
