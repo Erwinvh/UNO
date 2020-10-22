@@ -41,7 +41,7 @@
                 </Grid.RowDefinitions>
 
                 <Border BorderThickness="1" Grid.Row="1" Margin="20,0,20,0" CornerRadius="15,15,15,15" Background="White" Width="260" Height="50">
-                    <TextBox BorderThickness="0" TextWrapping="NoWrap" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,-4,0" FontSize="30" FontFamily="Verdana" Width="260" SelectionBrush="Black" Foreground="Black" SelectionTextBrush="Black" Height="50" MaxLength="15"/>
+                    <TextBox x:Name="UserName" Text="{Binding Path=UserName}" BorderThickness="0" TextWrapping="NoWrap" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" FontFamily="Verdana" Width="240" SelectionBrush="Black" Foreground="Black" SelectionTextBrush="Black" Height="50" MaxLength="15"/>
                 </Border>
 
                 <Label Content="Username:" Grid.Row="0" FontSize="18" FontWeight="Bold" Background="{x:Null}" Foreground="Black" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="36,0,0,57" Grid.RowSpan="2"/>
@@ -49,7 +49,7 @@
                     <Border.Effect>
                         <DropShadowEffect/>
                     </Border.Effect>
-                    <Button x:Name="LoginButton" Command="{Binding Path=LoginCommand}" Content="Login!" Background="{x:Null}" BorderBrush="{x:Null}" FontSize="16" FontWeight="Bold" Margin="0,0,0,2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Button x:Name="LoginButton" Command="{Binding Path=LoginCommand}" Content="Login!" Background="{x:Null}" BorderBrush="{x:Null}" FontSize="16" FontWeight="Bold" Margin="44,1,47,1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                 </Border>
 
 

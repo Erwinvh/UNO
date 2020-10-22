@@ -1,13 +1,12 @@
-﻿using ClientGUI.Commands;
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight.Command;
 using SharedDataClasses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection.Emit;
 using System.Text;
 using System.Windows.Input;
-using RelayCommand = ClientGUI.Commands.RelayCommand;
 
 namespace UNO
 {
@@ -16,13 +15,16 @@ namespace UNO
 
         readonly App App;
         User user;
+        public ICommand LoginCommand { get; set; }
+
 
         public LoginViewModel(App app)
         {
+            this.LoginCommand = new RelayCommand(() => { CanLogin(UserName); });
             this.App = app;
         }
 
-        public string UserName { get; set; } = "";
+        public string UserName { get; set; }
 
         private bool CanLogin(string userName)
         {
@@ -34,9 +36,9 @@ namespace UNO
 
                 user = new User(userName);
 
-                Console.WriteLine(user);
+                Debug.WriteLine(UserName);
 
-                this.App.AfterSuccesfullLogin();
+                LoginCheck();
             }
 
             return output;
@@ -46,22 +48,8 @@ namespace UNO
         {
             //Send username and await ack. (((SERVER)))
 
-            
 
             this.App.AfterSuccesfullLogin();
-        }
-
-        private ICommand mLoginCommand;
-        public ICommand LoginCommand
-        {
-            get
-            {
-                if (mLoginCommand == null)
-                {
-                    mLoginCommand = new RelayCommand(param => CanLogin(UserName), param => true);
-                }
-                return mLoginCommand;
-            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

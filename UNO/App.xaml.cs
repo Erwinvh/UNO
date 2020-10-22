@@ -32,10 +32,23 @@ namespace UNO
 
         public void AfterSuccesfullLogin()
         {
-            main = new MainWindow();
+            main = new MainWindow(this);
             main.Show();
 
             loginScreen.Close();
+        }
+
+        public void LeaveLobby()
+        {
+            loginScreen = new LoginScreen(this);
+            loginScreen.Show();
+
+            main.Close();
+        }
+
+        public void LaunchGame()
+        {
+
         }
     }
 }
