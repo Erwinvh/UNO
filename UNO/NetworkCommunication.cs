@@ -40,11 +40,10 @@ namespace UNO
 
         public NetworkCommunication(string hostname, int port)
         {
+            lobbyViewModel = new MainWindowViewModel(app, this);
             client = new TcpClient();
             client.BeginConnect(hostname, port, new AsyncCallback(OnConnect), null);
         }
-
-
 
         private void OnConnect(IAsyncResult ar)
         {

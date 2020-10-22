@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharedDataClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,10 +25,11 @@ namespace UNO
 
         public MainWindow(App app, NetworkCommunication networkCommunication)
         {
+            InitializeComponent();
             this.NetworkCommunication = networkCommunication;
             MainWindowViewModel mainWindowViewModel = new MainWindowViewModel(app, networkCommunication);
             this.DataContext = mainWindowViewModel;
-            InitializeComponent();
+            
         }
 
     }
