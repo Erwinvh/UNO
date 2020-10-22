@@ -203,7 +203,7 @@ namespace Server
 
         private void sendScoreboard()
         {
-            List<Score> scores = server.fileSystem.scoreBoard;
+            List<Score> scores = server.fileSystem.scoreBoard.scoreboard;
             ScoreMessage ScoreMess = new ScoreMessage(scores);
             Write(JsonSerializer.Serialize(ScoreMess));
             Console.WriteLine("sent");

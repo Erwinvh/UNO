@@ -18,4 +18,14 @@ namespace SharedDataClasses
             gameAmount = total;
         }
     }
+
+    public class Scoreboard
+    {
+        public List<Score> scoreboard { get; set; }
+
+        public Scoreboard(List<Score> scores)
+        {
+            scoreboard = scores;
+        }
+    }
 }
