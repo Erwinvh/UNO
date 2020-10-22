@@ -32,28 +32,29 @@
             </Label.Effect>
         </Label>
 
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" Background="#FF5F8AFF" CornerRadius="20,20,20,20">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
+        <Border BorderThickness="1" Grid.Row="1" Background="#FF5F8AFF" CornerRadius="20,20,0,0" Grid.RowSpan="2" Grid.ColumnSpan="3" Margin="333,0,333,0">
+            <StackPanel Orientation="Vertical">
 
-                <Border BorderThickness="1" Grid.Row="1" Margin="20,0,20,0" CornerRadius="15,15,15,15" Background="White" Width="260" Height="50">
-                    <TextBox x:Name="UserName" Text="{Binding Path=UserName}" BorderThickness="0" TextWrapping="NoWrap" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" FontFamily="Verdana" Width="240" SelectionBrush="Black" Foreground="Black" SelectionTextBrush="Black" Height="50" MaxLength="15"/>
+                <Label Content="Username:" FontSize="18" FontWeight="Bold" Background="{x:Null}" Foreground="Black" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.RowSpan="2" Margin="0,0,0,-3"/>
+
+                <Border BorderThickness="1" CornerRadius="15,15,15,15" Background="White" Width="260" Height="50">
+                    <TextBox x:Name="UserName" Text="{Binding Path=UserName}" BorderThickness="0" TextWrapping="NoWrap" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="30" FontFamily="Verdana" Width="260" SelectionBrush="Black" Foreground="Black" SelectionTextBrush="Black" Height="50" MaxLength="15"/>
                 </Border>
 
-                <Label Content="Username:" Grid.Row="0" FontSize="18" FontWeight="Bold" Background="{x:Null}" Foreground="Black" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="36,0,0,57" Grid.RowSpan="2"/>
-                <Border BorderThickness="1" Grid.Row="2" Width="150" Height="32" Background="#FFD43A3A" CornerRadius="15,15,15,15">
+                <Label Content="Lobby code:" FontSize="18" FontWeight="Bold" Background="{x:Null}" Foreground="Black" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.RowSpan="2" Margin="0,0,0,-3"/>
+
+                <Border BorderThickness="1" CornerRadius="15,15,15,15" Background="White" Width="260" Height="50">
+                    <TextBox x:Name="LobbyCode" Text="{Binding Path=LobbyCode}" BorderThickness="0" TextWrapping="NoWrap" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="30" FontFamily="Verdana" Width="260" SelectionBrush="Black" Foreground="Black" SelectionTextBrush="Black" Height="50" MaxLength="15"/>
+                </Border>
+
+                <Border BorderThickness="1" Width="150" Height="32" Background="#FFD43A3A" CornerRadius="15,15,15,15" Margin="0,16,0,0">
                     <Border.Effect>
                         <DropShadowEffect/>
                     </Border.Effect>
                     <Button x:Name="LoginButton" Command="{Binding Path=LoginCommand}" Content="Login!" Background="{x:Null}" BorderBrush="{x:Null}" FontSize="16" FontWeight="Bold" Margin="44,1,47,1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                 </Border>
 
-
-            </Grid>
+            </StackPanel>
         </Border>
 
     </Grid>

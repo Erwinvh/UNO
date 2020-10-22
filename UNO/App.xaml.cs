@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -19,18 +20,28 @@ namespace UNO
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            this.NetworkCommunication = new NetworkCommunication("localhost", 15241);
+            this.NetworkCommunication = new NetworkCommunication("localhost", 15243);
+            this.NetworkCommunication.app = this;
             loginScreen = new LoginScreen(this, NetworkCommunication);
             loginScreen.Show();
 
         }
 
-        public void AfterSuccesfullLogin()
+        public async Task AfterSuccesfullLogin()
         {
-            main = new MainWindow(this);
-            main.Show();
+            while (NetworkCommunication.isLobbyReady == null)
+            {
+                
+                Thread.Sleep(25);
+            }
 
-            loginScreen.Close();
+            if (NetworkCommunication.isLobbyReady ?? true)
+            {
+                main = new MainWindow(this, NetworkCommunication);
+                main.Show();
+
+                loginScreen.Close();
+            }
         }
 
         public void LeaveLobby()
@@ -44,6 +55,11 @@ namespace UNO
         public void LaunchGame()
         {
 
+        }
+
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            NetworkCommunication.disconnect();
         }
     }
 }

@@ -10,14 +10,15 @@ namespace SharedDataClasses
         SYSTEM,
         MOVE,
         GAME,
-        LOBBY
+        LOBBY,
+        VOID
     }
 
 
     class TurnMessage
     {
         //This message dictates the turning of the player turn, who was the last player and who is the next. and it also adds the 
-        public MessageID MessageID = MessageID.TURN;
+        public MessageID MessageID { get; }
 
         public List<Card> addedCards { get; set; }
         public string lastplayer { get; set; }
@@ -26,6 +27,7 @@ namespace SharedDataClasses
 
         public TurnMessage(string lastplayer, string nextplayer, List<Card> addedCards)
         {
+            MessageID = MessageID.TURN;
             this.lastplayer = lastplayer;
             this.nextplayer = nextplayer;
             this.addedCards = addedCards;
@@ -35,19 +37,21 @@ namespace SharedDataClasses
 
     class MoveMessage
     {
-        public MessageID MessageID = MessageID.MOVE;
+        public MessageID MessageID { get; }
         public Card playedCard { get; set; }
         public string UserName { get; set; }
         public bool isVoidMove { get; set; }
 
         public MoveMessage(Card played, string byUserName)
         {
+            MessageID = MessageID.MOVE;
             UserName = byUserName;
             playedCard = played;
             isVoidMove = false;
         }
         public MoveMessage(Card played, string byUserName, bool isVoid)
         {
+            MessageID = MessageID.MOVE;
             UserName = byUserName;
             playedCard = played;
             isVoidMove = isVoid;
@@ -56,7 +60,7 @@ namespace SharedDataClasses
 
     class GameMessage
     {
-        public MessageID MessageID = MessageID.GAME;
+        public MessageID MessageID { get; }
 
         public string Username { get; set; }
         public string gameMessage { get; set; }
@@ -64,12 +68,14 @@ namespace SharedDataClasses
 
         public GameMessage(string username, string gameMessage)
         {
+            MessageID = MessageID.GAME;
             this.Username = username;
             this.gameMessage = gameMessage;
         }
 
         public GameMessage(Dictionary<string, int> statusPlayers)
         {
+            MessageID = MessageID.GAME;
             this.playerstatus = statusPlayers;
             this.gameMessage = "statusUpdate";
         }
@@ -78,13 +84,14 @@ namespace SharedDataClasses
 
     class ChatMessage
     {
-        public MessageID MessageID = MessageID.CHAT;
+        public MessageID MessageID { get; }
         public string message { get; set; }
         public string sender { get; set; }
         public DateTime DToS { get; set; }
 
         public ChatMessage(string sender, string message, DateTime dToS)
         {
+            MessageID = MessageID.CHAT;
             this.sender = sender;
             this.message = message;
             DToS = dToS;
@@ -93,12 +100,13 @@ namespace SharedDataClasses
 
     class SystemMessage
     {
-        public MessageID MessageID = MessageID.SYSTEM;
+        public MessageID MessageID { get; }
 
         public int status { get; set; }
 
         public SystemMessage(int status)
         {
+            MessageID = MessageID.SYSTEM;
             this.status = status;
         }
     }

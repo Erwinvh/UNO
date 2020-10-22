@@ -5,7 +5,7 @@ using SharedDataClasses;
 
 namespace SharedDataClasses
 {
-    class User
+    public class User
     {
         public List<Card> hand { get; set; }
 

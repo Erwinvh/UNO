@@ -10,6 +10,7 @@ using System.Windows.Media.Animation;
 using SharedDataClasses;
 using static SharedDataClasses.Encryption;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+using System.Diagnostics;
 
 namespace UNO
 {
@@ -21,16 +22,18 @@ namespace UNO
 
 
         //--Game related--
-        private User user;
+        public User user { get; set; }
         private Card pileCard;
         private bool isplaying;
         private string lobby;
         private Dictionary<string, int> playerDictionary { get; set; }
+        public App app { get; set; }
+        public bool? isLobbyReady { get; set; }
+        public bool running = true;
 
         public NetworkCommunication(string hostname, int port)
         {
             client = new TcpClient();
-            
             client.BeginConnect(hostname, port, new AsyncCallback(OnConnect), null);
         }
 
@@ -39,7 +42,7 @@ namespace UNO
         private void OnConnect(IAsyncResult ar)
         {
             client.EndConnect(ar);
-            Console.WriteLine("Verbonden!");
+            Debug.WriteLine("Verbonden!");
             stream = client.GetStream();
             Thread listenerThread = new Thread(() => Listener());
             listenerThread.Start();
@@ -47,7 +50,11 @@ namespace UNO
 
         public void disconnect()
         {
-            //TODO: Implement method
+            SystemMessage sm = new SystemMessage(200);
+            write(JsonSerializer.Serialize(sm));
+            running = false;
+            //stream.Close();
+            //client.Close();
         }
 
         public void updateUI()
@@ -65,10 +72,10 @@ namespace UNO
         //--Incoming data--
         //
 
-        public Task Listener()
+        public void Listener()
         {
             Byte[] lengtebytes = new byte[2];
-            while (true)
+            while (running)
             {
                 for (int i = 0; i < 2; i++)
                 {
@@ -76,26 +83,56 @@ namespace UNO
                     Console.WriteLine(lengtebytes[i]);
                 }
                 uint bytes = BitConverter.ToUInt16(lengtebytes);
-                bytes += 2;
+                //bytes += 2;
                 Byte[] bytebuffer = new byte[bytes];
-                for (int i = 0; i < bytes; i++)
+                for (int i = -2; i < bytes; i++)
                 {
-                    bytebuffer[i] = (byte)stream.ReadByte();
-                    Console.WriteLine(bytebuffer[i]);
-                }
+                    if (i >= 0)
+                    {
+                        bytebuffer[i] = (byte)stream.ReadByte();
+                        //Debug.WriteLine(bytebuffer[i]);
+                    }
+                    else
+                    {
+                        byte Byte = (byte)stream.ReadByte();
+                    }
 
+
+                }
+                Debug.WriteLine(Encoding.Default.GetString(bytebuffer));
                 Console.WriteLine("Received packet");
-                handleData(Encoding.ASCII.GetString(bytebuffer));
+                string listenedData = Encoding.ASCII.GetString(bytebuffer);
+                //listenedData.Remove(0, 2);
+                Debug.WriteLine(listenedData);
+                handleData(listenedData);
             }
+            stream.Close();
+            client.Close();
         }
 
         private void handleData(string packetData)
         {
-            Console.WriteLine($"Got a packet: {packetData}");
-            JObject pakket = JObject.Parse(packetData);
+            Debug.WriteLine($"Got a packet: {packetData}");
+            JObject pakket;
             MessageID messageId;
-            Enum.TryParse((string)pakket.GetValue("MessageID"), out messageId);
-            string messageUsername = (string)pakket.GetValue("Username");
+            string messageUsername;
+
+            try
+            {
+                pakket = JObject.Parse(packetData);
+                Enum.TryParse((string)pakket.GetValue("MessageID"), out messageId);
+                messageUsername = (string)pakket.GetValue("Username");
+            } catch (Exception e)
+            {
+                pakket = null;
+                messageId = MessageID.VOID;
+                messageUsername = "";
+            }
+
+            
+            
+            
+            
             switch (messageId)
             {
                 case MessageID.MOVE:
@@ -126,14 +163,16 @@ namespace UNO
                 case MessageID.SYSTEM:
                     //TODO: Implement SYSTEM
                     int code = (int)pakket.GetValue("status");
+                    Debug.WriteLine(code);
                     switch (code)
                     {
                         case 101:
-                            Console.WriteLine("Username OK");
+                            Debug.WriteLine("Username OK");
 
                             break;
                         case 102:
-                            Console.WriteLine("Lobby OK");
+                            Debug.WriteLine("Lobby OK");
+                            isLobbyReady = true;
                             playerDictionary = new Dictionary<string, int>();
                             //TODO: send user to lobbyscreen
                             break;
@@ -143,6 +182,7 @@ namespace UNO
                             break;
                         case 202:
                             Console.WriteLine("Lobby full");
+                            isLobbyReady = false;
                             //TODO: show on screen via popup
                             break;
                     }
@@ -232,6 +272,7 @@ namespace UNO
 
         public void sendLobby(string Username, string LobbyCode)
         {
+            isLobbyReady = null;
             user = new User(Username);
             lobby = LobbyCode;
             LobbyMessage LM = new LobbyMessage(user.name, LobbyCode);

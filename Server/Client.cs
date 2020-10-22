@@ -15,6 +15,7 @@ namespace Server
         private Server server;
         public User user;
         public Lobby lobby;
+        public bool running = true;
 
         public Client(TcpClient tcpClient, Server server)
         {
@@ -32,7 +33,7 @@ namespace Server
         private void Listener()
         {
             Byte[] lengtebytes = new byte[2];
-            while (true)
+            while (running)
             {
                 for (int i = 0; i < 2; i++)
                 {
@@ -50,6 +51,9 @@ namespace Server
                 Console.WriteLine("Received packet");
                 handleData(Encoding.ASCII.GetString(bytebuffer));
             }
+            stream.Close();
+            tcpClient.Close();
+            server.clients.Remove(this);
         }
 
         public void handleData(string packetData)
@@ -71,6 +75,7 @@ namespace Server
                         {
                             server.UserDictionary.Add(username, "");
                         }
+                        Console.WriteLine("USERNAME OK!");
                         sendSystemMessage(101);
                         if (server.LobbyExist(LobbyCode))
                         {
@@ -83,7 +88,7 @@ namespace Server
                                 server.addUsertoLobby(username, LobbyCode);
                                 lobby = server.GetLobbybyCode(LobbyCode);
                                 sendSystemMessage(102);
-                                sendLobbyPlayers();
+                                //sendLobbyPlayers();
                             }
                         }
                         else
@@ -91,10 +96,17 @@ namespace Server
                             lobby = new Lobby(username, LobbyCode, server);
                             server.lobbyList.Add(lobby);
                             server.UserDictionary[username] = LobbyCode;
+                            sendSystemMessage(102);
+                            Console.WriteLine("LOBBY OK!");
                         }
                     }
                     else
                     {
+                        if(LobbyCode == "")
+                        {
+                            lobby.playerQuit(user.name);
+                            server.UserDictionary.Remove(user.name);
+                        }
                         sendSystemMessage(201);
                     }
                     break;
@@ -168,6 +180,13 @@ namespace Server
                         Broadcast(JsonSerializer.Serialize(forfeitTurnMessage));
                     }
                     break;
+                case MessageID.SYSTEM:
+                    int code = (int)pakket.GetValue("status");
+                    if (code == 200)
+                    {
+                        disconnect();
+                    }
+                    break;
             }
         }
 
@@ -201,6 +220,7 @@ namespace Server
 
      public void sendSystemMessage(int message)
         {
+            Console.WriteLine(message);
             Write(JsonSerializer.Serialize(new SystemMessage(message)));
         }
 
@@ -218,5 +238,11 @@ namespace Server
             stream.Flush();
         }
 
+        public void disconnect()
+        {
+            server.UserDictionary.Remove(user.name);
+            lobby.playerQuit(user.name);
+            running = false;
+        }
     }
 }

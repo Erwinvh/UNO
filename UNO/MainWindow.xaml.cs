@@ -20,11 +20,15 @@ namespace UNO
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(App app)
+        private NetworkCommunication NetworkCommunication;
+
+        public MainWindow(App app, NetworkCommunication networkCommunication)
         {
-            MainWindowViewModel mainWindowViewModel = new MainWindowViewModel(app);
+            this.NetworkCommunication = networkCommunication;
+            MainWindowViewModel mainWindowViewModel = new MainWindowViewModel(app, networkCommunication);
             this.DataContext = mainWindowViewModel;
             InitializeComponent();
         }
+
     }
 }

@@ -1,11 +1,9 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using SharedDataClasses;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Reflection.Emit;
-using System.Text;
+using System.Linq;
 using System.Windows.Input;
 
 namespace UNO
@@ -22,17 +20,26 @@ namespace UNO
         public LoginViewModel(App app, NetworkCommunication NetworkCommunication)
         {
             this.networkCommunication = NetworkCommunication;
-            this.LoginCommand = new RelayCommand(() => { CanLogin(UserName); });
+            this.LoginCommand = new RelayCommand(() => { CanLogin(UserName, LobbyCode); });
             this.App = app;
         }
 
         public string UserName { get; set; }
+        public string LobbyCode { get; set; }
 
-        private bool CanLogin(string userName)
+        private bool CanLogin(string userName, string lobbycode)
         {
             bool output = false;
 
-            if (!userName.Equals("System"))
+            if (userName == null || lobbycode == null)
+            {
+                return output;
+            }
+
+            userName = RemoveWhitespace(userName);
+            lobbycode = RemoveWhitespace(lobbycode);
+
+            if (!userName.Equals("System") && !userName.Equals("") && !lobbycode.Equals(""))
             {
                 output = true;
 
@@ -49,9 +56,16 @@ namespace UNO
         private void Login()
         {
             //Send username and await ack. (((SERVER)))
-            networkCommunication.sendLobby(UserName, "9999");
+            networkCommunication.sendLobby(UserName, LobbyCode);
 
-            this.App.AfterSuccesfullLogin();
+            App.AfterSuccesfullLogin();
+        }
+
+        public string RemoveWhitespace(string input)
+        {
+            return new string(input.ToCharArray()
+                .Where(c => !Char.IsWhiteSpace(c))
+                .ToArray());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
