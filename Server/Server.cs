@@ -39,7 +39,7 @@ namespace Server
         //The constructor of the server
         public Server()
         {
-            //this.fileSystem = fileSystem;
+            this.fileSystem = new FileSystem();
             lobbyList = new List<Lobby>();
             UserDictionary = new Dictionary<string, string>();
             listener = new TcpListener(IPAddress.Any, 15243);
