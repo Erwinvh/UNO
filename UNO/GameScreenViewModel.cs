@@ -6,6 +6,8 @@ using System.ComponentModel;
 using System.Text;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
+using System.Diagnostics;
+using System.Windows.Media;
 
 namespace UNO
 {
@@ -17,6 +19,7 @@ namespace UNO
         public ICommand MoveCommand { get; set; }
         readonly App app;
         private NetworkCommunication networkCommunication;
+        public string imageSource { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public string Message { set; get; }
@@ -46,7 +49,7 @@ namespace UNO
             hand.Add(new Card(Card.Color.GREEN, 5));
             ChatCommand = new RelayCommand(() => { sendChatmessage(Message); });
             DeckCommand = new RelayCommand(() => { pullFromDeck(); });
-            MoveCommand = new RelayCommand(() => { sendMove(); });
+            MoveCommand = new RelayCommand<Card>(sendMove);
         }
 
         // 
@@ -62,8 +65,11 @@ namespace UNO
             networkCommunication.sendChat(message);
         }
 
-        public void sendMove()
+        public void sendMove(Card source)
         {
+            Debug.WriteLine("Card Played: " + source.number);
+
+
             //TODO: add wildcard logic
             //Get card form somewhere via index perhaps? 
             //networkCommunication.sendMove(); 

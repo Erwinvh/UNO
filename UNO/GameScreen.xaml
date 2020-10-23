@@ -76,7 +76,7 @@
             </StackPanel>
         </StackPanel>
 
-        <ListView ItemsSource="{Binding hand, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.ColumnSpan="4" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" Background="{x:Null}" BorderBrush="{x:Null}">
+        <ListView x:Name="hand" ItemsSource="{Binding hand, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.ColumnSpan="4" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" Background="{x:Null}" BorderBrush="{x:Null}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
@@ -84,7 +84,7 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Button Width="220" Height="340" BorderBrush="{x:Null}">
+                    <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MoveCommand}"  Width="220" Height="340" BorderBrush="{x:Null}" CommandParameter="{Binding Parent}">
                         <Button.Background>
                             <ImageBrush ImageSource="{Binding SourcePath}"/>
                         </Button.Background>
