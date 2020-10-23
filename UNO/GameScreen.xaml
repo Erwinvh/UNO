@@ -84,7 +84,7 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MoveCommand}"  Width="220" Height="340" BorderBrush="{x:Null}" CommandParameter="{Binding SourcePath}">
+                    <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MoveCommand}"  Width="220" Height="340" BorderBrush="{x:Null}" CommandParameter="{Binding card}">
                         <Button.Background>
                             <ImageBrush ImageSource="{Binding SourcePath}"/>
                         </Button.Background>

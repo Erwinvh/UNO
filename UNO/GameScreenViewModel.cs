@@ -65,22 +65,15 @@ namespace UNO
             networkCommunication.sendChat(message);
         }
 
-        public void sendMove(string source)
+        public void sendMove(Card playedCard)
         {
-            Card movedCard = null;
-            foreach (Card card in hand)
-            {
-                if (card.SourcePath == source)
-                {
-                    movedCard = card;
-                }
-            }
+            
             //TODO: add wildcard logic
-           // if (playedCard.number == 13 || playedCard.number == 14)
-           // {
+            //if (playedCard.number == 13 || playedCard.number == 14)
+            //{
             //    playedCard.color = color;
             //}
-            networkCommunication.sendMove(movedCard); 
+            networkCommunication.sendMove(playedCard); 
         }
 
 
