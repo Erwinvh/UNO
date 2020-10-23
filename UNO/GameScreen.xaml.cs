@@ -21,10 +21,14 @@ namespace UNO
 
         public GameScreen(App app, NetworkCommunication networkCommunication)
         {
+            InitializeComponent();
             this.NetworkCommunication = networkCommunication;
             GameScreenViewModel gameScreenViewModel = new GameScreenViewModel(app, networkCommunication);
             this.DataContext = gameScreenViewModel;
-            InitializeComponent();
+
+            
+            
+            
         }
     }
 }

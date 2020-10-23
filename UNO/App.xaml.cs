@@ -26,6 +26,7 @@ namespace UNO
             this.NetworkCommunication.app = this;
             main = new MainWindow(this, NetworkCommunication);
             loginScreen = new LoginScreen(this, NetworkCommunication);
+            gameScreen = new GameScreen(this, NetworkCommunication);
             loginScreen.Show();
 
         }
@@ -56,7 +57,7 @@ namespace UNO
 
         public void LaunchGame()
         {
-            gameScreen = new GameScreen(this, NetworkCommunication);
+            
             gameScreen.Show();
             main.Close();
         }

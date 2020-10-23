@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:UNO"
         mc:Ignorable="d"
         Title="GameScreen" Height="1080" Width="1920" WindowState="Maximized" WindowStyle="SingleBorderWindow" ResizeMode="CanMinimize">
+    
+    
     <Grid>
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -39,7 +41,7 @@
             </Border>
         </StackPanel>
 
-        <Button x:Name="Deck" Grid.Column="1" Width="240" Height="360" Margin="120,177,120,172" Grid.RowSpan="2">
+        <Button x:Name="Deck" Grid.Column="1" Width="240" Height="360" Margin="120,177,120,172" Grid.RowSpan="2" BorderBrush="{x:Null}">
             <Button.Background>
                 <ImageBrush ImageSource="/Cards/uno.png" TileMode="None"/>
             </Button.Background>
@@ -51,12 +53,26 @@
             </Canvas.Background>
         </Canvas>
 
-        <ListView ItemsSource="{Binding hand, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.ColumnSpan="4">
+        <StackPanel Orientation="Vertical" Grid.RowSpan="2" Grid.Column="3" Margin="0,0,10,0">
+
+            <Border Height="500" Margin="12,20,0,0" CornerRadius="20,20,20,20" Background="White">
+                <ListView x:Name="ChatBox" Background="{x:Null}" BorderBrush="{x:Null}">
+
+                </ListView>
+            </Border>
+        </StackPanel>
+
+        <ListView ItemsSource="{Binding hand, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.ColumnSpan="4" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" Background="{x:Null}" BorderBrush="{x:Null}">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Button Width="240" Height="360">
+                    <Button Width="220" Height="340" BorderBrush="{x:Null}">
                         <Button.Background>
-                            <ImageBrush ImageSource="/Cards/blue1.png"/>
+                            <ImageBrush ImageSource="{Binding SourcePath}"/>
                         </Button.Background>
                     </Button>
                 </DataTemplate>
