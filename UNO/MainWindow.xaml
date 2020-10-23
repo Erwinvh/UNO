@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:UNO"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="1000" ResizeMode="CanMinimize">
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -31,10 +32,22 @@
         </Border>
         
         <Border BorderThickness="1" Grid.RowSpan="3" Background="White" CornerRadius="00,00,20,20" Margin="10,131,10,10">
-            <Grid>
+            <ListView ItemsSource="{Binding Scoreboard, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <WrapPanel>
+                            <Label Content="{Binding name}"/>
+                            <Label Content="{Binding winAmount}"/>
+                            <Label Content="{Binding gameAmount}"/>
+                        </WrapPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+            <!--<Grid>
                 <DataGrid HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="300" Width="500"
                           ItemsSource="{Binding Scoreboard, Mode=OneWay}" IsSynchronizedWithCurrentItem="True"  />
-            </Grid>
+            </Grid>-->
         </Border>
 
         <Border Background="#FF899FE8" Margin="11,72,11,0" CornerRadius="20,20,0,0" Height="52" VerticalAlignment="Top">
@@ -43,10 +56,23 @@
 
 
         <Border BorderThickness="1" Grid.Column="2" Grid.RowSpan="2" Margin="10,10,10,10" CornerRadius="20,20,20,20" Background="White">
-            <Grid>
+            <ListView ItemsSource="{Binding observableUsers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Background="{x:Null}" BorderBrush="{x:Null}">
+                
+                <ListView.ItemTemplate>
+                    <DataTemplate >
+                        <WrapPanel>
+                            <Label Content="{Binding name}" FontSize="18" FontWeight="Bold" />
+                            <Label Content="{Binding isReady}" ContentStringFormat="Ready: {0}" FontSize="18" FontWeight="Bold" />
+                        </WrapPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                
+            </ListView>
+            
+            <!--<Grid>
                 <DataGrid HorizontalAlignment="Left" VerticalAlignment="Top" Width="313.333333333333" Height="369.36"
-                  ItemsSource="{Binding observableUsers, Mode=OneWay}" IsSynchronizedWithCurrentItem="True" Background="{x:Null}" BorderBrush="{x:Null}"  />
-            </Grid>
+                  ItemsSource="{Binding Source= observableUsers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsSynchronizedWithCurrentItem="True" Background="{x:Null}" BorderBrush="{x:Null}"  />
+            </Grid>-->
         </Border>
 
 

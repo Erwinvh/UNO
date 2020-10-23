@@ -16,6 +16,7 @@ namespace UNO
     {
         private LoginScreen loginScreen;
         private MainWindow main;
+        private GameScreen gameScreen;
         private NetworkCommunication NetworkCommunication;
 
         protected override void OnStartup(StartupEventArgs e)
@@ -54,7 +55,9 @@ namespace UNO
 
         public void LaunchGame()
         {
-
+            gameScreen = new GameScreen(this, NetworkCommunication);
+            gameScreen.Show();
+            main.Close();
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)

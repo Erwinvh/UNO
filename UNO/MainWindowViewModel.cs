@@ -25,6 +25,7 @@ namespace UNO
             
             this.networkCommunication = networkCommunication;
             this.LeaveLobbyCommand = new RelayCommand(() => { LeaveLobby(); });
+            this.LaunchGameCommand = new RelayCommand(() => { LaunchGame(); });
             this.app = app;
             Scoreboard = this.networkCommunication.Scoreboard;
             observableUsers = new ObservableCollection<User>();
@@ -39,6 +40,11 @@ namespace UNO
             networkCommunication.sendLobby(networkCommunication.user.name, "");
 
             app.LeaveLobby();
+        }
+
+        public void LaunchGame()
+        {
+            app.LaunchGame();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
