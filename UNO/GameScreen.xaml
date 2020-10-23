@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UNO"
         mc:Ignorable="d"
-        Title="GameScreen" Height="1080" Width="1920" WindowState="Maximized" WindowStyle="SingleBorderWindow" ResizeMode="CanMinimize">
+        Title="GameScreen" Height="1080" Width="1920" WindowState="Maximized" WindowStyle="None" ResizeMode="CanMinimize">
     
     
     <Grid>
@@ -84,7 +84,7 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MoveCommand}"  Width="220" Height="340" BorderBrush="{x:Null}" CommandParameter="{Binding card}">
+                    <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MoveCommand}"  Width="220" Height="340" BorderBrush="{x:Null}" CommandParameter="{Binding SourcePath}">
                         <Button.Background>
                             <ImageBrush ImageSource="{Binding SourcePath}"/>
                         </Button.Background>

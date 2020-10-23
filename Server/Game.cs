@@ -14,6 +14,7 @@ namespace Server
         private List<Card> deck { get; set; }
         private List<Card> pile { get; set; }
         private Card lastPlayedCard { get; set; }
+        private Lobby lobby { get; set; }
 
         private const int SkipTurn = 10;
         private const int TurnAround = 11;
@@ -23,8 +24,13 @@ namespace Server
 
         private Server server { get; }
 
-        public Game(Server server)
+        public Game(Server server, Lobby lobby)
         {
+            this.lobby = lobby;
+            players = lobby.players;
+            Console.WriteLine("Game has begun");
+            deck = new List<Card>();
+            pile = new List<Card>();
             this.server = server;
             fillDeck();
             for (int i = 0; i < 5; i++)
@@ -42,7 +48,16 @@ namespace Server
 
         public void fillDeck()
         {
-
+            for (int i = 0; i < 13; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                { 
+                deck.Add(new Card(Card.Color.YELLOW, i));
+                deck.Add(new Card(Card.Color.GREEN,i));
+                deck.Add(new Card(Card.Color.BLUE,i));
+                deck.Add(new Card(Card.Color.RED,i));
+                }
+            }
         }
 
         public void beginGame()
@@ -111,6 +126,7 @@ namespace Server
             DeckCheck();
             Card drawedCard = deck[deck.Count - 1];
             deck.Remove(drawedCard);
+            Console.WriteLine("Hand:"+server.getClient(player).hand);
             server.getClient(player).hand.Add(drawedCard);
             Shuffle();
             return drawedCard;

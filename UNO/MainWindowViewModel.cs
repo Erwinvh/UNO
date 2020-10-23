@@ -71,6 +71,7 @@ namespace UNO
         public void LaunchGame()
         {
             app.LaunchGame();
+            networkCommunication.SendGameStart();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

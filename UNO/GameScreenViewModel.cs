@@ -13,7 +13,7 @@ namespace UNO
 {
     public class GameScreenViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<Card> hand { get; set; }
+        public AsyncObservableCollection<Card> hand { get; set; }
         public ICommand ChatCommand { get; set; }
         public ICommand DeckCommand { get; set; }
         public ICommand MoveCommand { get; set; }
@@ -28,28 +28,14 @@ namespace UNO
         public GameScreenViewModel(App app, NetworkCommunication networkCommunication)
         {
             this.networkCommunication = networkCommunication;
+            this.networkCommunication.GameScreenViewModel = this;
             //this.LeaveLobbyCommand = new RelayCommand(() => { LeaveLobby(); }); 
             //this.LaunchGameCommand = new RelayCommand(() => { LaunchGame(); }); 
             this.app = app;
-            hand = new ObservableCollection<Card>();
-            hand.Add(new Card(Card.Color.GREEN, 1));
-            hand.Add(new Card(Card.Color.GREEN, 2));
-            hand.Add(new Card(Card.Color.GREEN, 3));
-            hand.Add(new Card(Card.Color.GREEN, 4));
-            hand.Add(new Card(Card.Color.GREEN, 5));
-            hand.Add(new Card(Card.Color.GREEN, 6));
-            hand.Add(new Card(Card.Color.GREEN, 7));
-            hand.Add(new Card(Card.Color.GREEN, 8));
-            hand.Add(new Card(Card.Color.GREEN, 9));
-            hand.Add(new Card(Card.Color.GREEN, 0));
-            hand.Add(new Card(Card.Color.GREEN, 1));
-            hand.Add(new Card(Card.Color.GREEN, 2));
-            hand.Add(new Card(Card.Color.GREEN, 3));
-            hand.Add(new Card(Card.Color.GREEN, 4));
-            hand.Add(new Card(Card.Color.GREEN, 5));
+            hand = new AsyncObservableCollection<Card>();
             ChatCommand = new RelayCommand(() => { sendChatmessage(Message); });
             DeckCommand = new RelayCommand(() => { pullFromDeck(); });
-            MoveCommand = new RelayCommand<Card>(sendMove);
+            MoveCommand = new RelayCommand<string>(sendMove);
         }
 
         // 
@@ -68,16 +54,24 @@ namespace UNO
             networkCommunication.sendChat(message);
         }
 
-        public void sendMove(Card playedCard)
+        public void sendMove(string playedCard)
         {
             if (isPlaying)
-            { 
+            {
+                Card movedCard = null;
+                foreach (Card card in hand)
+                {
+                    if (card.SourcePath == playedCard)
+                    {
+                        movedCard = card;
+                    }
+                }
                 //TODO: add wildcard logic
             //if (playedCard.number == 13 || playedCard.number == 14)
             //{
             //    playedCard.color = color;
             //}
-            networkCommunication.sendMove(playedCard); 
+            networkCommunication.sendMove(movedCard); 
 
             }
         }
@@ -89,11 +83,14 @@ namespace UNO
         public void addCardToUI(Card card)
         {
             //TODO: add card to UI 
+            Debug.WriteLine("Card added" + card.number);
+            hand.Add(card);
         }
 
         public void removeCardFromUI(Card card)
         {
             //TODO: try via index or via card 
+            hand.Remove(card);
         }
 
         public void changePileCard(Card card)

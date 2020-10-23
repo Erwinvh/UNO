@@ -108,6 +108,12 @@ namespace UNO
             client.Close();
         }
 
+        internal void SendGameStart()
+        {
+            GameMessage GM = new GameMessage(user.name, "Game begin");
+            write(JsonSerializer.Serialize(GM));
+        }
+
         private void handleData(string packetData)
         {
             Debug.WriteLine($"Got a packet: {packetData}");
@@ -131,7 +137,8 @@ namespace UNO
             {
                 case MessageID.MOVE:
                     bool isvoid = (bool)pakket.GetValue("isVoidMove");
-                    Card cardmoved = JsonSerializer.Deserialize<Card>((string)pakket.GetValue("playedCard"));
+                    MoveMessage MM = pakket.ToObject<MoveMessage>();
+                    Card cardmoved = MM.playedCard;
                     if (messageUsername == user.name)
                     {
                         if (!isvoid)
@@ -214,8 +221,10 @@ namespace UNO
                     break;
                 case MessageID.TURN:
                     //TODO: Implement TURN
-                    if (user.name == (string)pakket.GetValue("nextPlayer"))
-                    {
+                    string name = (string) pakket.GetValue("nextplayer");
+                    Debug.WriteLine(user.name + " and " + name);
+                    if (user.name.Equals(name))
+                    {Debug.WriteLine("HERE!! ");
                         TurnMessage turn = pakket.ToObject<TurnMessage>();
                         List<Card> added = turn.addedCards;
                         GameScreenViewModel.AddMultpileCards(added);
@@ -265,7 +274,7 @@ namespace UNO
 
         public void sendMove(Card playedCard)
         {
-            MoveMessage MM = new MoveMessage(playedCard, user.name); 
+            MoveMessage MM = new MoveMessage(playedCard, user.name, false); 
             write(JsonSerializer.Serialize(MM));
         }
 
@@ -298,7 +307,7 @@ namespace UNO
 
         public void sendEmptyMove()
         {
-            MoveMessage MS = new MoveMessage(null, user.name);
+            MoveMessage MS = new MoveMessage(null, user.name,false);
             write(JsonSerializer.Serialize(MS));
         }
 

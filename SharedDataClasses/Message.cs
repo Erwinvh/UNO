@@ -56,13 +56,7 @@ namespace SharedDataClasses
         public string UserName { get; set; }
         public bool isVoidMove { get; set; }
 
-        public MoveMessage(Card played, string byUserName)
-        {
-            MessageID = MessageID.MOVE;
-            UserName = byUserName;
-            playedCard = played;
-            isVoidMove = false;
-        }
+
         public MoveMessage(Card played, string byUserName, bool isVoid)
         {
             MessageID = MessageID.MOVE;

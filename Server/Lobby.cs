@@ -22,9 +22,9 @@ namespace Server
 
         public bool startGame()
         {
-            if (players.Count>2)
+            if (players.Count>=2)
             {
-                gameSession = new Game(server);
+                gameSession = new Game(server, this);
                 return true;
             }
             return false;

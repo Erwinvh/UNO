@@ -21,11 +21,6 @@ namespace SharedDataClasses
         public Color color { get; set; }
         public int number { get; set; }
         public string SourcePath { get; set; }
-        public Card card 
-        {
-            get { return this; } 
-            set{ } 
-        }
 
         public Card(Color color, int number)
         {

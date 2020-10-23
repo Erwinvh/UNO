@@ -24,6 +24,7 @@ namespace Server
             user = new User(null);
             this.tcpClient = tcpClient;
             this.server = server;
+            this.hand = new List<Card>();
             this.stream = this.tcpClient.GetStream();
             Thread listernerThread = new Thread(() => Listener());
             listernerThread.Start();
@@ -151,6 +152,10 @@ namespace Server
                             
 
                             break;
+                        case "Game begin":
+                            server.GetLobbybyCode(lobby.LobbyCode).startGame();
+
+                            break;
                     }
                     //TODO: switch case: startgame, left game, ready
 
@@ -165,7 +170,7 @@ namespace Server
                     }
                     else
                     {
-                        move = new MoveMessage(playedCard, user.name);
+                        move = new MoveMessage(playedCard, user.name, false);
                     }
                     sendSystemMessage(101);
                     Broadcast(JsonSerializer.Serialize(move));
