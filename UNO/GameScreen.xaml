@@ -60,6 +60,20 @@
 
                 </ListView>
             </Border>
+
+            <StackPanel Orientation="Horizontal">
+                <Border CornerRadius="20,20,20,20" Background="White" Width="350" Margin="10,10,0,0">
+                    <TextBox FontSize="24" Background="{x:Null}" BorderBrush="{x:Null}">
+                        
+                    </TextBox>
+                </Border>
+
+                <Border Background="#FF63E446" CornerRadius="10,10,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,0,0" Padding="20,0,20,0">
+                    <Button Content="Send" Background="{x:Null}" BorderBrush="{x:Null}" FontSize="24" FontWeight="Bold">
+                        
+                    </Button>
+                </Border>
+            </StackPanel>
         </StackPanel>
 
         <ListView ItemsSource="{Binding hand, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.ColumnSpan="4" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" Background="{x:Null}" BorderBrush="{x:Null}">
