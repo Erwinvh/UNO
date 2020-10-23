@@ -1,5 +1,7 @@
 ﻿
 using System;
+using System.IO;
+using System.Net.Security;
 
 namespace SharedDataClasses
 {
@@ -36,9 +38,9 @@ namespace SharedDataClasses
 
         public void GetSourcepath()
         {
-            string name = @$"Cards\" + color.ToString().ToLower() + number + ".png";
-            SourcePath = name;
-
+            string name = color.ToString().ToLower() + number + ".png";
+            string path = Path.GetFullPath(name);
+            SourcePath = path;
         }
 
     }
