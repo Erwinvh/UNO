@@ -18,6 +18,7 @@ namespace UNO
         public ICommand LeaveLobbyCommand { get; set; }
         private NetworkCommunication networkCommunication;
         public ObservableCollection<User> observableUsers { get; set; }
+        public List<Score> Scoreboard { get; set; }
 
         public MainWindowViewModel(App app, NetworkCommunication networkCommunication)
         {
@@ -25,10 +26,12 @@ namespace UNO
             this.networkCommunication = networkCommunication;
             this.LeaveLobbyCommand = new RelayCommand(() => { LeaveLobby(); });
             this.app = app;
+            Scoreboard = this.networkCommunication.Scoreboard;
             observableUsers = new ObservableCollection<User>();
             observableUsers.Add(new User("PlayerOne"));
             observableUsers.Add(new User("PlayerTwo"));
-            observableUsers.Add(new User("PlayerThree"));
+            //PlayerList.Add(new User("PlayerThree"));
+            //PlayerList.Add(new User("PlayerFour"));
         }
 
         public void LeaveLobby()

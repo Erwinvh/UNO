@@ -1,7 +1,9 @@
 ﻿
+using System.ComponentModel;
+
 namespace SharedDataClasses
 {
-    public class User
+    public class User : INotifyPropertyChanged
     {
         
         public string name { get; set; }
@@ -15,5 +17,6 @@ namespace SharedDataClasses
             amountOfCards = 7;
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

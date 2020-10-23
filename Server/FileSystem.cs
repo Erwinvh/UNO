@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using SharedDataClasses;
@@ -10,18 +9,31 @@ namespace Server
 {
     class FileSystem
     {
-        private List<Score> scoreBoard { get; }
+        public Scoreboard scoreBoard { get; set; }
 
         public FileSystem()
         {
-            scoreBoard = ReadFile();
+            ReadFile();
+            //scoreBoard = new Scoreboard(new List<Score>());
+            //scoreBoard.scoreboard.Add(new Score("tester", 10,20));
+            //WritetoFile();
         }
 
         public void WritetoFile()
         {
+            directoryExists();
             string path = GetFilePath(true);
-            string data = Encode(JsonSerializer.Serialize(scoreBoard));
+            string data = JsonSerializer.Serialize(scoreBoard);
             File.WriteAllText(path,data);
+        }
+
+        public void directoryExists()
+        {
+            string Dirpath = GetFilePath(false);
+            if (!Directory.Exists(Dirpath))
+            {
+                Directory.CreateDirectory(Dirpath);
+            }
         }
 
         public string GetFilePath(bool isFile)
@@ -30,35 +42,31 @@ namespace Server
             if (isFile)
             {
                 path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-                          + $@"\RHServerDB\UNO\Scoreboard.json";
+                          + $@"\CUNOServerDB\UNO\Scoreboard.json";
              
             }
             else
             {
                 path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-                              + $@"\RHServerDB\UNO";
+                              + $@"\CUNOServerDB\UNO";
             }
             return path;
         }
 
-        public List<Score> ReadFile()
+        public void ReadFile()
         {
-            string Dirpath = GetFilePath(false);
-            if (!Directory.Exists(Dirpath))
-            {
-                Directory.CreateDirectory(Dirpath);
-            }
-
+            directoryExists();
             string Filepath = GetFilePath(true);
-            string data = Decode(File.ReadAllText(Filepath));
+            string data = File.ReadAllText(Filepath);
 
             JObject o1 = JObject.Parse(data);
-            return o1.ToObject<List<Score>>();
+            scoreBoard = o1.ToObject<Scoreboard>();
+            
         }
 
         public Score getScoreByUser(string Username)
         {
-            foreach (Score score in scoreBoard)
+            foreach (Score score in scoreBoard.scoreboard)
             {
                 if (score.username == Username)
                 {
@@ -66,13 +74,13 @@ namespace Server
                 }
             }
             Score addedScore =  new Score(Username, 0,0);
-            scoreBoard.Add(addedScore);
+            scoreBoard.scoreboard.Add(addedScore);
             return addedScore;
         }
 
         public void updateScore(Score Upadatescore)
         {
-            foreach (Score score in scoreBoard)
+            foreach (Score score in scoreBoard.scoreboard)
             {
                 if (score.username == Upadatescore.username)
                 {

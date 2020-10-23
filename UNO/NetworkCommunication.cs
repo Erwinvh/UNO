@@ -12,6 +12,9 @@ using SharedDataClasses;
 using static SharedDataClasses.Encryption;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.Serialization.Json;
+using Newtonsoft.Json;
 
 namespace UNO
 {
@@ -28,7 +31,8 @@ namespace UNO
         public bool? isLobbyReady { get; set; }
 
         //--LobbyRelated--
-  private string lobby;
+        private string lobby;
+        public List<Score> Scoreboard { get; set; }
 
 
   //--Game related--
@@ -43,6 +47,11 @@ namespace UNO
             mainWindowViewModel = new MainWindowViewModel(app, this);
             client = new TcpClient();
             client.BeginConnect(hostname, port, new AsyncCallback(OnConnect), null);
+        }
+
+        internal List<Score> getScoreBoard()
+        {
+            throw new NotImplementedException();
         }
 
         private void OnConnect(IAsyncResult ar)
@@ -174,13 +183,14 @@ namespace UNO
                     {
                         case 101:
                             Debug.WriteLine("Username OK");
-
                             break;
                         case 102:
                             Debug.WriteLine("Lobby OK");
                             isLobbyReady = true;
-                            Debug.WriteLine(user);
+                            Thread.Sleep(30);
+                            Debug.WriteLine("User:" + user.name);
                             mainWindowViewModel.observableUsers.Add(user);
+                            
                             //TODO: send user to lobbyscreen
                             break;
                         case 201:
@@ -247,16 +257,18 @@ namespace UNO
                     string lobbyCode = (string)pakket.GetValue("LobbyCode");
                     if (lobbyCode == "" || lobbyCode != lobby)
                     {
-                        ObservableCollection<User> users =new ObservableCollection<User>();
                         mainWindowViewModel.observableUsers.Remove(getUserObsColl(messageUsername));
                         updateLobbyUI();
-
                     }
                     else
                     {
                         mainWindowViewModel.observableUsers.Add(new User(messageUsername));
                         updateLobbyUI();
                     }
+                    break;
+                case MessageID.SCORE:
+                    ScoreMessage score = pakket.ToObject<ScoreMessage>();
+                    Scoreboard = score.Scores;
                     break;
             }
         }
