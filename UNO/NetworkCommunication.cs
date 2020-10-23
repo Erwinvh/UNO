@@ -39,7 +39,7 @@ namespace UNO
         private Card pileCard;
         private bool isplaying;
         public MainWindowViewModel mainWindowViewModel { get; set; }
-
+        public GameScreenViewModel GameScreenViewModel { get; set; }
         public List<Card> hand { get; set; }
 
         public NetworkCommunication(string hostname, int port)
@@ -148,7 +148,7 @@ namespace UNO
                     {
                         if (!isvoid)
                         {
-                            hand.Remove(cardmoved);
+                            GameScreenViewModel.removeCardFromUI(cardmoved);
                             updateUI();
                         }
                         else
@@ -279,12 +279,8 @@ namespace UNO
         //--Outgoing data--
         //
 
-        public void sendMove(Card playedCard, Card.Color color)
+        public void sendMove(Card playedCard)
         {
-            if (playedCard.number == 13||playedCard.number == 14)
-            {
-                playedCard.color = color;
-            }
             MoveMessage MM = new MoveMessage(playedCard, user.name); 
             write(JsonSerializer.Serialize(MM));
         }

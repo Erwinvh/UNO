@@ -65,14 +65,22 @@ namespace UNO
             networkCommunication.sendChat(message);
         }
 
-        public void sendMove(Card source)
+        public void sendMove(string source)
         {
-            Debug.WriteLine("Card Played: " + source.number);
-
-
+            Card movedCard = null;
+            foreach (Card card in hand)
+            {
+                if (card.SourcePath == source)
+                {
+                    movedCard = card;
+                }
+            }
             //TODO: add wildcard logic
-            //Get card form somewhere via index perhaps? 
-            //networkCommunication.sendMove(); 
+           // if (playedCard.number == 13 || playedCard.number == 14)
+           // {
+            //    playedCard.color = color;
+            //}
+            networkCommunication.sendMove(movedCard); 
         }
 
 
@@ -84,7 +92,7 @@ namespace UNO
             //TODO: add card to UI 
         }
 
-        public void removeCardFromUI()
+        public void removeCardFromUI(Card card)
         {
             //TODO: try via index or via card 
         }
