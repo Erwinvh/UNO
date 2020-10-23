@@ -17,8 +17,13 @@ namespace UNO
     /// </summary>
     public partial class GameScreen : Window
     {
+        private NetworkCommunication NetworkCommunication;
+
         public GameScreen(App app, NetworkCommunication networkCommunication)
         {
+            this.NetworkCommunication = networkCommunication;
+            GameScreenViewModel gameScreenViewModel = new GameScreenViewModel(app, networkCommunication);
+            this.DataContext = gameScreenViewModel;
             InitializeComponent();
         }
     }

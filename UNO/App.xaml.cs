@@ -21,8 +21,10 @@ namespace UNO
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            
             this.NetworkCommunication = new NetworkCommunication("localhost", 15243);
             this.NetworkCommunication.app = this;
+            main = new MainWindow(this, NetworkCommunication);
             loginScreen = new LoginScreen(this, NetworkCommunication);
             loginScreen.Show();
 
@@ -38,7 +40,6 @@ namespace UNO
 
             if (NetworkCommunication.isLobbyReady ?? true)
             {
-                main = new MainWindow(this, NetworkCommunication);
                 main.Show();
 
                 loginScreen.Close();

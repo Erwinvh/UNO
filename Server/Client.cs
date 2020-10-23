@@ -89,6 +89,14 @@ namespace Server
                             {
                                 server.addUsertoLobby(username, LobbyCode);
                                 lobby = server.GetLobbybyCode(LobbyCode);
+                                foreach (User user in lobby.players)
+                                {
+                                    if (user.name != this.user.name)
+                                    {
+                                        LobbyMessage LM = new LobbyMessage(user.name, lobby.LobbyCode);
+                                        Write(JsonSerializer.Serialize(LM));
+                                    }
+                                }
                                 sendScoreboard();
                                 sendSystemMessage(102);
                                 //sendLobbyPlayers();

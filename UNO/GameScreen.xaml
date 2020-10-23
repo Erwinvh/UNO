@@ -41,17 +41,27 @@
 
         <Button x:Name="Deck" Grid.Column="1" Width="240" Height="360" Margin="120,177,120,172" Grid.RowSpan="2">
             <Button.Background>
-                <ImageBrush ImageSource="/Layer 1.png" TileMode="None"/>
+                <ImageBrush ImageSource="/Cards/uno.png" TileMode="None"/>
             </Button.Background>
         </Button>
 
-        <Image x:Name="Pile" Width="240" Height="360" Grid.Column="2" Margin="120,177,120,172" Grid.RowSpan="2">
-            <Image.OpacityMask>
-                <ImageBrush ImageSource="/Layer 1.png"/>
-            </Image.OpacityMask>
+        <Canvas Width="240" Height="360" Grid.Column="2" Margin="120,177,120,172" Grid.RowSpan="2">
+            <Canvas.Background>
+                <ImageBrush ImageSource="/Cards/blue6.png"/>
+            </Canvas.Background>
+        </Canvas>
 
-        </Image>
-
+        <ListView ItemsSource="{Binding hand, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.ColumnSpan="4">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Button Width="240" Height="360">
+                        <Button.Background>
+                            <ImageBrush ImageSource="/Cards/blue1.png"/>
+                        </Button.Background>
+                    </Button>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
     </Grid>
 </Window>

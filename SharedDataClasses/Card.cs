@@ -7,25 +7,17 @@ namespace SharedDataClasses
 {
 
     public class Card
-    {   
-       public enum Color
     {
-    BLACK, 
-    RED,
-    BLUE, 
-    GREEN,
-    YELLOW
-
-    }
-        public Color color
+        public enum Color
         {
-            get { return color; }
-            set
-            {
-                color = value;
-                GetSourcepath();
-            }
-    }
+            BLACK,
+            RED,
+            BLUE,
+            GREEN,
+            YELLOW
+
+        }
+        public Color color { get; set; }
         public int number { get; set; }
         public string SourcePath { get; set; }
 
@@ -41,6 +33,12 @@ namespace SharedDataClasses
             string name = color.ToString().ToLower() + number + ".png";
             string path = Path.GetFullPath(name);
             SourcePath = path;
+        }
+
+        public void setColor(Color color)
+        {
+            this.color = color;
+            GetSourcepath();
         }
 
     }

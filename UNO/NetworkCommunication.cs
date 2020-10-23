@@ -38,13 +38,12 @@ namespace UNO
   //--Game related--
         private Card pileCard;
         private bool isplaying;
-        private MainWindowViewModel mainWindowViewModel;
+        public MainWindowViewModel mainWindowViewModel { get; set; }
 
         public List<Card> hand { get; set; }
 
         public NetworkCommunication(string hostname, int port)
         {
-            mainWindowViewModel = new MainWindowViewModel(app, this);
             client = new TcpClient();
             client.BeginConnect(hostname, port, new AsyncCallback(OnConnect), null);
         }
@@ -189,7 +188,7 @@ namespace UNO
                             isLobbyReady = true;
                             Thread.Sleep(30);
                             Debug.WriteLine("User:" + user.name);
-                            mainWindowViewModel.observableUsers.Add(user);
+                            mainWindowViewModel.AddPlayer(user.name);
                             
                             //TODO: send user to lobbyscreen
                             break;
@@ -257,12 +256,15 @@ namespace UNO
                     string lobbyCode = (string)pakket.GetValue("LobbyCode");
                     if (lobbyCode == "" || lobbyCode != lobby)
                     {
-                        mainWindowViewModel.observableUsers.Remove(getUserObsColl(messageUsername));
+                        Debug.WriteLine("Remove player");
+                        //mainWindowViewModel.observableUsers.Remove(getUserObsColl(messageUsername));
                         updateLobbyUI();
                     }
                     else
                     {
-                        mainWindowViewModel.observableUsers.Add(new User(messageUsername));
+                        
+                        mainWindowViewModel.AddPlayer(messageUsername);
+                        //mainWindowViewModel.observableUsers.Add(new User(messageUsername));
                         updateLobbyUI();
                     }
                     break;

@@ -97,7 +97,7 @@ namespace Server
                     lastPlayedCard = playedCard;
                     if (playedCard.number==Wild||playedCard.number==Plus4)
                     {
-                        playedCard.color = Card.Color.BLACK;
+                        playedCard.setColor(Card.Color.BLACK);
                     }
                     pile.Add(playedCard);
                     return true;
