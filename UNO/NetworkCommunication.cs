@@ -316,6 +316,11 @@ namespace UNO
             write(JsonSerializer.Serialize(GM));
         }
 
+        public void sendEmptyMove()
+        {
+            MoveMessage MS = new MoveMessage(null, user.name);
+            write(JsonSerializer.Serialize(MS));
+        }
 
         public void write(string data)
         {

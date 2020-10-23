@@ -41,7 +41,7 @@
             </Border>
         </StackPanel>
 
-        <Button x:Name="Deck" Grid.Column="1" Width="240" Height="360" Margin="120,177,120,172" Grid.RowSpan="2" BorderBrush="{x:Null}">
+        <Button x:Name="Deck" Command="{Binding Path=DeckCommand}" Grid.Column="1" Width="240" Height="360" Margin="120,177,120,172" Grid.RowSpan="2" BorderBrush="{x:Null}">
             <Button.Background>
                 <ImageBrush ImageSource="/Cards/uno.png" TileMode="None"/>
             </Button.Background>
@@ -63,13 +63,13 @@
 
             <StackPanel Orientation="Horizontal">
                 <Border CornerRadius="20,20,20,20" Background="White" Width="350" Margin="10,10,0,0">
-                    <TextBox FontSize="24" Background="{x:Null}" BorderBrush="{x:Null}">
+                    <TextBox FontSize="24" Text="{Binding Path=Message}" Background="{x:Null}" BorderBrush="{x:Null}">
                         
                     </TextBox>
                 </Border>
 
                 <Border Background="#FF63E446" CornerRadius="10,10,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,0,0" Padding="20,0,20,0">
-                    <Button Content="Send" Background="{x:Null}" BorderBrush="{x:Null}" FontSize="24" FontWeight="Bold">
+                    <Button Command="{Binding Path=ChatCommand}" Content="Send"  Background="{x:Null}" BorderBrush="{x:Null}" FontSize="24" FontWeight="Bold">
                         
                     </Button>
                 </Border>

@@ -2,16 +2,32 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
 
 namespace UNO
 {
-    public class GameScreenViewModel
+    public class GameScreenViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<Card> hand { get; set; }
+        public ICommand ChatCommand { get; set; }
+        public ICommand DeckCommand { get; set; }
+        public ICommand MoveCommand { get; set; }
+        readonly App app;
+        private NetworkCommunication networkCommunication;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public string Message { set; get; }
+
 
         public GameScreenViewModel(App app, NetworkCommunication networkCommunication)
         {
+            this.networkCommunication = networkCommunication;
+            //this.LeaveLobbyCommand = new RelayCommand(() => { LeaveLobby(); }); 
+            //this.LaunchGameCommand = new RelayCommand(() => { LaunchGame(); }); 
+            this.app = app;
             hand = new ObservableCollection<Card>();
             hand.Add(new Card(Card.Color.GREEN, 1));
             hand.Add(new Card(Card.Color.GREEN, 2));
@@ -28,8 +44,59 @@ namespace UNO
             hand.Add(new Card(Card.Color.GREEN, 3));
             hand.Add(new Card(Card.Color.GREEN, 4));
             hand.Add(new Card(Card.Color.GREEN, 5));
-        } 
+            ChatCommand = new RelayCommand(() => { sendChatmessage(Message); });
+            DeckCommand = new RelayCommand(() => { pullFromDeck(); });
+            MoveCommand = new RelayCommand(() => { sendMove(); });
+        }
 
-        
+        // 
+        //--UI to Netrwerkcom-- 
+        // 
+        public void pullFromDeck()
+        {
+            networkCommunication.sendEmptyMove();
+        }
+
+        public void sendChatmessage(string message)
+        {
+            networkCommunication.sendChat(message);
+        }
+
+        public void sendMove()
+        {
+            //TODO: add wildcard logic
+            //Get card form somewhere via index perhaps? 
+            //networkCommunication.sendMove(); 
+        }
+
+
+        // 
+        //--netwerkcom to UI-- 
+        // 
+        public void addCardToUI(Card card)
+        {
+            //TODO: add card to UI 
+        }
+
+        public void removeCardFromUI()
+        {
+            //TODO: try via index or via card 
+        }
+
+        public void changePileCard(Card card)
+        {
+            //TODO: change pileCard 
+        }
+
+        public void setPlayingState(bool isPlaying)
+        {
+            if (isPlaying)
+            {
+                //TODO: set buttons and other elements but chat to pressable 
+                return;
+            }
+            //TODO: set buttons and other elements but chat to readonly 
+        }
+
     }
 }
