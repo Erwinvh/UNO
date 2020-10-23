@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using SharedDataClasses;
@@ -33,6 +34,18 @@ namespace Server
             if (!Directory.Exists(Dirpath))
             {
                 Directory.CreateDirectory(Dirpath);
+            }
+            FileExists();
+        }
+
+        public void FileExists()
+        {
+            string filepath = GetFilePath(true);
+            if (!File.Exists(filepath))
+            {
+                //File.Create(filepath);
+                File.WriteAllText(filepath, JsonSerializer.Serialize(new Scoreboard(new List<Score>())));
+               // File.
             }
         }
 
