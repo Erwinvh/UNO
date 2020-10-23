@@ -36,21 +36,14 @@ namespace UNO
 
 
   //--Game related--
-        private Card pileCard;
-        private bool isplaying;
-        public MainWindowViewModel mainWindowViewModel { get; set; }
+  public MainWindowViewModel mainWindowViewModel { get; set; }
         public GameScreenViewModel GameScreenViewModel { get; set; }
-        public List<Card> hand { get; set; }
+
 
         public NetworkCommunication(string hostname, int port)
         {
             client = new TcpClient();
             client.BeginConnect(hostname, port, new AsyncCallback(OnConnect), null);
-        }
-
-        internal List<Score> getScoreBoard()
-        {
-            throw new NotImplementedException();
         }
 
         private void OnConnect(IAsyncResult ar)
@@ -72,11 +65,6 @@ namespace UNO
         }
 
         public void updateUI()
-        {
-            //TODO: implement method
-        }
-
-        public void updateLobbyUI()
         {
             //TODO: implement method
         }
@@ -149,20 +137,17 @@ namespace UNO
                         if (!isvoid)
                         {
                             GameScreenViewModel.removeCardFromUI(cardmoved);
-                            updateUI();
                         }
                         else
                         {
-                            hand.Add(cardmoved);
-                            updateUI();
+                            GameScreenViewModel.addCardToUI(cardmoved);
                         }
                     }
                     else
                     {
                         if (!isvoid)
                         {
-                            pileCard = cardmoved;
-                            updateUI();
+                            GameScreenViewModel.changePileCard(cardmoved);
                         }
                     }
                     break;
@@ -199,13 +184,13 @@ namespace UNO
                     if (gamemessage == "Win")
                     {
                         //TODO: show win message
-                        hand = new List<Card>();
+                        GameScreenViewModel.EmptyHand();
                         //TODO: return to the lobby
                     }
                     else if (gamemessage == "lose")
                     {
                         //TODO: show lose message
-                        hand = new List<Card>();
+                        GameScreenViewModel.EmptyHand();
                         //TODO: return to the lobby
                     }
                     else if (gamemessage == "UNO!")
@@ -231,15 +216,14 @@ namespace UNO
                     //TODO: Implement TURN
                     if (user.name == (string)pakket.GetValue("nextPlayer"))
                     {
-                        List<Card> added = JsonSerializer.Deserialize<List<Card>>((string)pakket.GetValue("addedCards"));
-                        hand.AddRange(added);
-                        isplaying = true;
-                        updateUI();
+                        TurnMessage turn = pakket.ToObject<TurnMessage>();
+                        List<Card> added = turn.addedCards;
+                        GameScreenViewModel.AddMultpileCards(added);
+                        GameScreenViewModel.setPlayingState(true);
                     }
                     else if (user.name == (string)pakket.GetValue("lastPlayer"))
                     {
-                        isplaying = false;
-                        updateUI();
+                        GameScreenViewModel.setPlayingState(false);
                     }
                     break;
                 case MessageID.LOBBY:

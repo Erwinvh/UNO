@@ -23,7 +23,7 @@ namespace UNO
 
         public event PropertyChangedEventHandler PropertyChanged;
         public string Message { set; get; }
-
+        public bool isPlaying { get; set; }
 
         public GameScreenViewModel(App app, NetworkCommunication networkCommunication)
         {
@@ -57,7 +57,10 @@ namespace UNO
         // 
         public void pullFromDeck()
         {
-            networkCommunication.sendEmptyMove();
+            if (isPlaying)
+            {
+                networkCommunication.sendEmptyMove();
+            }
         }
 
         public void sendChatmessage(string message)
@@ -67,13 +70,14 @@ namespace UNO
 
         public void sendMove(Card playedCard)
         {
-            
+            if (isPlaying)
             //TODO: add wildcard logic
             //if (playedCard.number == 13 || playedCard.number == 14)
             //{
             //    playedCard.color = color;
             //}
             networkCommunication.sendMove(playedCard); 
+            }
         }
 
 
@@ -97,13 +101,20 @@ namespace UNO
 
         public void setPlayingState(bool isPlaying)
         {
-            if (isPlaying)
-            {
-                //TODO: set buttons and other elements but chat to pressable 
-                return;
-            }
-            //TODO: set buttons and other elements but chat to readonly 
+            this.isPlaying = isPlaying;
         }
 
+        internal void AddMultpileCards(List<Card> added)
+        {
+            foreach (Card card in added)
+            {
+                addCardToUI(card);
+            }
+        }
+
+        internal void EmptyHand()
+        {
+            hand.Clear();
+        }
     }
 }
