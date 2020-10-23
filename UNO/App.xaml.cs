@@ -32,7 +32,7 @@ namespace UNO
             while (NetworkCommunication.isLobbyReady == null)
             {
                 
-                Thread.Sleep(25);
+                Thread.Sleep(100);
             }
 
             if (NetworkCommunication.isLobbyReady ?? true)

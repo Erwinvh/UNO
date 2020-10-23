@@ -179,7 +179,7 @@ namespace Server
 
         internal void playerQuitCase(string name)
         {
-            throw new NotImplementedException();
+            
         }
 
         internal bool Checkhand()

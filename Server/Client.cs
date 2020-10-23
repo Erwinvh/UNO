@@ -250,7 +250,7 @@ namespace Server
         public void disconnect()
         {
             server.UserDictionary.Remove(user.name);
-            lobby.playerQuit(user.name);
+            //lobby.playerQuit(user.name);
             running = false;
         }
     }

@@ -40,7 +40,7 @@ namespace UNO
 
         public NetworkCommunication(string hostname, int port)
         {
-            lobbyViewModel = new MainWindowViewModel(app, this);
+            mainWindowViewModel = new MainWindowViewModel(app, this);
             client = new TcpClient();
             client.BeginConnect(hostname, port, new AsyncCallback(OnConnect), null);
         }
@@ -179,6 +179,7 @@ namespace UNO
                         case 102:
                             Debug.WriteLine("Lobby OK");
                             isLobbyReady = true;
+                            Debug.WriteLine(user);
                             mainWindowViewModel.observableUsers.Add(user);
                             //TODO: send user to lobbyscreen
                             break;
