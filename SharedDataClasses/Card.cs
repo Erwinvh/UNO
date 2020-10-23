@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace SharedDataClasses
 {
 
@@ -13,13 +15,31 @@ namespace SharedDataClasses
     YELLOW
 
     }
-        public Color color { get; set; }
+        public Color color
+        {
+            get { return color; }
+            set
+            {
+                color = value;
+                GetSourcepath();
+            }
+    }
         public int number { get; set; }
+        public string SourcePath { get; set; }
 
         public Card(Color color, int number)
         {
             this.number = number;
             this.color = color;
+            GetSourcepath();
         }
+
+        public void GetSourcepath()
+        {
+            string name = @$"Cards\" + color.ToString().ToLower() + number + ".png";
+            SourcePath = name;
+
+        }
+
     }
 }
