@@ -94,7 +94,6 @@ namespace UNO
                 for (int i = 0; i < 2; i++)
                 {
                     lengtebytes[i] = (byte)stream.ReadByte();
-                    Console.WriteLine(lengtebytes[i]);
                 }
                 uint bytes = BitConverter.ToUInt16(lengtebytes);
                 //bytes += 2;
@@ -104,7 +103,6 @@ namespace UNO
                     if (i >= 0)
                     {
                         bytebuffer[i] = (byte)stream.ReadByte();
-                        //Debug.WriteLine(bytebuffer[i]);
                     }
                     else
                     {
@@ -113,8 +111,6 @@ namespace UNO
 
 
                 }
-                Debug.WriteLine(Encoding.Default.GetString(bytebuffer));
-                Console.WriteLine("Received packet");
                 string listenedData = Encoding.ASCII.GetString(bytebuffer);
                 //listenedData.Remove(0, 2);
                 Debug.WriteLine(listenedData);
@@ -143,10 +139,6 @@ namespace UNO
                 messageUsername = "";
             }
 
-            
-            
-            
-            
             switch (messageId)
             {
                 case MessageID.MOVE:
@@ -187,13 +179,11 @@ namespace UNO
                             Debug.WriteLine("Lobby OK");
                             isLobbyReady = true;
                             Thread.Sleep(30);
-                            Debug.WriteLine("User:" + user.name);
                             mainWindowViewModel.AddPlayer(user.name);
-                            
-                            //TODO: send user to lobbyscreen
                             break;
                         case 201:
                             Console.WriteLine("Username already in use");
+                            isLobbyReady = false;
                             //TODO: show on screen via popup
                             break;
                         case 202:
@@ -257,16 +247,12 @@ namespace UNO
                     if (lobbyCode != lobby)
                     {
                         Debug.WriteLine("Remove player");
-                        //mainWindowViewModel.observableUsers.Remove(getUserObsColl(messageUsername));
                         mainWindowViewModel.RemovePlayer(messageUsername);
-                        //updateLobbyUI();
                     }
                     else
                     {
                         Debug.WriteLine("OLd player added to new player");
                         mainWindowViewModel.AddPlayer(messageUsername);
-                        //mainWindowViewModel.observableUsers.Add(new User(messageUsername));
-                        //updateLobbyUI();
                     }
                     break;
                 case MessageID.SCORE:
@@ -312,8 +298,14 @@ namespace UNO
         public void sendLobby(string Username, string LobbyCode)
         {
             isLobbyReady = null;
+            // check thisV
             user = new User(Username);
             lobby = LobbyCode;
+            if (lobby == "")
+            {
+                mainWindowViewModel.emptyObservableUsers();
+                //isLobbyReady = null;
+            }
             LobbyMessage LM = new LobbyMessage(user.name, LobbyCode);
             write(JsonSerializer.Serialize(LM));
         }

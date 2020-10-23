@@ -63,6 +63,7 @@ namespace UNO
                 if (u.name.Equals(username))
                 {
                     observableUsers.Remove(u);
+                    return;
                 }
             }
         }
@@ -73,5 +74,10 @@ namespace UNO
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        internal void emptyObservableUsers()
+        {
+            observableUsers = new AsyncObservableCollection<User>();
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ namespace UNO
             this.NetworkCommunication = new NetworkCommunication("localhost", 15243);
             this.NetworkCommunication.app = this;
             main = new MainWindow(this, NetworkCommunication);
+            gameScreen = new GameScreen(this, NetworkCommunication);
             loginScreen = new LoginScreen(this, NetworkCommunication);
             loginScreen.Show();
 
@@ -32,16 +34,19 @@ namespace UNO
 
         public async Task AfterSuccesfullLogin()
         {
+            Debug.WriteLine("logincheck:" + NetworkCommunication.isLobbyReady);
             while (NetworkCommunication.isLobbyReady == null)
             {
                 
                 Thread.Sleep(100);
+                Debug.WriteLine("logincheck loop:" + NetworkCommunication.isLobbyReady);
             }
-
+            Debug.WriteLine("logincheck:" + NetworkCommunication.isLobbyReady);
             if (NetworkCommunication.isLobbyReady ?? true)
             {
+                Debug.WriteLine("Main lobby opened");
+               // main = new MainWindow(this, NetworkCommunication);
                 main.Show();
-
                 loginScreen.Close();
             }
         }
@@ -51,14 +56,14 @@ namespace UNO
             loginScreen = new LoginScreen(this, NetworkCommunication);
             loginScreen.Show();
 
-            main.Close();
+            main.Hide();
         }
 
         public void LaunchGame()
         {
-            gameScreen = new GameScreen(this, NetworkCommunication);
+            
             gameScreen.Show();
-            main.Close();
+            main.Hide();
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)

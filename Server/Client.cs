@@ -21,6 +21,7 @@ namespace Server
 
         public Client(TcpClient tcpClient, Server server)
         {
+            user = new User(null);
             this.tcpClient = tcpClient;
             this.server = server;
             this.stream = this.tcpClient.GetStream();
@@ -71,59 +72,50 @@ namespace Server
                 case MessageID.LOBBY:
                     
                     string LobbyCode = (string) pakket.GetValue("LobbyCode");
-                    if (server.CheckUsers(username)||server.UserDictionary[username].Equals(""))
+
+                        //Leaving old lobby to loginscreen
+                        //Only sent to Client bij own app
+                    if (LobbyCode == "")
                     {
-                        user = new User(username);
-                        if (!server.UserDictionary.ContainsKey(username))
+                        foreach (User player in lobby.players)
                         {
-                            server.UserDictionary.Add(username, "");
+                            if (player.name != user.name)
+                            {
+                                LobbyMessage lm = new LobbyMessage(user.name, ""); 
+                                server.SendClientMessage(player.name, JsonSerializer.Serialize(lm));
+                                ;
+                            }
                         }
+                        
+                        lobby.players.Remove(user);
+                        if (lobby.players.Count == 0)
+                        {
+                            server.lobbyList.Remove(lobby);
+                        }
+                        server.UserDictionary[user.name] = "";
+                        break;
+                    }
+                    //left old lobby to join new lobby
+                    if (user.name == username && server.UserDictionary[username].Equals(""))
+                    {
+                        GoToLobby(LobbyCode);
+                        break;
+                    }
+                    //name change and name add
+                    if (server.CheckUsers(username))
+                    {
+                        if (user.name!=null)
+                        {
+                            server.UserDictionary.Remove(user.name);
+                        }
+                        user.name = username;
+                        server.UserDictionary.Add(username, LobbyCode);
                         Console.WriteLine("USERNAME OK!");
                         sendSystemMessage(101);
-                        if (server.LobbyExist(LobbyCode))
-                        {
-                            if (server.LobbyFill(LobbyCode))
-                            {
-                                sendSystemMessage(202);
-                            }
-                            else
-                            {
-                                //joining server
-                                server.addUsertoLobby(username, LobbyCode);
-                                lobby = server.GetLobbybyCode(LobbyCode);
-                                sendScoreboard();
-                                sendSystemMessage(102);
-                                Thread.Sleep(30);
-                                foreach (User user in lobby.players)
-                                {
-                                    if (user.name != this.user.name)
-                                    {
-                                        Console.WriteLine("Player sent to new player: "+ user.name);
-                                        LobbyMessage LM = new LobbyMessage(user.name, lobby.LobbyCode);
-                                        Write(JsonSerializer.Serialize(LM));
-                                    }
-                                }
-                                //sendLobbyPlayers();
-                            }
-                        }
-                        else
-                        {
-                            //creating server
-                            lobby = new Lobby(username, LobbyCode, server);
-                            server.lobbyList.Add(lobby);
-                            server.UserDictionary[username] = LobbyCode;
-                            sendScoreboard();
-                            sendSystemMessage(102);
-                            Console.WriteLine("LOBBY OK!");
-                        }
+                        GoToLobby(LobbyCode);
                     }
                     else
                     {
-                        if(LobbyCode == "")
-                        {
-                            lobby.playerQuit(user.name);
-                            server.UserDictionary.Remove(user.name);
-                        }
                         sendSystemMessage(201);
                     }
                     break;
@@ -212,6 +204,40 @@ namespace Server
                     }
                     break;
             }
+        }
+
+        private void GoToLobby(string LobbyCode)
+        {
+            if (server.LobbyExist(LobbyCode))
+            {
+                if (server.LobbyFill(LobbyCode))
+                {
+                    sendSystemMessage(202);
+                    return;
+                }
+                server.addUsertoLobby(user.name, LobbyCode);
+                lobby = server.GetLobbybyCode(LobbyCode);
+                sendScoreboard();
+                sendSystemMessage(102);
+                Thread.Sleep(30);
+                foreach (User user in lobby.players)
+                {
+                    if (user.name != this.user.name)
+                    {
+                        Console.WriteLine("Player sent to new player: " + user.name);
+                        LobbyMessage LM = new LobbyMessage(user.name, lobby.LobbyCode);
+                        Write(JsonSerializer.Serialize(LM));
+                    }
+                }
+                return;
+            }
+
+            //Lobby is new
+            lobby = new Lobby(user.name, LobbyCode, server);
+            server.lobbyList.Add(lobby);
+            sendScoreboard();
+            sendSystemMessage(102);
+            Console.WriteLine("LOBBY OK!");
         }
 
         private void sendScoreboard()
