@@ -48,13 +48,12 @@ namespace UNO
                 Debug.WriteLine("Main lobby opened");
                // main = new MainWindow(this, NetworkCommunication);
                 main.Show();
-                loginScreen.Close();
+                loginScreen.Hide();
             }
         }
 
         public void LeaveLobby()
         {
-            loginScreen = new LoginScreen(this, NetworkCommunication);
             loginScreen.Show();
 
             main.Hide();

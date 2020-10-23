@@ -83,14 +83,16 @@ namespace Server
                             {
                                 LobbyMessage lm = new LobbyMessage(user.name, ""); 
                                 server.SendClientMessage(player.name, JsonSerializer.Serialize(lm));
-                                ;
+                                
                             }
                         }
-                        
-                        lobby.players.Remove(user);
+                        Console.WriteLine("Amount of remaining players = " + lobby.players.Count);
+                        lobby.playerQuit(user.name);
+                        Console.WriteLine("Amount of remaining players = " + lobby.players.Count);
                         if (lobby.players.Count == 0)
                         {
                             server.lobbyList.Remove(lobby);
+                            Console.WriteLine("removed Lobby:" + lobby.LobbyCode);
                         }
                         server.UserDictionary[user.name] = "";
                         break;
