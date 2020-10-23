@@ -254,18 +254,19 @@ namespace UNO
                     break;
                 case MessageID.LOBBY:
                     string lobbyCode = (string)pakket.GetValue("LobbyCode");
-                    if (lobbyCode == "" || lobbyCode != lobby)
+                    if (lobbyCode != lobby)
                     {
                         Debug.WriteLine("Remove player");
                         //mainWindowViewModel.observableUsers.Remove(getUserObsColl(messageUsername));
-                        updateLobbyUI();
+                        mainWindowViewModel.RemovePlayer(messageUsername);
+                        //updateLobbyUI();
                     }
                     else
                     {
-                        
+                        Debug.WriteLine("OLd player added to new player");
                         mainWindowViewModel.AddPlayer(messageUsername);
                         //mainWindowViewModel.observableUsers.Add(new User(messageUsername));
-                        updateLobbyUI();
+                        //updateLobbyUI();
                     }
                     break;
                 case MessageID.SCORE:

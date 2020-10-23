@@ -33,10 +33,6 @@ namespace UNO
             this.app = app;
             Scoreboard = this.networkCommunication.Scoreboard;
             observableUsers = new AsyncObservableCollection<User>();
-            observableUsers.Add(new User("PlayerOne"));
-            observableUsers.Add(new User("PlayerTwo"));
-            //PlayerList.Add(new User("PlayerThree"));
-            //PlayerList.Add(new User("PlayerFour"));
         }
 
         public void LeaveLobby()
@@ -58,6 +54,17 @@ namespace UNO
 
             Debug.WriteLine("Added Player!!!");
             observableUsers.Add(new User(username));
+        }
+
+        public void RemovePlayer(string username)
+        {
+            foreach (User u in observableUsers)
+            {
+                if (u.name.Equals(username))
+                {
+                    observableUsers.Remove(u);
+                }
+            }
         }
 
         public void LaunchGame()

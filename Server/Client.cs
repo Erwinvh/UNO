@@ -40,7 +40,7 @@ namespace Server
                 for (int i = 0; i < 2; i++)
                 {
                     lengtebytes[i] = (byte)stream.ReadByte();
-                    Console.WriteLine(lengtebytes[i]);
+                    //Console.WriteLine(lengtebytes[i]);
                 }
                 uint bytes = BitConverter.ToUInt16(lengtebytes);
                 bytes += 2;
@@ -48,7 +48,7 @@ namespace Server
                 for (int i = 0; i < bytes; i++)
                 {
                     bytebuffer[i] = (byte)stream.ReadByte();
-                    Console.WriteLine(bytebuffer[i]);
+                    //Console.WriteLine(bytebuffer[i]);
                 }
                 Console.WriteLine("Received packet");
                 handleData(Encoding.ASCII.GetString(bytebuffer));
@@ -65,6 +65,7 @@ namespace Server
             MessageID messageId;
             Enum.TryParse((string)pakket.GetValue("MessageID"), out messageId);
             string username = (string) pakket.GetValue("Username");
+            Console.WriteLine("username has been set to:" + username + " for message" + messageId.ToString());
             switch (messageId)
             {
                 case MessageID.LOBBY:
@@ -87,23 +88,27 @@ namespace Server
                             }
                             else
                             {
+                                //joining server
                                 server.addUsertoLobby(username, LobbyCode);
                                 lobby = server.GetLobbybyCode(LobbyCode);
+                                sendScoreboard();
+                                sendSystemMessage(102);
+                                Thread.Sleep(30);
                                 foreach (User user in lobby.players)
                                 {
                                     if (user.name != this.user.name)
                                     {
+                                        Console.WriteLine("Player sent to new player: "+ user.name);
                                         LobbyMessage LM = new LobbyMessage(user.name, lobby.LobbyCode);
                                         Write(JsonSerializer.Serialize(LM));
                                     }
                                 }
-                                sendScoreboard();
-                                sendSystemMessage(102);
                                 //sendLobbyPlayers();
                             }
                         }
                         else
                         {
+                            //creating server
                             lobby = new Lobby(username, LobbyCode, server);
                             server.lobbyList.Add(lobby);
                             server.UserDictionary[username] = LobbyCode;

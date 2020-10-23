@@ -38,7 +38,7 @@ namespace Server
         public void playerQuit(string username)
         {
             players.Remove(getUSer(username));
-            gameSession.playerQuitCase(username);
+            //gameSession.playerQuitCase(username);
             //TODO: remove all player stuff
 
 
