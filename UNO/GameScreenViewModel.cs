@@ -71,28 +71,14 @@ namespace UNO
         public void sendMove(Card playedCard)
         {
             if (isPlaying)
-<<<<<<< Updated upstream
-=======
-            {
-                Card movedCard = null;
-            foreach (Card card in hand)
-            {
-                if (card.SourcePath == source)
-                {
-                    movedCard = card;
-                }
-            }
->>>>>>> Stashed changes
-            //TODO: add wildcard logic
+            { 
+                //TODO: add wildcard logic
             //if (playedCard.number == 13 || playedCard.number == 14)
             //{
             //    playedCard.color = color;
             //}
-<<<<<<< Updated upstream
             networkCommunication.sendMove(playedCard); 
-=======
-            networkCommunication.sendMove(movedCard); 
->>>>>>> Stashed changes
+
             }
         }
 
