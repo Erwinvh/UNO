@@ -28,6 +28,7 @@ namespace UNO
             main = new MainWindow(this, NetworkCommunication);
             gameScreen = new GameScreen(this, NetworkCommunication);
             loginScreen = new LoginScreen(this, NetworkCommunication);
+            gameScreen = new GameScreen(this, NetworkCommunication);
             loginScreen.Show();
 
         }
