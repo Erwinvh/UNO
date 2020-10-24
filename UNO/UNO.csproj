@@ -6,4 +6,211 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Cards\black13.png" />
+    <None Remove="Cards\black14.png" />
+    <None Remove="Cards\blue 13.png" />
+    <None Remove="Cards\blue0.png" />
+    <None Remove="Cards\blue1.png" />
+    <None Remove="Cards\blue10.png" />
+    <None Remove="Cards\blue11.png" />
+    <None Remove="Cards\blue12.png" />
+    <None Remove="Cards\blue14.png" />
+    <None Remove="Cards\blue2.png" />
+    <None Remove="Cards\blue3.png" />
+    <None Remove="Cards\blue4.png" />
+    <None Remove="Cards\blue5.png" />
+    <None Remove="Cards\blue6.png" />
+    <None Remove="Cards\blue7.png" />
+    <None Remove="Cards\blue8.png" />
+    <None Remove="Cards\blue9.png" />
+    <None Remove="Cards\green0.png" />
+    <None Remove="Cards\green1.png" />
+    <None Remove="Cards\green10.png" />
+    <None Remove="Cards\green11.png" />
+    <None Remove="Cards\green12.png" />
+    <None Remove="Cards\green13.png" />
+    <None Remove="Cards\green14.png" />
+    <None Remove="Cards\green2.png" />
+    <None Remove="Cards\green3.png" />
+    <None Remove="Cards\green4.png" />
+    <None Remove="Cards\green5.png" />
+    <None Remove="Cards\green6.png" />
+    <None Remove="Cards\green7.png" />
+    <None Remove="Cards\green8.png" />
+    <None Remove="Cards\green9.png" />
+    <None Remove="Cards\red0.png" />
+    <None Remove="Cards\red1.png" />
+    <None Remove="Cards\red10.png" />
+    <None Remove="Cards\red11.png" />
+    <None Remove="Cards\red12.png" />
+    <None Remove="Cards\red13.png" />
+    <None Remove="Cards\red14.png" />
+    <None Remove="Cards\red2.png" />
+    <None Remove="Cards\red3.png" />
+    <None Remove="Cards\red4.png" />
+    <None Remove="Cards\red5.png" />
+    <None Remove="Cards\red6.png" />
+    <None Remove="Cards\red7.png" />
+    <None Remove="Cards\red8.png" />
+    <None Remove="Cards\red9.png" />
+    <None Remove="Cards\uno.png" />
+    <None Remove="Cards\yellow0.png" />
+    <None Remove="Cards\yellow1.png" />
+    <None Remove="Cards\yellow10.png" />
+    <None Remove="Cards\yellow11.png" />
+    <None Remove="Cards\yellow12.png" />
+    <None Remove="Cards\yellow13.png" />
+    <None Remove="Cards\yellow14.png" />
+    <None Remove="Cards\yellow2.png" />
+    <None Remove="Cards\yellow3.png" />
+    <None Remove="Cards\yellow4.png" />
+    <None Remove="Cards\yellow5.png" />
+    <None Remove="Cards\yellow6.png" />
+    <None Remove="Cards\yellow7.png" />
+    <None Remove="Cards\yellow8.png" />
+    <None Remove="Cards\yellow9.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Cards\black13.png" />
+    <None Remove="Cards\black14.png" />
+    <None Remove="Cards\blue 13.png" />
+    <None Remove="Cards\blue0.png" />
+    <None Remove="Cards\blue1.png" />
+    <None Remove="Cards\blue10.png" />
+    <None Remove="Cards\blue11.png" />
+    <None Remove="Cards\blue12.png" />
+    <None Remove="Cards\blue14.png" />
+    <None Remove="Cards\blue2.png" />
+    <None Remove="Cards\blue3.png" />
+    <None Remove="Cards\blue4.png" />
+    <None Remove="Cards\blue5.png" />
+    <None Remove="Cards\blue6.png" />
+    <None Remove="Cards\blue7.png" />
+    <None Remove="Cards\blue8.png" />
+    <None Remove="Cards\blue9.png" />
+    <None Remove="Cards\green0.png" />
+    <None Remove="Cards\green1.png" />
+    <None Remove="Cards\green10.png" />
+    <None Remove="Cards\green11.png" />
+    <None Remove="Cards\green12.png" />
+    <None Remove="Cards\green13.png" />
+    <None Remove="Cards\green14.png" />
+    <None Remove="Cards\green2.png" />
+    <None Remove="Cards\green3.png" />
+    <None Remove="Cards\green4.png" />
+    <None Remove="Cards\green5.png" />
+    <None Remove="Cards\green6.png" />
+    <None Remove="Cards\green7.png" />
+    <None Remove="Cards\green8.png" />
+    <None Remove="Cards\green9.png" />
+    <None Remove="Cards\red0.png" />
+    <None Remove="Cards\red1.png" />
+    <None Remove="Cards\red10.png" />
+    <None Remove="Cards\red11.png" />
+    <None Remove="Cards\red12.png" />
+    <None Remove="Cards\red13.png" />
+    <None Remove="Cards\red14.png" />
+    <None Remove="Cards\red2.png" />
+    <None Remove="Cards\red3.png" />
+    <None Remove="Cards\red4.png" />
+    <None Remove="Cards\red5.png" />
+    <None Remove="Cards\red6.png" />
+    <None Remove="Cards\red7.png" />
+    <None Remove="Cards\red8.png" />
+    <None Remove="Cards\red9.png" />
+    <None Remove="Cards\uno.png" />
+    <None Remove="Cards\yellow0.png" />
+    <None Remove="Cards\yellow1.png" />
+    <None Remove="Cards\yellow10.png" />
+    <None Remove="Cards\yellow11.png" />
+    <None Remove="Cards\yellow12.png" />
+    <None Remove="Cards\yellow13.png" />
+    <None Remove="Cards\yellow14.png" />
+    <None Remove="Cards\yellow2.png" />
+    <None Remove="Cards\yellow3.png" />
+    <None Remove="Cards\yellow4.png" />
+    <None Remove="Cards\yellow5.png" />
+    <None Remove="Cards\yellow6.png" />
+    <None Remove="Cards\yellow7.png" />
+    <None Remove="Cards\yellow8.png" />
+    <None Remove="Cards\yellow9.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.3.0" />
+    <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.2.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Cards\black13.png" />
+    <Resource Include="Cards\black14.png" />
+    <Resource Include="Cards\blue 13.png" />
+    <Resource Include="Cards\blue0.png" />
+    <Resource Include="Cards\blue1.png" />
+    <Resource Include="Cards\blue10.png" />
+    <Resource Include="Cards\blue11.png" />
+    <Resource Include="Cards\blue12.png" />
+    <Resource Include="Cards\blue14.png" />
+    <Resource Include="Cards\blue2.png" />
+    <Resource Include="Cards\blue3.png" />
+    <Resource Include="Cards\blue4.png" />
+    <Resource Include="Cards\blue5.png" />
+    <Resource Include="Cards\blue6.png" />
+    <Resource Include="Cards\blue7.png" />
+    <Resource Include="Cards\blue8.png" />
+    <Resource Include="Cards\blue9.png" />
+    <Resource Include="Cards\green0.png" />
+    <Resource Include="Cards\green1.png" />
+    <Resource Include="Cards\green10.png" />
+    <Resource Include="Cards\green11.png" />
+    <Resource Include="Cards\green12.png" />
+    <Resource Include="Cards\green13.png" />
+    <Resource Include="Cards\green14.png" />
+    <Resource Include="Cards\green2.png" />
+    <Resource Include="Cards\green3.png" />
+    <Resource Include="Cards\green4.png" />
+    <Resource Include="Cards\green5.png" />
+    <Resource Include="Cards\green6.png" />
+    <Resource Include="Cards\green7.png" />
+    <Resource Include="Cards\green8.png" />
+    <Resource Include="Cards\green9.png" />
+    <Resource Include="Cards\red0.png" />
+    <Resource Include="Cards\red1.png" />
+    <Resource Include="Cards\red10.png" />
+    <Resource Include="Cards\red11.png" />
+    <Resource Include="Cards\red12.png" />
+    <Resource Include="Cards\red13.png" />
+    <Resource Include="Cards\red14.png" />
+    <Resource Include="Cards\red2.png" />
+    <Resource Include="Cards\red3.png" />
+    <Resource Include="Cards\red4.png" />
+    <Resource Include="Cards\red5.png" />
+    <Resource Include="Cards\red6.png" />
+    <Resource Include="Cards\red7.png" />
+    <Resource Include="Cards\red8.png" />
+    <Resource Include="Cards\red9.png" />
+    <Resource Include="Cards\uno.png" />
+    <Resource Include="Cards\yellow0.png" />
+    <Resource Include="Cards\yellow1.png" />
+    <Resource Include="Cards\yellow10.png" />
+    <Resource Include="Cards\yellow11.png" />
+    <Resource Include="Cards\yellow12.png" />
+    <Resource Include="Cards\yellow13.png" />
+    <Resource Include="Cards\yellow14.png" />
+    <Resource Include="Cards\yellow2.png" />
+    <Resource Include="Cards\yellow3.png" />
+    <Resource Include="Cards\yellow4.png" />
+    <Resource Include="Cards\yellow5.png" />
+    <Resource Include="Cards\yellow6.png" />
+    <Resource Include="Cards\yellow7.png" />
+    <Resource Include="Cards\yellow8.png" />
+    <Resource Include="Cards\yellow9.png" />
+  </ItemGroup>
+
+  <Import Project="..\SharedDataClasses\SharedDataClasses.projitems" Label="Shared" />
+
 </Project>

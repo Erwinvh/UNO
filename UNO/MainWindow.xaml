@@ -5,8 +5,85 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UNO"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="600" Width="1000" ResizeMode="CanMinimize">
+    
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FFD44444"/>
+                <GradientStop Color="#FF952626" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Border BorderThickness="1" Grid.Column="0" Grid.Row="0" Width="170" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top" Background="White" CornerRadius="15,15,15,15" Margin="10,10,0,0">
+            <Button x:Name="LeaveLobby" Command="{Binding Path=LeaveLobbyCommand}" Content="LEAVE LOBBY" Background="{x:Null}" BorderBrush="{x:Null}" FontWeight="Bold" FontFamily="Arial Black" FontSize="20" Foreground="#FFD83C3C"/>
+        </Border>
+        
+        <Border BorderThickness="1" Grid.RowSpan="3" Background="White" CornerRadius="00,00,20,20" Margin="10,131,10,10">
+            <ListView ItemsSource="{Binding Scoreboard, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <WrapPanel>
+                            <Label Content="{Binding name}"/>
+                            <Label Content="{Binding winAmount}"/>
+                            <Label Content="{Binding gameAmount}"/>
+                        </WrapPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+            <!--<Grid>
+                <DataGrid HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="300" Width="500"
+                          ItemsSource="{Binding Scoreboard, Mode=OneWay}" IsSynchronizedWithCurrentItem="True"  />
+            </Grid>-->
+        </Border>
+
+        <Border Background="#FF899FE8" Margin="11,72,11,0" CornerRadius="20,20,0,0" Height="52" VerticalAlignment="Top">
+            <Label Content="SCOREBOARD" FontWeight="Bold" FontFamily="Arial Black" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
+        </Border>
+
+
+        <Border BorderThickness="1" Grid.Column="2" Grid.RowSpan="2" Margin="10,10,10,10" CornerRadius="20,20,20,20" Background="White">
+            <ListView ItemsSource="{Binding observableUsers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Background="{x:Null}" BorderBrush="{x:Null}">
+                
+                <ListView.ItemTemplate>
+                    <DataTemplate >
+                        <WrapPanel>
+                            <Label Content="{Binding name}" FontSize="18" FontWeight="Bold" />
+                            <Label Content="{Binding isReady}" ContentStringFormat="Ready: {0}" FontSize="18" FontWeight="Bold" />
+                        </WrapPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                
+            </ListView>
+            
+            <!--<Grid>
+                <DataGrid HorizontalAlignment="Left" VerticalAlignment="Top" Width="313.333333333333" Height="369.36"
+                  ItemsSource="{Binding Source= observableUsers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsSynchronizedWithCurrentItem="True" Background="{x:Null}" BorderBrush="{x:Null}"  />
+            </Grid>-->
+        </Border>
+
+
+
+
+        <Border BorderThickness="1" Grid.Column="2" Grid.Row="2" Width="170" Height="50" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Background="White" CornerRadius="15,15,15,15">
+            <Button x:Name="StartGame" Command="{Binding Path=LaunchGameCommand}" Content="START GAME" Background="{x:Null}" BorderBrush="{x:Null}" FontWeight="Bold" FontFamily="Arial Black" FontSize="20" Foreground="#FF30B849"/>
+        </Border>
+        <Label Content="{Binding Path=players}" Grid.Column="2" HorizontalAlignment="Left" Margin="158,96,0,0" Grid.Row="2" VerticalAlignment="Top" FontSize="18" FontWeight="Bold"/>
+
+
 
     </Grid>
 </Window>
