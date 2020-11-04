@@ -30,7 +30,7 @@ namespace UNO
             this.networkCommunication = networkCommunication;
             this.networkCommunication.GameScreenViewModel = this;
             //this.LeaveLobbyCommand = new RelayCommand(() => { LeaveLobby(); }); 
-            //this.LaunchGameCommand = new RelayCommand(() => { LaunchGame(); }); 
+            //this.ReadyPlayerCommand = new RelayCommand(() => { LaunchGame(); }); 
             this.app = app;
             hand = new AsyncObservableCollection<Card>();
             ChatCommand = new RelayCommand(() => { sendChatmessage(Message); });

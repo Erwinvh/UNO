@@ -146,6 +146,7 @@ namespace Server
                             }
                             break;
                         case "ToggleReady":
+                            lobby.getUSer(user.name).isReady = !lobby.getUSer(user.name).isReady;
 
                                 GameMessage GM = new GameMessage(user.name, "ToggleReady");
                                 Broadcast(JsonSerializer.Serialize(GM));
@@ -233,7 +234,13 @@ namespace Server
                     {
                         Console.WriteLine("Player sent to new player: " + user.name);
                         LobbyMessage LM = new LobbyMessage(user.name, lobby.LobbyCode);
+
                         Write(JsonSerializer.Serialize(LM));
+                        if (user.isReady)
+                        {
+                            GameMessage GM = new GameMessage(user.name, "ToggleReady");
+                            Write(JsonSerializer.Serialize(GM));
+                        }
                     }
                 }
                 return;

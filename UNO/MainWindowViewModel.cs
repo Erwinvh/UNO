@@ -9,13 +9,16 @@ using System.Windows.Automation;
 using System.Windows.Input;
 using SharedDataClasses;
 using System.Diagnostics;
+using System.Windows.Threading;
+
 
 namespace UNO
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
+        
         readonly App app;
-        public ICommand LaunchGameCommand { get; set; }
+        public ICommand ReadyPlayerCommand { get; set; }
         public ICommand LeaveLobbyCommand { get; set; }
         public ICommand Addplayer { get; set; }
         private NetworkCommunication networkCommunication;
@@ -28,7 +31,7 @@ namespace UNO
             this.networkCommunication = networkCommunication;
             this.networkCommunication.mainWindowViewModel = this;
             this.LeaveLobbyCommand = new RelayCommand(() => { LeaveLobby(); });
-            this.LaunchGameCommand = new RelayCommand(() => { LaunchGame(); });
+            this.ReadyPlayerCommand = new RelayCommand(() => { sendReadyMessage(); });
             //this.Addplayer = new RelayCommand(() => { AddPlayer(string username); });
             this.app = app;
             Scoreboard = this.networkCommunication.Scoreboard;
@@ -40,6 +43,36 @@ namespace UNO
             networkCommunication.sendLobby(networkCommunication.user.name, "");
 
             app.LeaveLobby();
+        }
+
+        public void sendReadyMessage()
+        {
+            networkCommunication.sendToggleReady();
+        }
+
+        public void readyPlayer(string username)
+        {
+            foreach (User player in observableUsers)
+            {
+                if (player.name == username)
+                {
+                    player.isReady = !player.isReady;
+                    Debug.WriteLine(player.name + " This players info was changed to " + player.isReady);
+                }
+            }
+
+            if (observableUsers.Count < 2)
+            {
+                return;
+            }
+            foreach (User user in observableUsers)
+            {
+                if (!user.isReady)
+                {
+                    return;
+                }
+            }
+            LaunchGame();
         }
 
         public void AddPlayer(string username)
@@ -70,8 +103,10 @@ namespace UNO
 
         public void LaunchGame()
         {
-            app.LaunchGame();
-            networkCommunication.SendGameStart();
+            if (!app.Dispatcher.CheckAccess())
+            {
+                app.Dispatcher.InvokeAsync(new Action(app.LaunchGame));
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

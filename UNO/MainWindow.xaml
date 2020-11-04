@@ -79,7 +79,7 @@
 
 
         <Border BorderThickness="1" Grid.Column="2" Grid.Row="2" Width="170" Height="50" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Background="White" CornerRadius="15,15,15,15">
-            <Button x:Name="StartGame" Command="{Binding Path=LaunchGameCommand}" Content="START GAME" Background="{x:Null}" BorderBrush="{x:Null}" FontWeight="Bold" FontFamily="Arial Black" FontSize="20" Foreground="#FF30B849"/>
+            <Button x:Name="StartGame" Command="{Binding Path=ReadyPlayerCommand}" Content="START GAME" Background="{x:Null}" BorderBrush="{x:Null}" FontWeight="Bold" FontFamily="Arial Black" FontSize="20" Foreground="#FF30B849"/>
         </Border>
         <Label Content="{Binding Path=players}" Grid.Column="2" HorizontalAlignment="Left" Margin="158,96,0,0" Grid.Row="2" VerticalAlignment="Top" FontSize="18" FontWeight="Bold"/>
 

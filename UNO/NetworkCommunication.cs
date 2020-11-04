@@ -33,11 +33,10 @@ namespace UNO
         //--LobbyRelated--
         private string lobby;
         public List<Score> Scoreboard { get; set; }
-
+        public MainWindowViewModel mainWindowViewModel { get; set; }
 
   //--Game related--
-  public MainWindowViewModel mainWindowViewModel { get; set; }
-        public GameScreenViewModel GameScreenViewModel { get; set; }
+  public GameScreenViewModel GameScreenViewModel { get; set; }
 
 
         public NetworkCommunication(string hostname, int port)
@@ -210,7 +209,7 @@ namespace UNO
                     }
                     else if (gamemessage == "ToggleReady")
                     {
-                        getUserObsColl(messageUsername).isReady = !getUserObsColl(messageUsername).isReady;
+                        mainWindowViewModel.readyPlayer(messageUsername);
                     }
 
                     break;
@@ -253,18 +252,6 @@ namespace UNO
                     Scoreboard = score.Scores;
                     break;
             }
-        }
-
-        public User getUserObsColl(string username)
-        {
-            foreach (User player in mainWindowViewModel.observableUsers)
-            {
-                if (player.name == username)
-                {
-                    return player;
-                }
-            }
-            return null;
         }
 
 
