@@ -56,5 +56,26 @@ namespace Server
 
             return null;
         }
+
+        public void ToggleReady(string name)
+        {
+            getUSer(name).isReady = !getUSer(name).isReady;
+            if (checkGameReady())
+            {
+                startGame();
+            }
+        }
+
+        private bool checkGameReady()
+        {
+            foreach (User player in players)
+            {
+                if (!player.isReady)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

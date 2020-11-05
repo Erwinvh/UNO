@@ -37,11 +37,12 @@ namespace Server
             {
                 Shuffle();
             }
-            beginGame();
-            Shuffle();
             lastPlayedCard = deck[deck.Count - 1];
             pile.Add(lastPlayedCard);
             deck.Remove(lastPlayedCard);
+            beginGame();
+            Shuffle();
+
             Shuffle();
             firstTurn();
         }
@@ -70,8 +71,9 @@ namespace Server
                 }
                 TurnMessage initialTurn = new TurnMessage("System", player.name, addedCards);
                 server.SendClientMessage(player.name, JsonSerializer.Serialize(initialTurn));
-                
-                TurnMessage nullifierTurn = new TurnMessage(player.name, "System", null);
+                List<Card> pileCard = new List<Card>();
+                pileCard.Add(lastPlayedCard);
+                TurnMessage nullifierTurn = new TurnMessage(player.name, "System", pileCard);
                 server.SendClientMessage(player.name, JsonSerializer.Serialize(nullifierTurn));
                 
             }

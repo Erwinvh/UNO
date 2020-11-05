@@ -55,8 +55,8 @@ namespace Server
                 Console.WriteLine("Received packet");
                 handleData(Encoding.ASCII.GetString(bytebuffer));
             }
-            stream.Close();
-            tcpClient.Close();
+            stream.Close();
+            tcpClient.Close();
             server.clients.Remove(this);
         }
 
@@ -146,15 +146,13 @@ namespace Server
                             }
                             break;
                         case "ToggleReady":
-
-                                GameMessage GM = new GameMessage(user.name, "ToggleReady");
-                                Broadcast(JsonSerializer.Serialize(GM));
-                            
-
-                            break;
-                        case "Game begin":
-                            server.GetLobbybyCode(lobby.LobbyCode).startGame();
-
+                            lobby.ToggleReady(user.name);
+                            GameMessage GM = new GameMessage(user.name, "ToggleReady");
+                            Broadcast(JsonSerializer.Serialize(GM));
+                            break;
+                        case "Game begin":
+                            //server.GetLobbybyCode(lobby.LobbyCode).startGame();
+
                             break;
                     }
                     //TODO: switch case: startgame, left game, ready
@@ -202,18 +200,18 @@ namespace Server
                         TurnMessage forfeitTurnMessage = lobby.gameSession.GenerateTurn(true);
                         Broadcast(JsonSerializer.Serialize(forfeitTurnMessage));
                     }
-                    break;
-                case MessageID.SYSTEM:
-                    int code = (int)pakket.GetValue("status");
-                    if (code == 200)
-                    {
-                        disconnect();
-                    }
+                    break;
+                case MessageID.SYSTEM:
+                    int code = (int)pakket.GetValue("status");
+                    if (code == 200)
+                    {
+                        disconnect();
+                    }
                     break;
             }
-        }
-
-        private void GoToLobby(string LobbyCode)
+        }
+
+        private void GoToLobby(string LobbyCode)
         {
             if (server.LobbyExist(LobbyCode))
             {
@@ -237,33 +235,33 @@ namespace Server
                     }
                 }
                 return;
-            }
-
+            }
+
             //Lobby is new
             lobby = new Lobby(user.name, LobbyCode, server);
             server.lobbyList.Add(lobby);
             sendScoreboard();
             sendSystemMessage(102);
             Console.WriteLine("LOBBY OK!");
-        }
-
+        }
+
         private void sendScoreboard()
         {
             List<Score> scores = server.fileSystem.scoreBoard.scoreboard;
             ScoreMessage ScoreMess = new ScoreMessage(scores);
             Write(JsonSerializer.Serialize(ScoreMess));
             Console.WriteLine("sent");
-        }
-
-
-
-
-
-
-        //
-        //--Outgoing data
-        //
-
+        }
+
+
+
+
+
+
+        //
+        //--Outgoing data
+        //
+
         public void Broadcast(string pakketdata)
         {
             foreach (User player in lobby.players)
@@ -303,11 +301,11 @@ namespace Server
             stream.Flush();
         }
 
-        public void disconnect()
-        {
-            server.UserDictionary.Remove(user.name);
-            //lobby.playerQuit(user.name);
-            running = false;
+        public void disconnect()
+        {
+            server.UserDictionary.Remove(user.name);
+            //lobby.playerQuit(user.name);
+            running = false;
         }
     }
 }

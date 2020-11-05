@@ -47,9 +47,9 @@
             </Button.Background>
         </Button>
 
-        <Canvas Width="240" Height="360" Grid.Column="2" Margin="120,177,120,172" Grid.RowSpan="2">
+        <Canvas  Width="240" Height="360" Grid.Column="2" Margin="120,177,120,172" Grid.RowSpan="2" AutomationProperties.Name="Pile">
             <Canvas.Background>
-                <ImageBrush ImageSource="/Cards/blue6.png"/>
+                <ImageBrush  ImageSource="{Binding SourcePath}"/>
             </Canvas.Background>
         </Canvas>
 

@@ -24,6 +24,7 @@ namespace UNO
         public event PropertyChangedEventHandler PropertyChanged;
         public string Message { set; get; }
         public bool isPlaying { get; set; }
+        public Card pileCard { get; set; }
 
         public GameScreenViewModel(App app, NetworkCommunication networkCommunication)
         {
@@ -114,6 +115,11 @@ namespace UNO
         internal void EmptyHand()
         {
             hand.Clear();
+        }
+
+        internal void setPileCard(Card startPileCard)
+        {
+            throw new NotImplementedException();
         }
     }
 }

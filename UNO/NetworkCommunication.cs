@@ -233,6 +233,13 @@ namespace UNO
                     else if (user.name == (string)pakket.GetValue("lastPlayer"))
                     {
                         GameScreenViewModel.setPlayingState(false);
+                        if (name.Equals("System"))
+                        {
+                            TurnMessage turn = pakket.ToObject<TurnMessage>();
+                            List<Card> pile = turn.addedCards;
+                            Card startPileCard = pile[0];
+                            GameScreenViewModel.setPileCard(startPileCard);
+                        }
                     }
                     break;
                 case MessageID.LOBBY:
