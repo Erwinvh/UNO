@@ -67,7 +67,7 @@
                         <DataTemplate >
                             <WrapPanel>
                                 <Label Content="{Binding sender}" FontSize="18" FontWeight="Bold" />
-                                <Label Content="{Binding message}" ContentStringFormat="Ready: {0}" FontSize="18" FontWeight="Bold" />
+                                <Label Content="{Binding message}" FontSize="18" FontWeight="Bold" />
                             </WrapPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
