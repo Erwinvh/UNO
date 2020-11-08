@@ -90,7 +90,7 @@ namespace SharedDataClasses
     }
     
 
-    class ChatMessage
+    public class ChatMessage
     {
         public MessageID MessageID { get; }
         public string message { get; set; }

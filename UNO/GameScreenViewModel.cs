@@ -14,6 +14,8 @@ namespace UNO
     public class GameScreenViewModel : INotifyPropertyChanged
     {
         public AsyncObservableCollection<Card> hand { get; set; }
+        public AsyncObservableCollection<ChatMessage> ChatCollection { get; set; }
+        public AsyncObservableCollection<User> userList { get; set; }
         public ICommand ChatCommand { get; set; }
         public ICommand DeckCommand { get; set; }
         public ICommand MoveCommand { get; set; }
@@ -33,6 +35,9 @@ namespace UNO
             //this.LaunchGameCommand = new RelayCommand(() => { LaunchGame(); }); 
             this.app = app;
             hand = new AsyncObservableCollection<Card>();
+            ChatCollection = new AsyncObservableCollection<ChatMessage>();
+            receiverChatMessage(new ChatMessage("erwin", "hello", DateTime.Now));
+            receiverChatMessage(new ChatMessage("bart", "hello player", DateTime.Now));
             ChatCommand = new RelayCommand(() => { sendChatmessage(Message); });
             DeckCommand = new RelayCommand(() => { pullFromDeck(); });
             MoveCommand = new RelayCommand<string>(sendMove);
@@ -47,6 +52,15 @@ namespace UNO
             {
                 networkCommunication.sendEmptyMove();
             }
+        }
+
+        public void receiverChatMessage(ChatMessage message)
+        {
+            if (message.sender == networkCommunication.user.name)
+            {
+                message.sender = null;
+            }
+            ChatCollection.Add(message);
         }
 
         public void sendChatmessage(string message)

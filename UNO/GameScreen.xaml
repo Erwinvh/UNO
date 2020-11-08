@@ -35,8 +35,14 @@
             </Border>
 
             <Border Height="500" Margin="12,20,0,0" CornerRadius="20,20,20,20" Background="White">
-                <ListView Background="{x:Null}" BorderBrush="{x:Null}">
-
+                <ListView ItemsSource="{Binding  userList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Background="{x:Null}" BorderBrush="{x:Null}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate >
+                            <WrapPanel>
+                                <Label Content="{Binding name}" FontSize="18" FontWeight="Bold" />
+                            </WrapPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
             </Border>
         </StackPanel>
@@ -56,8 +62,15 @@
         <StackPanel Orientation="Vertical" Grid.RowSpan="2" Grid.Column="3" Margin="0,0,10,0">
 
             <Border Height="500" Margin="12,20,0,0" CornerRadius="20,20,20,20" Background="White">
-                <ListView x:Name="ChatBox" Background="{x:Null}" BorderBrush="{x:Null}">
-
+                <ListView ItemsSource="{Binding  ChatCollection, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" x:Name="ChatBox" Background="{x:Null}" BorderBrush="{x:Null}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate >
+                            <WrapPanel>
+                                <Label Content="{Binding sender}" FontSize="18" FontWeight="Bold" />
+                                <Label Content="{Binding message}" ContentStringFormat="Ready: {0}" FontSize="18" FontWeight="Bold" />
+                            </WrapPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
             </Border>
 
