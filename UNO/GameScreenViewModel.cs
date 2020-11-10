@@ -14,15 +14,18 @@ namespace UNO
     public class GameScreenViewModel : INotifyPropertyChanged
     {
         public AsyncObservableCollection<Card> hand { get; set; }
+        public AsyncObservableCollection<ChatMessage> ChatCollection { get; set; }
+        public AsyncObservableCollection<User> userList { get; set; }
         public ICommand ChatCommand { get; set; }
         public ICommand DeckCommand { get; set; }
         public ICommand MoveCommand { get; set; }
         readonly App app;
         private NetworkCommunication networkCommunication;
         public string imageSource { get; set; }
+        public string Message { get; set; } = "";
+        public string PlayerPlayingName { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public string Message { set; get; }
         public bool isPlaying { get; set; }
         public Card pileCard { get; set; }
 
@@ -34,7 +37,11 @@ namespace UNO
             //this.LaunchGameCommand = new RelayCommand(() => { LaunchGame(); }); 
             this.app = app;
             hand = new AsyncObservableCollection<Card>();
-            ChatCommand = new RelayCommand(() => { sendChatmessage(Message); });
+            ChatCollection = new AsyncObservableCollection<ChatMessage>();
+            userList = new AsyncObservableCollection<User>();
+            ChatCollection.Add(new ChatMessage("erwin", "hello", DateTime.Now));
+           ChatCollection.Add(new ChatMessage("bart", "hello player", DateTime.Now));
+           ChatCommand = new RelayCommand(() => { sendChatmessage(Message); });
             DeckCommand = new RelayCommand(() => { pullFromDeck(); });
             MoveCommand = new RelayCommand<string>(sendMove);
         }
@@ -50,9 +57,18 @@ namespace UNO
             }
         }
 
-        public void sendChatmessage(string message)
+        public void receiverChatMessage(ChatMessage message)
         {
-            networkCommunication.sendChat(message);
+            if (message.sender == networkCommunication.user.name)
+            {
+                message.sender = null;
+            }
+            ChatCollection.Add(message);
+        }
+
+        public void sendChatmessage(string Message)
+        {
+            networkCommunication.sendChat(Message);
         }
 
         public void sendMove(string playedCard)
@@ -102,6 +118,15 @@ namespace UNO
         public void setPlayingState(bool isPlaying)
         {
             this.isPlaying = isPlaying;
+        }
+
+        public void changePlayerPlayingName(string name)
+        {
+            if (name == networkCommunication.user.name)
+            {
+                name = "You";
+            }
+            PlayerPlayingName = name;
         }
 
         internal void AddMultpileCards(List<Card> added)

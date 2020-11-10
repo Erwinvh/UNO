@@ -94,6 +94,7 @@ namespace Server
             {
                 if (client.user.name == username)
                 {
+                    Console.WriteLine("were here with player:" + username);
                     client.Write(message);
                 }
             }

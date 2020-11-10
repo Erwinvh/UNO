@@ -123,6 +123,7 @@ namespace Server
                     }
                     break;
                 case MessageID.CHAT:
+                    Console.WriteLine("write message hello we are here");
                     Broadcast(packetData);
                     sendSystemMessage(103);
                     break;
@@ -267,6 +268,7 @@ namespace Server
             foreach (User player in lobby.players)
             {
                 server.SendClientMessage(player.name, pakketdata);
+                
             }
         }
         
