@@ -105,6 +105,7 @@ namespace UNO
         {
             if (!app.Dispatcher.CheckAccess())
             {
+                networkCommunication.GameScreenViewModel.transportPlayers(observableUsers);
                 app.Dispatcher.InvokeAsync(new Action(app.LaunchGame));
             }
         }

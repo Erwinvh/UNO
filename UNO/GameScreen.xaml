@@ -42,6 +42,7 @@
                         <DataTemplate >
                             <WrapPanel>
                                 <Label Content="{Binding name}" FontSize="18" FontWeight="Bold" />
+                                <Label Content="{Binding amountOfCards}" FontSize="18" FontWeight="Bold" />
                             </WrapPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>

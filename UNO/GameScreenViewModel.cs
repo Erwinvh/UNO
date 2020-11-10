@@ -45,7 +45,7 @@ namespace UNO
         }
 
         // 
-        //--UI to Netrwerkcom-- 
+        //--Game related-- 
         // 
         public void pullFromDeck()
         {
@@ -54,21 +54,24 @@ namespace UNO
                 networkCommunication.sendEmptyMove();
             }
         }
-
-        public void receiverChatMessage(ChatMessage message)
+ public void addCardToUI(Card card)
         {
-            if (message.sender == networkCommunication.user.name)
-            {
-                message.sender = null;
-            }
-            ChatCollection.Add(message);
+            //TODO: add card to UI 
+            Debug.WriteLine("Card added" + card.number);
+            hand.Add(card);
         }
 
-        public void sendChatmessage(string Message)
+        public void removeCardFromUI(Card card)
         {
-            networkCommunication.sendChat(Message);
-            this.Message = "";
+            //TODO: try via index or via card 
+            hand.Remove(card);
         }
+
+        public void changePileCard(Card card)
+        {
+            //TODO: change pileCard 
+        }
+       
 
         public void sendMove(string playedCard)
         {
@@ -92,42 +95,6 @@ namespace UNO
             }
         }
 
-
-        // 
-        //--netwerkcom to UI-- 
-        // 
-        public void addCardToUI(Card card)
-        {
-            //TODO: add card to UI 
-            Debug.WriteLine("Card added" + card.number);
-            hand.Add(card);
-        }
-
-        public void removeCardFromUI(Card card)
-        {
-            //TODO: try via index or via card 
-            hand.Remove(card);
-        }
-
-        public void changePileCard(Card card)
-        {
-            //TODO: change pileCard 
-        }
-
-        public void setPlayingState(bool isPlaying)
-        {
-            this.isPlaying = isPlaying;
-        }
-
-        public void changePlayerPlayingName(string name)
-        {
-            if (name == networkCommunication.user.name)
-            {
-                name = "You";
-            }
-            PlayerPlayingName = name;
-        }
-
         internal void AddMultpileCards(List<Card> added)
         {
             foreach (Card card in added)
@@ -141,9 +108,60 @@ namespace UNO
             hand.Clear();
         }
 
-        internal void setPileCard(Card startPileCard)
+        //
+        //--Chat related--
+        //
+
+ public void receiverChatMessage(ChatMessage message)
         {
-            throw new NotImplementedException();
+            if (message.sender == networkCommunication.user.name)
+            {
+                message.sender = null;
+            }
+            ChatCollection.Add(message);
         }
+
+        public void sendChatmessage(string Message)
+        {
+            networkCommunication.sendChat(Message);
+            this.Message = "";
+        }
+
+
+
+        //
+        //--Other UI elements related--
+        //
+        public void transportPlayers(AsyncObservableCollection<User> players)
+        {
+            userList = players;
+        }
+
+        public void setPlayingState(bool isPlaying)
+        {
+            this.isPlaying = isPlaying;
+        }
+        
+        public void changePlayerPlayingName(string name)
+        {
+            if (name == networkCommunication.user.name)
+            {
+                name = "You";
+            }
+            PlayerPlayingName = name;
+        }
+
+        public void editPlayerCardsInfo(string name, int amount)
+        {
+            foreach (User player in userList)
+            {
+                if (player.name == name)
+                {
+                    player.amountOfCards += amount;
+                }
+            }
+        }
+
+
     }
 }

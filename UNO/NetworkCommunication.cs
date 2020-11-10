@@ -239,7 +239,7 @@ namespace UNO
                             TurnMessage turn = pakket.ToObject<TurnMessage>();
                             List<Card> pile = turn.addedCards;
                             Card startPileCard = pile[0];
-                            GameScreenViewModel.setPileCard(startPileCard);
+                            GameScreenViewModel.changePileCard(startPileCard);
                         }
                     }
                     break;
