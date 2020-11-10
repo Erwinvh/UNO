@@ -79,7 +79,7 @@
 
             <StackPanel Orientation="Horizontal">
                 <Border CornerRadius="20,20,20,20" Background="White" Width="350" Margin="10,10,0,0">
-                    <TextBox FontSize="24" Text="{Binding Path= Message, UpdateSourceTrigger=PropertyChanged}" Background="{x:Null}" BorderBrush="{x:Null}">
+                    <TextBox FontSize="24" Text="{Binding Path= Message, UpdateSourceTrigger=PropertyChanged}" Background="{x:Null}" BorderBrush="{x:Null}" MaxLength="150">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Return" 
                                         Command="{Binding Path= ChatCommand}"/>

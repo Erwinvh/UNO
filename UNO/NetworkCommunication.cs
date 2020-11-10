@@ -107,12 +107,6 @@ namespace UNO
             client.Close();
         }
 
-        internal void SendGameStart()
-        {
-            GameMessage GM = new GameMessage(user.name, "Game begin");
-            write(JsonSerializer.Serialize(GM));
-        }
-
         private void handleData(string packetData)
         {
             Debug.WriteLine($"Got a packet: {packetData}");
@@ -143,10 +137,13 @@ namespace UNO
                         if (!isvoid)
                         {
                             GameScreenViewModel.removeCardFromUI(cardmoved);
+                            GameScreenViewModel.editPlayerCardsInfo(user.name, -1);
                         }
                         else
                         {
                             GameScreenViewModel.addCardToUI(cardmoved);
+                            //add 1 card to user
+                            GameScreenViewModel.editPlayerCardsInfo(user.name, 1);
                         }
                     }
                     else
@@ -154,7 +151,10 @@ namespace UNO
                         if (!isvoid)
                         {
                             GameScreenViewModel.changePileCard(cardmoved);
+                            GameScreenViewModel.editPlayerCardsInfo(messageUsername,-1);
+                            break;
                         }
+                        GameScreenViewModel.editPlayerCardsInfo(messageUsername, 1);
                     }
                     break;
                 case MessageID.SYSTEM:
@@ -230,6 +230,7 @@ namespace UNO
                         List<Card> added = turn.addedCards;
                         GameScreenViewModel.AddMultpileCards(added);
                         GameScreenViewModel.setPlayingState(true);
+                        GameScreenViewModel.editPlayerCardsInfo(name, added.Count);
                     }
                     else if (user.name == (string)pakket.GetValue("lastPlayer"))
                     {

@@ -150,10 +150,6 @@ namespace Server
                             lobby.ToggleReady(user.name);
                             GameMessage GM = new GameMessage(user.name, "ToggleReady");
                             Broadcast(JsonSerializer.Serialize(GM));
-                            break;
-                        case "Game begin":
-                            //server.GetLobbybyCode(lobby.LobbyCode).startGame();
-
                             break;
                     }
                     //TODO: switch case: startgame, left game, ready
