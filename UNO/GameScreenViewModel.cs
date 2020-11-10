@@ -39,9 +39,7 @@ namespace UNO
             hand = new AsyncObservableCollection<Card>();
             ChatCollection = new AsyncObservableCollection<ChatMessage>();
             userList = new AsyncObservableCollection<User>();
-            ChatCollection.Add(new ChatMessage("erwin", "hello", DateTime.Now));
-           ChatCollection.Add(new ChatMessage("bart", "hello player", DateTime.Now));
-           ChatCommand = new RelayCommand(() => { sendChatmessage(Message); });
+            ChatCommand = new RelayCommand(() => { sendChatmessage(Message); });
             DeckCommand = new RelayCommand(() => { pullFromDeck(); });
             MoveCommand = new RelayCommand<string>(sendMove);
         }
@@ -69,6 +67,7 @@ namespace UNO
         public void sendChatmessage(string Message)
         {
             networkCommunication.sendChat(Message);
+            this.Message = "";
         }
 
         public void sendMove(string playedCard)

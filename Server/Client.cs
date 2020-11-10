@@ -142,17 +142,14 @@ namespace Server
                             else
                             {
                                 Console.WriteLine(username + " player has left");
-                                
+                                //TODO: something here? pop up mabye?
 
                             }
                             break;
                         case "ToggleReady":
-                            lobby.getUSer(user.name).isReady = !lobby.getUSer(user.name).isReady;
-
-                                GameMessage GM = new GameMessage(user.name, "ToggleReady");
-                                Broadcast(JsonSerializer.Serialize(GM));
-                            
-
+                            lobby.ToggleReady(user.name);
+                            GameMessage GM = new GameMessage(user.name, "ToggleReady");
+                            Broadcast(JsonSerializer.Serialize(GM));
                             break;
                         case "Game begin":
                             //server.GetLobbybyCode(lobby.LobbyCode).startGame();

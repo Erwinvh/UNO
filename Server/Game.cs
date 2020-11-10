@@ -62,7 +62,8 @@ namespace Server
         }
 
         public void beginGame()
-        {            foreach (User player in players)
+        {            
+            foreach (User player in players)
             {
                 List<Card> addedCards = new List<Card>();
                 for (int i = 0; i < 7; i++)

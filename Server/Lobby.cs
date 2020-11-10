@@ -37,14 +37,14 @@ namespace Server
 
         public void playerQuit(string username)
         {
-            players.Remove(getUSer(username));
+            players.Remove(getUser(username));
             //gameSession.playerQuitCase(username);
             //TODO: remove all player stuff
 
 
         }
 
-        public User getUSer(string username)
+        public User getUser(string username)
         {
             foreach (User user in players)
             {
@@ -59,7 +59,7 @@ namespace Server
 
         public void ToggleReady(string name)
         {
-            getUSer(name).isReady = !getUSer(name).isReady;
+            getUser(name).isReady = !getUser(name).isReady;
             if (checkGameReady())
             {
                 startGame();
