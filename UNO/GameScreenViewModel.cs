@@ -22,9 +22,10 @@ namespace UNO
         readonly App app;
         private NetworkCommunication networkCommunication;
         public string imageSource { get; set; }
+        public string Message { get; set; } = "";
+        public string PlayerPlayingName { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public string Message { set; get; }
         public bool isPlaying { get; set; }
 
         public GameScreenViewModel(App app, NetworkCommunication networkCommunication)
@@ -64,9 +65,9 @@ namespace UNO
             ChatCollection.Add(message);
         }
 
-        public void sendChatmessage(string message)
+        public void sendChatmessage(string Message)
         {
-            networkCommunication.sendChat(message);
+            networkCommunication.sendChat(Message);
         }
 
         public void sendMove(string playedCard)
@@ -116,6 +117,15 @@ namespace UNO
         public void setPlayingState(bool isPlaying)
         {
             this.isPlaying = isPlaying;
+        }
+
+        public void changePlayerPlayingName(string name)
+        {
+            if (name == networkCommunication.user.name)
+            {
+                name = "You";
+            }
+            PlayerPlayingName = name;
         }
 
         internal void AddMultpileCards(List<Card> added)

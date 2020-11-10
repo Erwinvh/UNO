@@ -217,11 +217,13 @@ namespace UNO
                 case MessageID.CHAT:
                     //TODO: Implement CHAT
                     //TODO: show chatmessage on chat area
-
+                    ChatMessage message = pakket.ToObject<ChatMessage>();
+                    GameScreenViewModel.receiverChatMessage(message);
                     break;
                 case MessageID.TURN:
                     //TODO: Implement TURN
                     string name = (string) pakket.GetValue("nextplayer");
+                    GameScreenViewModel.changePlayerPlayingName(name);
                     Debug.WriteLine(user.name + " and " + name);
                     if (user.name.Equals(name))
                     {Debug.WriteLine("HERE!! ");
@@ -280,6 +282,7 @@ namespace UNO
 
         public void sendChat(string message)
         {
+            Debug.WriteLine("Chatmessage sendt:" + message);
             ChatMessage CM = new ChatMessage(user.name, message, DateTime.Now);
             write(JsonSerializer.Serialize(CM));
         }
