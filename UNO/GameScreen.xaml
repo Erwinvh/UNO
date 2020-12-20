@@ -34,7 +34,7 @@
             ></Label>
         <StackPanel Orientation="Vertical" Grid.RowSpan="2">
             <Border BorderThickness="1" Grid.Column="0" Grid.Row="0" Width="170" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top" Background="White" CornerRadius="15,15,15,15" Margin="10,10,0,0">
-                <Button x:Name="LeaveLobby" Command="{Binding Path=LeaveLobbyCommand}" Content="LEAVE LOBBY" Background="{x:Null}" BorderBrush="{x:Null}" FontWeight="Bold" FontFamily="Arial Black" FontSize="20" Foreground="#FFD83C3C"/>
+                <Button x:Name="LeaveLobby" Command="{Binding Path=quitGameCommand}" Content="LEAVE LOBBY" Background="{x:Null}" BorderBrush="{x:Null}" FontWeight="Bold" FontFamily="Arial Black" FontSize="20" Foreground="#FFD83C3C"/>
             </Border>
             
             <Border Height="500" Margin="12,20,0,0" CornerRadius="20,20,20,20" Background="White">

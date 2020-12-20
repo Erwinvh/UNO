@@ -50,6 +50,18 @@ namespace UNO
         // 
         //--Game related-- 
         // 
+        public void RemovePlayer(string username)
+        {
+            foreach (User u in userList)
+            {
+                if (u.name.Equals(username))
+                {
+                    userList.Remove(u);
+                    return;
+                }
+            }
+        }
+
         public void pullFromDeck()
         {
             if (isPlaying)
@@ -159,6 +171,7 @@ namespace UNO
             }
             //TODO: leave to login
             networkCommunication.resetToLogin();
+
             app.ReturnToLogin();
         }
 

@@ -47,6 +47,65 @@ namespace Server
             firstTurn();
         }
 
+        internal void playerQuitCase(string name)
+        {
+            User _player = null;
+            foreach (User player in players) {
+                if (player.name.Equals(name)) {
+                    _player = player;
+                }
+            }
+
+            if (_player != null)
+            {
+                players.Remove(_player);
+
+                if (_player.name.Equals(name))
+                {
+
+                    List<Card> addedCards = new List<Card>();
+                    if (isClockwise) 
+                    {
+                        if (index >= players.Count) 
+                        {
+                            index = 0;
+                        }
+                        TurnMessage turn = new TurnMessage(name, players[index].name, addedCards);
+                        server.getClient(name).Broadcast(JsonSerializer.Serialize(turn));
+
+                    } else
+                    {
+                        nextTurn();
+                        TurnMessage turn = new TurnMessage(name, players[index].name, addedCards);
+                        server.getClient(name).Broadcast(JsonSerializer.Serialize(turn));
+                    }                    
+                }
+            }
+
+            if (players.Count == 1) 
+            {
+                win(players[0].name);
+            } else if(players.Count == 0)
+            {
+                //TODO Close game, no winner
+            }
+
+            List<Card> hand = server.getClient(name).hand;
+
+            deck.AddRange(hand);
+            Shuffle();
+            Shuffle();
+            Shuffle();
+
+            server.getClient(name).hand.Clear();
+            
+        }
+
+        public void win(string name)
+        {
+            //TODO player wins game
+        }
+
         public void fillDeck()
         {
             for (int i = 0; i < 13; i++)
@@ -204,9 +263,9 @@ namespace Server
                     for (int i = 0; i < 2; i++)
                     {
                         int person = index - 1;
-                        if (person <0)
+                        if (person < 0)
                         {
-                            person = players.Count-1;
+                            person = players.Count - 1;
                         }
                         addCards.Add(drawCard(players[person].name));
                     }
@@ -227,11 +286,6 @@ namespace Server
                     return addCards;
             }
             return null;
-        }
-
-        internal void playerQuitCase(string name)
-        {
-            
         }
 
         internal bool Checkhand()

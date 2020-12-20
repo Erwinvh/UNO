@@ -187,7 +187,8 @@ namespace UNO
                     break;
                 case MessageID.GAME:
                     //TODO: Implement GAME
-                    string gamemessage = (string)pakket.GetValue("gameMessage");
+                    GameMessage gm = pakket.ToObject<GameMessage>();
+                    string gamemessage = gm.gameMessage;
                     if (gamemessage == "Win")
                     {
                         //TODO: show win message
@@ -211,6 +212,14 @@ namespace UNO
                     else if (gamemessage == "ToggleReady")
                     {
                         mainWindowViewModel.readyPlayer(messageUsername);
+                    }
+                    else if(gamemessage == "left Game")
+                    {
+                        if (!user.name.Equals(gm.Username))
+                        {
+                            mainWindowViewModel.RemovePlayer(gm.Username);
+                            GameScreenViewModel.RemovePlayer(gm.Username);
+                        }
                     }
 
                     break;
@@ -332,6 +341,12 @@ namespace UNO
             Byte[] z = lengteBytes.Concat(dataAsBytes).ToArray();
             stream.Write(z, 0, z.Length);
             stream.Flush();
+        }
+
+        public void sendQuitGame() 
+        {
+            GameMessage gm = new GameMessage(user.name, "left Game");
+            write(JsonSerializer.Serialize(gm));
         }
         
     }

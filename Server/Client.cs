@@ -136,12 +136,12 @@ namespace Server
 
                             break;
                         case "left Game":
+                            //Player closes application
                             if (username == user.name)
                             {
                                 Broadcast(JsonSerializer.Serialize(new GameMessage(user.name, "left Game")));
                                 //TODO: fix player in game
-                                lobby.gameSession.playerQuitCase(user.name);
-                                server.Disconnect(this);
+                                lobby.playerQuit(user.name);
                             }
                             else
                             {
