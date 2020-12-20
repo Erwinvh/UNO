@@ -232,6 +232,11 @@ namespace Server
                     sendSystemMessage(202);
                     return;
                 }
+                if (server.GetLobbybyCode(LobbyCode).gameSession != null)
+                {
+                    sendSystemMessage(203);
+                    return;
+                }
                 server.addUsertoLobby(user.name, LobbyCode);
                 lobby = server.GetLobbybyCode(LobbyCode);
                 sendScoreboard();

@@ -183,12 +183,15 @@ namespace UNO
                             isLobbyReady = false;
                             //TODO: show on screen via popup
                             break;
+                        case 203: 
+                            //game in session
+                            isLobbyReady = false;
+                            break;
                     }
                     break;
                 case MessageID.GAME:
                     //TODO: Implement GAME
-                    GameMessage gm = pakket.ToObject<GameMessage>();
-                    string gamemessage = gm.gameMessage;
+                    string gamemessage = (string)pakket.GetValue("gameMessage");
                     if (gamemessage == "Win")
                     {
                         //TODO: show win message
@@ -215,10 +218,11 @@ namespace UNO
                     }
                     else if(gamemessage == "left Game")
                     {
-                        if (!user.name.Equals(gm.Username))
+                        string username = (string) pakket.GetValue("Username");
+                        if (!user.name.Equals(username))
                         {
-                            mainWindowViewModel.RemovePlayer(gm.Username);
-                            GameScreenViewModel.RemovePlayer(gm.Username);
+                            mainWindowViewModel.RemovePlayer(username);
+                            GameScreenViewModel.RemovePlayer(username);
                         }
                     }
 
@@ -284,6 +288,7 @@ namespace UNO
         public void resetToLogin()
         { 
             lobby = "";
+            sendQuitGame();
         }
 
         //
