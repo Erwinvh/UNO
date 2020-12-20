@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UNO"
         mc:Ignorable="d"
-        Title="GameScreen" Height="1080" Width="1920" WindowState="Maximized" WindowStyle="None" ResizeMode="CanMinimize">
+        Title="GameScreen" Height="1080" Width="1920" WindowState="Maximized" WindowStyle="None" ResizeMode="CanMinimize"
+        Closing="window_Close">
     
     
     <Grid>
@@ -58,7 +59,7 @@
 
         <Canvas  Width="240" Height="360" Grid.Column="2" Margin="120,177,120,172" Grid.RowSpan="2" AutomationProperties.Name="Pile">
             <Canvas.Background>
-                <ImageBrush  ImageSource="{Binding SourcePath}"/>
+                <ImageBrush  ImageSource="{Binding imageSource}"/>
             </Canvas.Background>
         </Canvas>
 

@@ -69,5 +69,17 @@ namespace UNO
         {
             NetworkCommunication.disconnect();
         }
+
+        internal void ReturnToLogin()
+        {
+            gameScreen.Hide();
+            loginScreen.Show();
+        }
+
+        internal void ReturnToLobby()
+        {
+            main.Show();
+            gameScreen.Hide();
+        }
     }
 }

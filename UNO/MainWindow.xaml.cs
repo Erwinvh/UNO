@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 
 namespace UNO
 {
@@ -16,6 +17,11 @@ namespace UNO
             MainWindowViewModel mainWindowViewModel = new MainWindowViewModel(app, networkCommunication);
             this.DataContext = mainWindowViewModel;
             
+        }
+
+        public void window_Close(object sender, CancelEventArgs e)
+        {
+            App.Current.Shutdown();
         }
 
     }

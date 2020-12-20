@@ -19,6 +19,7 @@ namespace UNO
         public ICommand ChatCommand { get; set; }
         public ICommand DeckCommand { get; set; }
         public ICommand MoveCommand { get; set; }
+        public ICommand quitGameCommand { get; set; }
         readonly App app;
         private NetworkCommunication networkCommunication;
         public string imageSource { get; set; }
@@ -28,20 +29,22 @@ namespace UNO
         public event PropertyChangedEventHandler PropertyChanged;
         public bool isPlaying { get; set; }
         public Card pileCard { get; set; }
+        public bool gameover = false;
 
         public GameScreenViewModel(App app, NetworkCommunication networkCommunication)
         {
             this.networkCommunication = networkCommunication;
             this.networkCommunication.GameScreenViewModel = this;
-            //this.LeaveLobbyCommand = new RelayCommand(() => { LeaveLobby(); }); 
-            //this.ReadyPlayerCommand = new RelayCommand(() => { LaunchGame(); }); 
             this.app = app;
+            isPlaying = false;
             hand = new AsyncObservableCollection<Card>();
             ChatCollection = new AsyncObservableCollection<ChatMessage>();
             userList = new AsyncObservableCollection<User>();
             ChatCommand = new RelayCommand(() => { sendChatmessage(Message); });
             DeckCommand = new RelayCommand(() => { pullFromDeck(); });
             MoveCommand = new RelayCommand<string>(sendMove);
+            quitGameCommand = new RelayCommand(quitGame);
+            imageSource = $@"/Cards/uno.png";
         }
 
         // 
@@ -54,22 +57,28 @@ namespace UNO
                 networkCommunication.sendEmptyMove();
             }
         }
- public void addCardToUI(Card card)
+        public void addCardToUI(Card card)
         {
-            //TODO: add card to UI 
             Debug.WriteLine("Card added" + card.number);
             hand.Add(card);
         }
 
         public void removeCardFromUI(Card card)
         {
-            //TODO: try via index or via card 
-            hand.Remove(card);
+            
+            foreach (Card ownedCard in hand)
+            {
+                if (ownedCard.SourcePath == card.SourcePath)
+                {
+                    hand.Remove(ownedCard);
+                    return;
+                }
+            }
         }
 
         public void changePileCard(Card card)
         {
-            //TODO: change pileCard 
+            imageSource = card.SourcePath;
         }
        
 
@@ -97,16 +106,28 @@ namespace UNO
 
         internal void AddMultpileCards(List<Card> added)
         {
-            foreach (Card card in added)
+            if (added!=null)
             {
-                addCardToUI(card);
+                foreach (Card card in added)
+                {
+                    addCardToUI(card);
+                }
             }
+            
+        }
+
+
+        public void clearData()
+        {
+            hand.Clear();
+            ChatCollection.Clear();
         }
 
         internal void EmptyHand()
         {
-            hand.Clear();
+            
         }
+
 
         //
         //--Chat related--
@@ -127,7 +148,19 @@ namespace UNO
             this.Message = "";
         }
 
-
+        public void quitGame()
+        {
+            clearData();
+            if (gameover)
+            {
+                networkCommunication.resetToLobby();
+                app.ReturnToLobby();
+                return;
+            }
+            //TODO: leave to login
+            networkCommunication.resetToLogin();
+            app.ReturnToLogin();
+        }
 
         //
         //--Other UI elements related--

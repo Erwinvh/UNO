@@ -131,6 +131,10 @@ namespace Server
                     string gamemessage = (string) pakket.GetValue("gameMessage");
                     switch (gamemessage)
                     {
+                        case "game finished":
+
+
+                            break;
                         case "left Game":
                             if (username == user.name)
                             {
@@ -144,6 +148,7 @@ namespace Server
                                 Console.WriteLine(username + " player has left");
                                 //TODO: something here? pop up mabye?
 
+
                             }
                             break;
                         case "ToggleReady":
@@ -152,14 +157,19 @@ namespace Server
                             Broadcast(JsonSerializer.Serialize(GM));
                             break;
                     }
-                    //TODO: switch case: startgame, left game, ready
+                    //TODO: switch case:  left game, ready
 
                     break;
                 case MessageID.MOVE:
-                    JObject JCard = (JObject)pakket.GetValue("playedCard");
-                    Card playedCard = JCard.ToObject<Card>();
+                    MoveMessage MM = pakket.ToObject<MoveMessage>();
                     MoveMessage move;
-                    if (!lobby.gameSession.checkMove(playedCard))
+                    Card playedCard = MM.playedCard;
+                    if (playedCard != null)
+                    {
+                        Console.WriteLine("This card has been spotted in the movemessage:" + playedCard.SourcePath);
+                    }
+
+                    if (!lobby.gameSession.checkMove(playedCard, MM.UserName))
                     {
                         move = new MoveMessage(lobby.gameSession.drawCard(user.name), user.name, true);
                     }
@@ -167,8 +177,10 @@ namespace Server
                     {
                         move = new MoveMessage(playedCard, user.name, false);
                     }
+
                     sendSystemMessage(101);
                     Broadcast(JsonSerializer.Serialize(move));
+                    Console.WriteLine("This Card has been spotted to send to the user:" + move.playedCard.SourcePath + "With void: " + move.isVoidMove);
                     Broadcast(JsonSerializer.Serialize(lobby.gameSession.GeneratePlayerStatusMessage()));
                     if (lobby.gameSession.Checkhand())
                     {
@@ -191,6 +203,7 @@ namespace Server
                             Broadcast(JsonSerializer.Serialize(gm));
                     }
                     TurnMessage turn = lobby.gameSession.GenerateTurn(false);
+                    Console.WriteLine("This is the turn message: " + JsonSerializer.Serialize(turn));
                     Broadcast(JsonSerializer.Serialize(turn));
                     if (turn.addedCards.Count>0)
                     {
@@ -198,11 +211,13 @@ namespace Server
                         Broadcast(JsonSerializer.Serialize(forfeitTurnMessage));
                     }
                     break;
-                case MessageID.SYSTEM:
-                    int code = (int)pakket.GetValue("status");
-                    if (code == 200)
-                    {
-                        disconnect();
+                case MessageID.SYSTEM:
+                    SystemMessage SM = pakket.ToObject<SystemMessage>();
+                    int code = SM.status;Console.WriteLine("We are removing a player from the lobby" + code);
+                    if (code == 200)
+                    {
+                        
+                        disconnect();
                     }
                     break;
             }
@@ -305,10 +320,24 @@ namespace Server
             stream.Flush();
         }
 
-        public void disconnect()
+        public void disconnect()
         {
-            server.UserDictionary.Remove(user.name);
-            //lobby.playerQuit(user.name);
+            server.UserDictionary.Remove(user.name);
+            Lobby enteredLobby = null;
+            foreach (Lobby lobby in server.lobbyList)
+            {
+                if (lobby.getUser(user.name)!=null)
+                {
+                    enteredLobby = lobby;
+                    
+                }
+            }
+            if (enteredLobby!=null)
+            {
+                enteredLobby.playerQuit(user.name);
+            }
+
+            
             running = false;
         }
     }

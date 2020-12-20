@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Windows;
@@ -27,6 +28,9 @@ namespace UNO
             this.DataContext = loginViewModel;
             InitializeComponent();
         }
-
+        public void window_Close(object sender, CancelEventArgs e)
+        {
+            App.Current.Shutdown();
+        }
     }
 }

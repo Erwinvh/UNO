@@ -59,6 +59,12 @@ namespace Server
                 deck.Add(new Card(Card.Color.RED,i));
                 }
             }
+            //TODO: implement check black cards
+         //  for (int i = 0; i < 4; i++)
+         //  {
+         //      deck.Add(new Card(Card.Color.BLACK, 13));
+         //      deck.Add(new Card(Card.Color.BLACK, 14));
+         //  }
         }
 
         public void beginGame()
@@ -70,10 +76,13 @@ namespace Server
                 {
                    addedCards.Add(drawCard(player.name));
                 }
+
+                server.getClient(player.name).hand = addedCards;
                 TurnMessage initialTurn = new TurnMessage("System", player.name, addedCards);
                 server.SendClientMessage(player.name, JsonSerializer.Serialize(initialTurn));
                 List<Card> pileCard = new List<Card>();
                 pileCard.Add(lastPlayedCard);
+                Console.WriteLine("This card is tyhe first pile card: "+lastPlayedCard.SourcePath);
                 TurnMessage nullifierTurn = new TurnMessage(player.name, "System", pileCard);
                 server.SendClientMessage(player.name, JsonSerializer.Serialize(nullifierTurn));
                 
@@ -91,37 +100,51 @@ namespace Server
             return GM;
         }
 
-        public TurnMessage firstTurn()
+        public void firstTurn()
         {
-            TurnMessage firstTurn = new TurnMessage("System", players[0].name, null);
-            return firstTurn;
+            TurnMessage firstTurn = new TurnMessage("System", players[0].name, new List<Card>());
+            lobby.sendToAll(JsonSerializer.Serialize(firstTurn));
         }
 
-        public bool checkMove(Card playedCard)
+        public bool compareHandToCard(List<Card> hand, Card card)
+        {
+            foreach (Card ownedCard in hand)
+            {
+                if (ownedCard.number == card.number)
+                {
+                    if (ownedCard.color == Card.Color.BLACK || ownedCard.color == card.color)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool checkMove(Card playedCard, string name)
         {
             if (playedCard==null)
             {
                 return false;
             }
-            else
+            if (playedCard.color==lastPlayedCard.color||playedCard.number==lastPlayedCard.number)
             {
-                if (playedCard.color==lastPlayedCard.color||playedCard.number==lastPlayedCard.number)
+                Console.WriteLine("Check move check message WE ARE HERE!!!" + server.getClient(name).hand.Count);
+                
+                if (!compareHandToCard(server.getClient(name).hand,playedCard))
                 {
-                    if (!server.getClient(players[index].name).hand.Contains(playedCard))
-                    {
-                        return false;
-                    }
-                    server.getClient(players[index].name).hand.Remove(playedCard);
-                    lastPlayedCard = playedCard;
-                    if (playedCard.number==Wild||playedCard.number==Plus4)
-                    {
-                        playedCard.setColor(Card.Color.BLACK);
-                    }
-                    pile.Add(playedCard);
-                    return true;
+                     return false;
                 }
-                return false; 
-            }
+                server.getClient(players[index].name).hand.Remove(playedCard);
+                lastPlayedCard = playedCard;
+                if (playedCard.number==Wild||playedCard.number==Plus4)
+                {
+                    playedCard.setColor(Card.Color.BLACK);
+                }
+                pile.Add(playedCard);
+                return true;
+            } 
+            return false;
         }
 
         public Card drawCard(string player)
@@ -169,13 +192,23 @@ namespace Server
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            addCards.Add(drawCard(players[index + 1].name));
+                            int person = index + 1;
+                            if (person >= players.Count)
+                            {
+                                person = 0;
+                            }
+                            addCards.Add(drawCard(players[person].name));
                         }
                         return addCards;
                     }
                     for (int i = 0; i < 2; i++)
                     {
-                        addCards.Add(drawCard(players[index - 1].name));
+                        int person = index - 1;
+                        if (person <0)
+                        {
+                            person = players.Count-1;
+                        }
+                        addCards.Add(drawCard(players[person].name));
                     }
                     return addCards;
                 case Plus4:
@@ -255,9 +288,13 @@ namespace Server
   {
       string lastplayer = players[index].name;
       List<Card> addedCards = new List<Card>();
-      if (isForfeitTurn!)
+      if (!isForfeitTurn)
       {
-          addedCards = ProcessEffect();
+          List<Card> newCards = ProcessEffect();
+          if (newCards!=null)
+          {
+              addedCards = newCards;
+          }
       }
        
             nextTurn();
@@ -270,10 +307,18 @@ namespace Server
             if (isClockwise)
             {
                 index++;
+                if (index >= players.Count)
+                {
+                    index = 0;
+                }
             }
             else
             {
                 index--;
+                if (index<0)
+                {
+                    index = players.Count - 1;
+                }
             }
         }
     }

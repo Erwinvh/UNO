@@ -31,7 +31,7 @@ namespace UNO
         public bool? isLobbyReady { get; set; }
 
         //--LobbyRelated--
-        private string lobby;
+        public string lobby;
         public List<Score> Scoreboard { get; set; }
         public MainWindowViewModel mainWindowViewModel { get; set; }
 
@@ -58,9 +58,8 @@ namespace UNO
         {
             SystemMessage sm = new SystemMessage(200);
             write(JsonSerializer.Serialize(sm));
+            Debug.WriteLine("Final statement");
             running = false;
-            //stream.Close();
-            //client.Close();
         }
 
         public void updateUI()
@@ -129,21 +128,23 @@ namespace UNO
             switch (messageId)
             {
                 case MessageID.MOVE:
-                    bool isvoid = (bool)pakket.GetValue("isVoidMove");
+                    
                     MoveMessage MM = pakket.ToObject<MoveMessage>();
+                    bool isvoid = MM.isVoidMove;
                     Card cardmoved = MM.playedCard;
-                    if (messageUsername == user.name)
+                    if (MM.UserName == user.name)
                     {
-                        if (!isvoid)
+                        if (isvoid)
                         {
-                            GameScreenViewModel.removeCardFromUI(cardmoved);
-                            GameScreenViewModel.editPlayerCardsInfo(user.name, -1);
+                            GameScreenViewModel.addCardToUI(cardmoved);
+                            GameScreenViewModel.editPlayerCardsInfo(user.name, 1);
+                           
                         }
                         else
                         {
-                            GameScreenViewModel.addCardToUI(cardmoved);
-                            //add 1 card to user
-                            GameScreenViewModel.editPlayerCardsInfo(user.name, 1);
+                            GameScreenViewModel.removeCardFromUI(cardmoved);
+                            GameScreenViewModel.editPlayerCardsInfo(user.name, -1);
+                            GameScreenViewModel.changePileCard(cardmoved);
                         }
                     }
                     else
@@ -151,10 +152,10 @@ namespace UNO
                         if (!isvoid)
                         {
                             GameScreenViewModel.changePileCard(cardmoved);
-                            GameScreenViewModel.editPlayerCardsInfo(messageUsername,-1);
+                            GameScreenViewModel.editPlayerCardsInfo(MM.UserName,-1);
                             break;
                         }
-                        GameScreenViewModel.editPlayerCardsInfo(messageUsername, 1);
+                        GameScreenViewModel.editPlayerCardsInfo(MM.UserName, 1);
                     }
                     break;
                 case MessageID.SYSTEM:
@@ -223,25 +224,26 @@ namespace UNO
                     //TODO: Implement TURN
                     string name = (string) pakket.GetValue("nextplayer");
                     GameScreenViewModel.changePlayerPlayingName(name);
+                    TurnMessage turn = pakket.ToObject<TurnMessage>();
                     Debug.WriteLine(user.name + " and " + name);
                     if (user.name.Equals(name))
                     {Debug.WriteLine("HERE!! ");
-                        TurnMessage turn = pakket.ToObject<TurnMessage>();
                         List<Card> added = turn.addedCards;
                         GameScreenViewModel.AddMultpileCards(added);
                         GameScreenViewModel.setPlayingState(true);
                         GameScreenViewModel.editPlayerCardsInfo(name, added.Count);
                     }
-                    else if (user.name == (string)pakket.GetValue("lastPlayer"))
+                    else if (name == "System")
                     {
                         GameScreenViewModel.setPlayingState(false);
-                        if (name.Equals("System"))
-                        {
-                            TurnMessage turn = pakket.ToObject<TurnMessage>();
-                            List<Card> pile = turn.addedCards;
-                            Card startPileCard = pile[0];
-                            GameScreenViewModel.changePileCard(startPileCard);
-                        }
+                        List<Card> pile = turn.addedCards;
+                        Card startPileCard = pile[0];
+                        Debug.WriteLine("This is the first pilecard:"+startPileCard.SourcePath);
+                        GameScreenViewModel.changePileCard(startPileCard);
+                    }
+                    else
+                    {
+                        GameScreenViewModel.setPlayingState(false);
                     }
                     break;
                 case MessageID.LOBBY:
@@ -264,6 +266,16 @@ namespace UNO
             }
         }
 
+
+        public void resetToLobby()
+        {
+           
+        }
+
+        public void resetToLogin()
+        { 
+            lobby = "";
+        }
 
         //
         //--Outgoing data--
@@ -305,7 +317,7 @@ namespace UNO
 
         public void sendEmptyMove()
         {
-            MoveMessage MS = new MoveMessage(null, user.name,false);
+            MoveMessage MS = new MoveMessage(null, user.name,true);
             write(JsonSerializer.Serialize(MS));
         }
 

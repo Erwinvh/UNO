@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,9 +27,10 @@ namespace UNO
             GameScreenViewModel gameScreenViewModel = new GameScreenViewModel(app, networkCommunication);
             this.DataContext = gameScreenViewModel;
 
-            
-            
-            
+        }
+        public void window_Close(object sender, CancelEventArgs e)
+        {
+            App.Current.Shutdown();
         }
     }
 }

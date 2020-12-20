@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Mail;
 using System.Text;
+using System.Text.Json;
 using SharedDataClasses;
 
 namespace Server
@@ -37,11 +39,32 @@ namespace Server
 
         public void playerQuit(string username)
         {
+            Console.WriteLine("We are removing a player from the lobby");
             players.Remove(getUser(username));
-            //gameSession.playerQuitCase(username);
+            if (gameSession != null)
+            {
+                gameSession.playerQuitCase(username);
+            }
             //TODO: remove all player stuff
+            if (players.Count==0)
+            {
+                server.lobbyList.Remove(this);
+                return;
+            }
 
+            foreach (User player in players)
+            {
+                LobbyMessage lm = new LobbyMessage(username, "");
+                server.SendClientMessage(player.name, JsonSerializer.Serialize(lm));
+            }
+        }
 
+        public void sendToAll(string message)
+        {
+            foreach (User player in players)
+            {
+                server.SendClientMessage(player.name, message);
+            }
         }
 
         public User getUser(string username)
