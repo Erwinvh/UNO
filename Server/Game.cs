@@ -130,10 +130,12 @@ namespace Server
             foreach (User player in players)
             {
                 GameMessage win = new GameMessage(name, "Win");
-                server.SendClientMessage(name, JsonSerializer.Serialize(win));
+                server.SendClientMessage(player.name, JsonSerializer.Serialize(win));
+
                 server.fileSystem.getScoreByUser(player.name).increaseGameAmount();
                 server.fileSystem.updateScore(server.fileSystem.getScoreByUser(player.name));
-                
+
+                Console.WriteLine(player.name + "got sent A win message!");
             }
 
             //foreach (User player in players)
@@ -225,13 +227,15 @@ namespace Server
             }
             if (playedCard.color==lastPlayedCard.color||playedCard.number==lastPlayedCard.number)
             {
-                Console.WriteLine("Check move check message WE ARE HERE!!!" + server.getClient(name).hand.Count);
                 
-                if (!compareHandToCard(server.getClient(name).hand,playedCard))
+                
+                if (!compareHandToCard(server.getClient(name).hand, playedCard))
                 {
                      return false;
                 }
                 server.getClient(players[index].name).hand.Remove(playedCard);
+                server.getClient(name).RemoveCard(playedCard.number, playedCard.color);
+                Console.WriteLine("Check move check message WE ARE HERE!!!" + players[index].name);
                 lastPlayedCard = playedCard;
                 if (playedCard.number==Wild||playedCard.number==Plus4)
                 {
