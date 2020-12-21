@@ -142,6 +142,7 @@ namespace Server
                                 Broadcast(JsonSerializer.Serialize(new GameMessage(user.name, "left Game")));
                                 //TODO: fix player in game
                                 lobby.playerQuit(user.name);
+                                server.UserDictionary[user.name] = "";
                             }
                             else
                             {
@@ -184,18 +185,7 @@ namespace Server
                     Broadcast(JsonSerializer.Serialize(lobby.gameSession.GeneratePlayerStatusMessage()));
                     if (lobby.gameSession.Checkhand())
                     {
-                            GameMessage EGM = new GameMessage(user.name, "Win");
-                            Broadcast(JsonSerializer.Serialize(EGM));
-                            foreach (Client client in server.clients)
-                            {
-                                Score score = server.fileSystem.getScoreByUser(client.user.name);
-                                score.gameAmount++;
-                                if (score.username == user.name)
-                                {
-                                    score.winAmount++;
-                                }
-                                server.fileSystem.updateScore(score);
-                            }
+                        lobby.gameSession.win(user.name);
                             server.fileSystem.WritetoFile();
                     }else if (lobby.gameSession.checkUNO())
                     {
@@ -210,10 +200,11 @@ namespace Server
                         TurnMessage forfeitTurnMessage = lobby.gameSession.GenerateTurn(true);
                         Broadcast(JsonSerializer.Serialize(forfeitTurnMessage));
                     }
-                    break;
+                    
+                    break;
                 case MessageID.SYSTEM:
                     SystemMessage SM = pakket.ToObject<SystemMessage>();
-                    int code = SM.status;Console.WriteLine("We are removing a player from the lobby" + code);
+                    int code = SM.status;                    Console.WriteLine("We are removing a player from the lobby" + code);
                     if (code == 200)
                     {
                         

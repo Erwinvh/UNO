@@ -22,6 +22,16 @@ namespace Server
             this.server = server;
         }
 
+        public void resetReady()
+        {
+            foreach(User player in players)
+            {
+                player.isReady = false;
+            }
+
+            gameSession = null;
+        }
+
         public bool startGame()
         {
             if (players.Count>=2)
@@ -40,11 +50,12 @@ namespace Server
         public void playerQuit(string username)
         {
             Console.WriteLine("We are removing a player from the lobby");
-            players.Remove(getUser(username));
+            
             if (gameSession != null)
             {
                 gameSession.playerQuitCase(username);
             }
+            players.Remove(getUser(username));
             //TODO: remove all player stuff
             if (players.Count==0)
             {

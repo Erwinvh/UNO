@@ -194,19 +194,32 @@ namespace UNO
                     string gamemessage = (string)pakket.GetValue("gameMessage");
                     if (gamemessage == "Win")
                     {
-                        //TODO: show win message
-                        GameScreenViewModel.EmptyHand();
-                        //TODO: return to the lobby
-                    }
-                    else if (gamemessage == "lose")
-                    {
-                        //TODO: show lose message
-                        GameScreenViewModel.EmptyHand();
-                        //TODO: return to the lobby
+                        GameScreenViewModel.gameOver();
+                        GameScreenViewModel.quitGame();
+
+                        mainWindowViewModel.resetReady();
+
+                        string username = (string)pakket.GetValue("Username");
+                        if (user.name.Equals(username))
+                        {
+                            //TODO: win popup
+                        } else
+                        {
+                            //TODO: lose popup
+                        }
                     }
                     else if (gamemessage == "UNO!")
                     {
-                        //TODO: display onto screen who has uno
+
+                        string username = (string)pakket.GetValue("Username");
+                        if (user.name.Equals(username))
+                        {
+                            //TODO: UNO popup
+                        }
+                        else
+                        {
+                            //TODO: other player has UNO popup
+                        }
                     }
                     else if (gamemessage == "statusUpdate")
                     {
@@ -257,6 +270,10 @@ namespace UNO
                     else
                     {
                         GameScreenViewModel.setPlayingState(false);
+                        if (turn.addedCards.Count >= 2)
+                        {
+                            GameScreenViewModel.editPlayerCardsInfo(name, turn.addedCards.Count);
+                        }
                     }
                     break;
                 case MessageID.LOBBY:

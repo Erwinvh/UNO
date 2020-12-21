@@ -9,7 +9,7 @@ namespace Server
     class Game
     {
         private List<User> players;
-        private bool isClockwise = true;
+        private bool isClockwise = false;
         private int index = 0;
         private List<Card> deck { get; set; }
         private List<Card> pile { get; set; }
@@ -49,41 +49,60 @@ namespace Server
 
         internal void playerQuitCase(string name)
         {
-            User _player = null;
+            int _player = -1;
             foreach (User player in players) {
                 if (player.name.Equals(name)) {
-                    _player = player;
+                    _player = players.IndexOf(player);
                 }
             }
 
-            if (_player != null)
+            if (_player != -1)
             {
-                players.Remove(_player);
 
-                if (_player.name.Equals(name))
+                if (players[_player].name.Equals(name))
                 {
-
+                    Console.WriteLine("LOSER");
                     List<Card> addedCards = new List<Card>();
-                    if (isClockwise) 
+                    if (isClockwise)
                     {
-                        if (index >= players.Count) 
+                        int indexCounter = index;
+                        indexCounter++;
+                        if (indexCounter >= players.Count)
                         {
-                            index = 0;
+                            indexCounter = 0;
                         }
-                        TurnMessage turn = new TurnMessage(name, players[index].name, addedCards);
-                        server.getClient(name).Broadcast(JsonSerializer.Serialize(turn));
+                        Console.WriteLine(players[indexCounter].name);
 
-                    } else
+                        foreach (User player in players)
+                        {
+                            TurnMessage turn = new TurnMessage(name, players[indexCounter].name, addedCards);
+                            server.SendClientMessage(player.name, JsonSerializer.Serialize(turn));
+                        }
+
+                    }
+                    else
                     {
+                        
                         nextTurn();
-                        TurnMessage turn = new TurnMessage(name, players[index].name, addedCards);
-                        server.getClient(name).Broadcast(JsonSerializer.Serialize(turn));
-                    }                    
+                        foreach (User player in players)
+                        {
+                            TurnMessage turn = new TurnMessage(name, players[index].name, addedCards);
+                            server.SendClientMessage(player.name, JsonSerializer.Serialize(turn));
+                        }
+                    }
                 }
+                players.Remove(players[_player]);
+                if (!isClockwise && index >= players.Count)
+                {
+                    index = players.Count - 1;
+                }
+
+                Console.WriteLine(players);
             }
 
             if (players.Count == 1) 
             {
+                Console.WriteLine("WINNEN OF NIET");
                 win(players[0].name);
             } else if(players.Count == 0)
             {
@@ -103,7 +122,25 @@ namespace Server
 
         public void win(string name)
         {
-            //TODO player wins game
+            server.fileSystem.getScoreByUser(name).increaseWinAmount();
+            server.fileSystem.updateScore(server.fileSystem.getScoreByUser(name));
+
+            lobby.resetReady();
+
+            foreach (User player in players)
+            {
+                GameMessage win = new GameMessage(name, "Win");
+                server.SendClientMessage(name, JsonSerializer.Serialize(win));
+                server.fileSystem.getScoreByUser(player.name).increaseGameAmount();
+                server.fileSystem.updateScore(server.fileSystem.getScoreByUser(player.name));
+                
+            }
+
+            //foreach (User player in players)
+            //{
+            //    ScoreMessage updatedScore = new ScoreMessage(server.fileSystem.scoreBoard.scoreboard);
+            //    server.SendClientMessage(player.name, JsonSerializer.Serialize(updatedScore));
+            //}
         }
 
         public void fillDeck()
@@ -292,7 +329,7 @@ namespace Server
         {
             if (server.getClient(players[index].name).hand.Count==0)
             {
-                //TODO: have server finish other things, dont know what right now
+                
                 return true;
             }
             return false;

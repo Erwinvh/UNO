@@ -50,6 +50,11 @@ namespace UNO
         // 
         //--Game related-- 
         // 
+        public void gameOver()
+        {
+            gameover = true;
+        }
+
         public void RemovePlayer(string username)
         {
             foreach (User u in userList)
@@ -162,11 +167,12 @@ namespace UNO
 
         public void quitGame()
         {
+            app.ReturnToLobby();
             clearData();
             if (gameover)
             {
                 networkCommunication.resetToLobby();
-                app.ReturnToLobby();
+                app.HideGame();
                 return;
             }
             //TODO: leave to login

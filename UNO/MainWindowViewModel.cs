@@ -38,6 +38,14 @@ namespace UNO
             observableUsers = new AsyncObservableCollection<User>();
         }
 
+        public void resetReady()
+        {
+            foreach(User player in observableUsers)
+            {
+                player.isReady = false;
+            }
+        }
+
         public void LeaveLobby()
         {
             networkCommunication.sendLobby(networkCommunication.user.name, "");

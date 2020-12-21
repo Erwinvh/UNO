@@ -17,6 +17,17 @@ namespace SharedDataClasses
             winAmount = wins;
             gameAmount = total;
         }
+
+        public void increaseWinAmount()
+        {
+            this.winAmount++;
+        }
+
+        public void increaseGameAmount()
+        {
+            this.gameAmount++;
+        }
+
     }
 
     public class Scoreboard
