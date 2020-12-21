@@ -167,12 +167,14 @@ namespace UNO
 
         public void quitGame()
         {
-            app.ReturnToLobby();
             clearData();
             if (gameover)
             {
                 networkCommunication.resetToLobby();
-                app.HideGame();
+                if (!app.Dispatcher.CheckAccess())
+                {
+                    app.Dispatcher.InvokeAsync(new Action(app.ReturnToLobby));
+                }
                 return;
             }
             //TODO: leave to login

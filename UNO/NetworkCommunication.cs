@@ -196,7 +196,6 @@ namespace UNO
                     {
                         GameScreenViewModel.gameOver();
                         GameScreenViewModel.quitGame();
-
                         mainWindowViewModel.resetReady();
 
                         string username = (string)pakket.GetValue("Username");
