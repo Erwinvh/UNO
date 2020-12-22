@@ -78,13 +78,9 @@ namespace UNO
 
         internal void ReturnToLobby()
         {
-            main.Show();
-            
+            gameScreen.Hide();
+                main.Show();
         }
 
-        internal void HideGame()
-        {
-            gameScreen.Hide();
-        }
     }
 }

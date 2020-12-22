@@ -167,18 +167,19 @@ namespace UNO
 
         public void quitGame()
         {
-            app.ReturnToLobby();
             clearData();
             if (gameover)
             {
                 networkCommunication.resetToLobby();
-                app.HideGame();
+                if (!app.Dispatcher.CheckAccess())
+                {
+                    app.Dispatcher.InvokeAsync(new Action(app.ReturnToLobby));
+                }
                 return;
             }
-            //TODO: leave to login
             networkCommunication.resetToLogin();
-
             app.ReturnToLogin();
+            
         }
 
         //
@@ -215,5 +216,17 @@ namespace UNO
         }
 
 
+        public void ResetCardAmounts()
+        {
+            foreach (User user in userList)
+            {
+                if (user.amountOfCards!=7)
+                {
+                    user.amountOfCards = 7;
+                }
+            }
+
+            gameover = false;
+        }
     }
 }
