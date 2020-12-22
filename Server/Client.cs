@@ -165,10 +165,10 @@ namespace Server
                     MoveMessage MM = pakket.ToObject<MoveMessage>();
                     MoveMessage move;
                     Card playedCard = MM.playedCard;
-                    if (playedCard != null)
-                    {
-                        Console.WriteLine("This card has been spotted in the movemessage:" + playedCard.SourcePath);
-                    }
+               //   if (playedCard != null)
+               //   {
+               //       Console.WriteLine("This card has been spotted in the movemessage:" + playedCard.SourcePath);
+               //   }
 
                     if (!lobby.gameSession.checkMove(playedCard, MM.UserName))
                     {
@@ -181,12 +181,14 @@ namespace Server
 
                     sendSystemMessage(101);
                     Broadcast(JsonSerializer.Serialize(move));
-                    Console.WriteLine("This Card has been spotted to send to the user:" + move.playedCard.SourcePath + "With void: " + move.isVoidMove);
+                    //Console.WriteLine("This Card has been spotted to send to the user:" + move.playedCard.SourcePath + "With void: " + move.isVoidMove);
                     Broadcast(JsonSerializer.Serialize(lobby.gameSession.GeneratePlayerStatusMessage()));
+                    
                     if (lobby.gameSession.Checkhand())
                     {
                         lobby.gameSession.win(user.name);
                             server.fileSystem.WritetoFile();
+                            break;
                     }else if (lobby.gameSession.checkUNO())
                     {
                             GameMessage gm = new GameMessage(user.name, "UNO!");
@@ -200,7 +202,13 @@ namespace Server
                         TurnMessage forfeitTurnMessage = lobby.gameSession.GenerateTurn(true);
                         Broadcast(JsonSerializer.Serialize(forfeitTurnMessage));
                     }
-                    
+
+                    Console.WriteLine("Clients hand:" + user.name);
+                    foreach (Card card in hand)
+                    {
+                        Console.WriteLine("Card:" + card.color + " " + card.number);
+                    }
+                    Console.WriteLine("      /");
                     break;
                 case MessageID.SYSTEM:
                     SystemMessage SM = pakket.ToObject<SystemMessage>();
@@ -212,8 +220,25 @@ namespace Server
                     }
                     break;
             }
-        }
-
+        }
+
+        internal void RemoveCard(int number, Card.Color color)
+        {
+            int removingindex = -1;
+            foreach (Card card in hand)
+            {
+                if (card.number == number && color == card.color)
+                {
+                    removingindex = hand.IndexOf(card);
+                }
+            }
+
+            if (removingindex!=-1)
+            {
+                hand.RemoveAt(removingindex);
+            }
+        }
+
         private void GoToLobby(string LobbyCode)
         {
             if (server.LobbyExist(LobbyCode))
