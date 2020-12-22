@@ -177,10 +177,9 @@ namespace UNO
                 }
                 return;
             }
-            //TODO: leave to login
             networkCommunication.resetToLogin();
-
             app.ReturnToLogin();
+            
         }
 
         //
@@ -217,5 +216,17 @@ namespace UNO
         }
 
 
+        public void ResetCardAmounts()
+        {
+            foreach (User user in userList)
+            {
+                if (user.amountOfCards!=7)
+                {
+                    user.amountOfCards = 7;
+                }
+            }
+
+            gameover = false;
+        }
     }
 }

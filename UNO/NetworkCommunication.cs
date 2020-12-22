@@ -265,6 +265,7 @@ namespace UNO
                         Card startPileCard = pile[0];
                         Debug.WriteLine("This is the first pilecard:"+startPileCard.SourcePath);
                         GameScreenViewModel.changePileCard(startPileCard);
+                        GameScreenViewModel.ResetCardAmounts();
                     }
                     else
                     {
@@ -305,6 +306,7 @@ namespace UNO
         { 
             lobby = "";
             sendQuitGame();
+            mainWindowViewModel.emptyObservableUsers();
         }
 
         //
