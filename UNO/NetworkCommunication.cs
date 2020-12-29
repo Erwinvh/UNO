@@ -27,7 +27,6 @@ namespace UNO
 
         //--LobbyRelated--
         public string lobby;
-        public List<Score> Scoreboard { get; set; }
         public MainWindowViewModel mainWindowViewModel { get; set; }
 
   //--Game related--
@@ -55,11 +54,6 @@ namespace UNO
             write(JsonSerializer.Serialize(sm));
             Debug.WriteLine("Final statement");
             running = false;
-        }
-
-        public void updateUI()
-        {
-            //TODO: implement method
         }
 
 
@@ -123,7 +117,6 @@ namespace UNO
             switch (messageId)
             {
                 case MessageID.MOVE:
-                    
                     MoveMessage MM = pakket.ToObject<MoveMessage>();
                     bool isvoid = MM.isVoidMove;
                     Card cardmoved = MM.playedCard;
@@ -154,7 +147,6 @@ namespace UNO
                     }
                     break;
                 case MessageID.SYSTEM:
-                    //TODO: Implement SYSTEM
                     int code = (int)pakket.GetValue("status");
                     Debug.WriteLine(code);
                     switch (code)
@@ -183,7 +175,6 @@ namespace UNO
                     }
                     break;
                 case MessageID.GAME:
-                    //TODO: Implement GAME
                     string gamemessage = (string)pakket.GetValue("gameMessage");
                     if (gamemessage == "Win")
                     {
@@ -232,13 +223,10 @@ namespace UNO
 
                     break;
                 case MessageID.CHAT:
-                    //TODO: Implement CHAT
-                    //TODO: show chatmessage on chat area
                     ChatMessage message = pakket.ToObject<ChatMessage>();
                     GameScreenViewModel.receiverChatMessage(message);
                     break;
                 case MessageID.TURN:
-                    //TODO: Implement TURN
                     string name = (string) pakket.GetValue("nextplayer");
                     GameScreenViewModel.changePlayerPlayingName(name);
                     TurnMessage turn = pakket.ToObject<TurnMessage>();
@@ -283,7 +271,7 @@ namespace UNO
                     break;
                 case MessageID.SCORE:
                     ScoreMessage score = pakket.ToObject<ScoreMessage>();
-                    Scoreboard = score.Scores;
+                    mainWindowViewModel.updateScoreboard(score.Scores);
                     break;
             }
         }

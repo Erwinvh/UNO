@@ -22,7 +22,7 @@ namespace UNO
         public LoginViewModel(App app, NetworkCommunication NetworkCommunication)
         {
             this.networkCommunication = NetworkCommunication;
-            this.networkCommunication.loginViewModel = this;
+            this.networkCommunication.LoginViewModel = this;
             this.LoginCommand = new RelayCommand(() => { CanLogin(UserName, LobbyCode); });
             this.App = app;
         }

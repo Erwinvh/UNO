@@ -23,7 +23,7 @@ namespace UNO
         public ICommand Addplayer { get; set; }
         private NetworkCommunication networkCommunication;
         public AsyncObservableCollection<User> observableUsers { get; set; }
-        public List<Score> Scoreboard { get; set; }
+        public AsyncObservableCollection<Score> Scoreboard { get; set; }
 
         public MainWindowViewModel(App app, NetworkCommunication networkCommunication)
         {
@@ -34,7 +34,7 @@ namespace UNO
             this.ReadyPlayerCommand = new RelayCommand(() => { sendReadyMessage(); });
             //this.Addplayer = new RelayCommand(() => { AddPlayer(string username); });
             this.app = app;
-            Scoreboard = this.networkCommunication.Scoreboard;
+            Scoreboard = new AsyncObservableCollection<Score>();
             observableUsers = new AsyncObservableCollection<User>();
         }
 
@@ -123,6 +123,15 @@ namespace UNO
         internal void emptyObservableUsers()
         {
             observableUsers = new AsyncObservableCollection<User>();
+        }
+
+        public void updateScoreboard(List<Score> updatedScoreboard)
+        {
+            Scoreboard.Clear();
+            foreach (Score score in updatedScoreboard)
+            {
+                Scoreboard.Add(score);
+            }
         }
     }
 }

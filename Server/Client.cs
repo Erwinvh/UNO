@@ -292,7 +292,7 @@ namespace Server
             List<Score> scores = server.fileSystem.scoreBoard.scoreboard;
             ScoreMessage ScoreMess = new ScoreMessage(scores);
             Write(JsonSerializer.Serialize(ScoreMess));
-            Console.WriteLine("sent");
+            Console.WriteLine("sentScoreboard!!!!!!" + scores.Count);
         }
 
 

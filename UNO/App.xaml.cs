@@ -34,18 +34,9 @@ namespace UNO
 
         public async Task AfterSuccesfullLogin()
         {
-            Debug.WriteLine("logincheck:" + NetworkCommunication.isLobbyReady);
-            while (NetworkCommunication.isLobbyReady == null)
-            {
-                
-                Thread.Sleep(100);
-                Debug.WriteLine("logincheck loop:" + NetworkCommunication.isLobbyReady);
-            }
-            Debug.WriteLine("logincheck:" + NetworkCommunication.isLobbyReady);
             if (NetworkCommunication.isLobbyReady ?? true)
             {
                 Debug.WriteLine("Main lobby opened");
-               // main = new MainWindow(this, NetworkCommunication);
                 main.Show();
                 loginScreen.Hide();
             }

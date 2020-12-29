@@ -105,6 +105,7 @@ namespace Server
             {
                 Console.WriteLine("WINNEN OF NIET");
                 win(players[0].name);
+                server.fileSystem.WritetoFile();
             } else if(players.Count == 0)
             {
                 //TODO Close game, no winner
@@ -139,11 +140,11 @@ namespace Server
                 Console.WriteLine(player.name + "got sent A win message!");
             }
 
-            //foreach (User player in players)
-            //{
-            //    ScoreMessage updatedScore = new ScoreMessage(server.fileSystem.scoreBoard.scoreboard);
-            //    server.SendClientMessage(player.name, JsonSerializer.Serialize(updatedScore));
-            //}
+            foreach (User player in players)
+            {
+                ScoreMessage updatedScore = new ScoreMessage(server.fileSystem.scoreBoard.scoreboard);
+                server.SendClientMessage(player.name, JsonSerializer.Serialize(updatedScore));
+            }
         }
 
         public void fillDeck()

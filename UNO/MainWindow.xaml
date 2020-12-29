@@ -37,7 +37,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <WrapPanel>
-                            <Label Content="{Binding name}"/>
+                            <Label Content="{Binding username}"/>
                             <Label Content="{Binding winAmount}"/>
                             <Label Content="{Binding gameAmount}"/>
                         </WrapPanel>
