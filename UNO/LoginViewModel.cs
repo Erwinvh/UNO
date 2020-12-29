@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows;
 
 namespace UNO
 {
@@ -15,11 +16,13 @@ namespace UNO
         User user;
         public ICommand LoginCommand { get; set; }
         private NetworkCommunication networkCommunication;
-
+        public bool isOpen = false;
+        
 
         public LoginViewModel(App app, NetworkCommunication NetworkCommunication)
         {
             this.networkCommunication = NetworkCommunication;
+            this.networkCommunication.loginViewModel = this;
             this.LoginCommand = new RelayCommand(() => { CanLogin(UserName, LobbyCode); });
             this.App = app;
         }
@@ -33,13 +36,16 @@ namespace UNO
 
             if (userName == null || lobbycode == null)
             {
+                MakeMessageBox("Name = System or\n" +
+                                "Name is empty or\n" +
+                                "Lobbycode is empty \n");
                 return output;
             }
 
             userName = RemoveWhitespace(userName);
             lobbycode = RemoveWhitespace(lobbycode);
 
-            if (!userName.Equals("System") && !userName.Equals("") && !lobbycode.Equals(""))
+            if (!userName.Equals("System") && !userName.Equals("system") &&!userName.Equals("") && !lobbycode.Equals("") && !userName.Equals("You") && !userName.Equals("you"))
             {
                 output = true;
 
@@ -48,16 +54,26 @@ namespace UNO
                 Debug.WriteLine(UserName);
 
                 Login();
+            } else
+            {
+                MakeMessageBox("Name = System or\n" +
+                                "Name is empty or\n" +
+                                "Lobbycode is empty \n");
             }
 
             return output;
+        }
+
+        public void MakeMessageBox(string message)
+        {
+            MessageBox.Show(message);
         }
 
         private void Login()
         {
             //Send username and await ack. (((SERVER)))
             networkCommunication.sendLobby(UserName, LobbyCode);
-
+            
             App.AfterSuccesfullLogin();
         }
 

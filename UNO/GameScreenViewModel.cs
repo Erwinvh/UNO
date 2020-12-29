@@ -8,6 +8,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using System.Diagnostics;
 using System.Windows.Media;
+using System.Windows;
 
 namespace UNO
 {
@@ -25,6 +26,8 @@ namespace UNO
         public string imageSource { get; set; }
         public string Message { get; set; } = "";
         public string PlayerPlayingName { get; set; }
+        public string colorPicker { get; set; } = null;
+        
 
         public event PropertyChangedEventHandler PropertyChanged;
         public bool isPlaying { get; set; }
@@ -80,16 +83,24 @@ namespace UNO
             hand.Add(card);
         }
 
-        public void removeCardFromUI(Card card)
+        public void removeCardFromUI(Card removeCard)
         {
-            
-            foreach (Card ownedCard in hand)
+            int removingindex = -1;
+            foreach (Card card in hand)
             {
-                if (ownedCard.SourcePath == card.SourcePath)
+                if (card.number == removeCard.number && removeCard.color == card.color)
                 {
-                    hand.Remove(ownedCard);
-                    return;
+                    removingindex = hand.IndexOf(card);
                 }
+                else if (card.number == removeCard.number && card.color == Card.Color.BLACK)
+                {
+                    removingindex = hand.IndexOf(card);
+                }
+            }
+
+            if (removingindex != -1)
+            {
+                hand.RemoveAt(removingindex);
             }
         }
 
@@ -112,11 +123,42 @@ namespace UNO
                     }
                 }
                 //TODO: add wildcard logic
-            //if (playedCard.number == 13 || playedCard.number == 14)
-            //{
-            //    playedCard.color = color;
-            //}
-            networkCommunication.sendMove(movedCard); 
+                if ((movedCard.number == 13 || movedCard.number == 14) && movedCard != null)
+                {
+
+                    ChooseColor chooseColor = new ChooseColor(this);
+                    chooseColor.ShowDialog();
+
+
+                    //while (chooseColor.color == null)
+                    //{
+
+                    //}
+
+                    if (colorPicker == null)
+                    {
+                        return;
+                    }
+                    
+                    switch (colorPicker)
+                    {
+                        case "red":
+                            movedCard.setColor(Card.Color.RED);
+                            MessageBox.Show(movedCard.SourcePath);
+                            break;
+                        case "blue":
+                            movedCard.setColor(Card.Color.BLUE);
+                            break;
+                        case "green":
+                            movedCard.setColor(Card.Color.GREEN);
+                            break;
+                        case "yellow":
+                            movedCard.setColor(Card.Color.YELLOW);
+                            break;
+                    }
+                    colorPicker = null;
+                }
+                networkCommunication.sendMove(movedCard); 
 
             }
         }
@@ -170,6 +212,7 @@ namespace UNO
             clearData();
             if (gameover)
             {
+                
                 networkCommunication.resetToLobby();
                 if (!app.Dispatcher.CheckAccess())
                 {
@@ -213,6 +256,11 @@ namespace UNO
                     player.amountOfCards += amount;
                 }
             }
+        }
+
+        public void MakeMessageBox(string message)
+        {
+            MessageBox.Show(message);
         }
 
 

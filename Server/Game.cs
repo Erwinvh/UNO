@@ -157,12 +157,11 @@ namespace Server
                 deck.Add(new Card(Card.Color.RED,i));
                 }
             }
-            //TODO: implement check black cards
-         //  for (int i = 0; i < 4; i++)
-         //  {
-         //      deck.Add(new Card(Card.Color.BLACK, 13));
-         //      deck.Add(new Card(Card.Color.BLACK, 14));
-         //  }
+            for (int i = 0; i < 4; i++)
+            {
+                deck.Add(new Card(Card.Color.BLACK, 13));
+                deck.Add(new Card(Card.Color.BLACK, 14));
+            }
         }
 
         public void beginGame()
@@ -225,25 +224,18 @@ namespace Server
             {
                 return false;
             }
-            if (playedCard.color==lastPlayedCard.color||playedCard.number==lastPlayedCard.number)
+            if (playedCard.color == lastPlayedCard.color || playedCard.number == lastPlayedCard.number || playedCard.number == Wild || playedCard.number == Plus4)
             {
-                
-                
                 if (!compareHandToCard(server.getClient(name).hand, playedCard))
                 {
-                     return false;
+                    return false;
                 }
-                server.getClient(players[index].name).hand.Remove(playedCard);
                 server.getClient(name).RemoveCard(playedCard.number, playedCard.color);
-                Console.WriteLine("Check move check message WE ARE HERE!!!" + players[index].name);
                 lastPlayedCard = playedCard;
-                if (playedCard.number==Wild||playedCard.number==Plus4)
-                {
-                    playedCard.setColor(Card.Color.BLACK);
-                }
+                
                 pile.Add(playedCard);
                 return true;
-            } 
+            }
             return false;
         }
 
@@ -316,13 +308,23 @@ namespace Server
                     {
                         for (int i = 0; i < 4; i++)
                         {
-                            addCards.Add(drawCard(players[index + 1].name));
+                            int person = index + 1;
+                            if (person >= players.Count)
+                            {
+                                person = 0;
+                            }
+                            addCards.Add(drawCard(players[person].name));
                         }
                         return addCards;
                     }
                     for (int i = 0; i < 4; i++)
                     {
-                        addCards.Add(drawCard(players[index - 1].name));
+                        int person = index - 1;
+                        if (person < 0)
+                        {
+                            person = players.Count - 1;
+                        }
+                        addCards.Add(drawCard(players[person].name));
                     }
                     return addCards;
             }
@@ -356,6 +358,10 @@ namespace Server
                 {
                     if (card != lastPlayedCard)
                     {
+                        if (card.number == 13 || card.number == 14)
+                        {
+                            card.setColor(Card.Color.BLACK);
+                        }
                         deck.Add(card);
                     }
                 }

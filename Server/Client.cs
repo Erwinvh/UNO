@@ -165,10 +165,10 @@ namespace Server
                     MoveMessage MM = pakket.ToObject<MoveMessage>();
                     MoveMessage move;
                     Card playedCard = MM.playedCard;
-               //   if (playedCard != null)
-               //   {
-               //       Console.WriteLine("This card has been spotted in the movemessage:" + playedCard.SourcePath);
-               //   }
+                    if (playedCard != null)
+                    {
+                        Console.WriteLine("This card has been spotted in the movemessage:" + playedCard.SourcePath);
+                    }
 
                     if (!lobby.gameSession.checkMove(playedCard, MM.UserName))
                     {
@@ -181,7 +181,7 @@ namespace Server
 
                     sendSystemMessage(101);
                     Broadcast(JsonSerializer.Serialize(move));
-                    //Console.WriteLine("This Card has been spotted to send to the user:" + move.playedCard.SourcePath + "With void: " + move.isVoidMove);
+                    Console.WriteLine("This Card has been spotted to send to the user:" + move.playedCard.SourcePath + "With void: " + move.isVoidMove);
                     Broadcast(JsonSerializer.Serialize(lobby.gameSession.GeneratePlayerStatusMessage()));
                     
                     if (lobby.gameSession.Checkhand())
@@ -228,6 +228,9 @@ namespace Server
             foreach (Card card in hand)
             {
                 if (card.number == number && color == card.color)
+                {
+                    removingindex = hand.IndexOf(card);
+                } else if (card.number == number && card.color == Card.Color.BLACK)
                 {
                     removingindex = hand.IndexOf(card);
                 }
