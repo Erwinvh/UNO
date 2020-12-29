@@ -23,6 +23,7 @@ namespace UNO
         //--GUI related--
         public App app { get; set; }
         public bool? isLobbyReady { get; set; }
+        public LoginViewModel LoginViewModel { get; set; }
 
         //--LobbyRelated--
         public string lobby;
@@ -168,17 +169,15 @@ namespace UNO
                             mainWindowViewModel.AddPlayer(user.name);
                             break;
                         case 201:
-                            Console.WriteLine("Username already in use");
+                            LoginViewModel.MakeMessageBox("Username already in use");
                             isLobbyReady = false;
-                            //TODO: show on screen via popup
                             break;
                         case 202:
-                            Console.WriteLine("Lobby full");
+                            LoginViewModel.MakeMessageBox("Lobby full");
                             isLobbyReady = false;
-                            //TODO: show on screen via popup
                             break;
                         case 203: 
-                            //game in session
+                            LoginViewModel.MakeMessageBox("Lobby is in a game");
                             isLobbyReady = false;
                             break;
                     }
@@ -188,18 +187,17 @@ namespace UNO
                     string gamemessage = (string)pakket.GetValue("gameMessage");
                     if (gamemessage == "Win")
                     {
-                        GameScreenViewModel.gameOver();
-                        GameScreenViewModel.quitGame();
-                        mainWindowViewModel.resetReady();
-
                         string username = (string)pakket.GetValue("Username");
                         if (user.name.Equals(username))
                         {
-                            //TODO: win popup
+                            GameScreenViewModel.MakeMessageBox("You Won!");
                         } else
                         {
-                            //TODO: lose popup
+                            GameScreenViewModel.MakeMessageBox("You lost!");
                         }
+                        GameScreenViewModel.gameOver();
+                        GameScreenViewModel.quitGame();
+                        mainWindowViewModel.resetReady();
                     }
                     else if (gamemessage == "UNO!")
                     {
@@ -207,11 +205,11 @@ namespace UNO
                         string username = (string)pakket.GetValue("Username");
                         if (user.name.Equals(username))
                         {
-                            //TODO: UNO popup
+                            GameScreenViewModel.MakeMessageBox("UNO!");
                         }
                         else
                         {
-                            //TODO: other player has UNO popup
+                            GameScreenViewModel.MakeMessageBox(username + " has UNO!");
                         }
                     }
                     else if (gamemessage == "statusUpdate")
