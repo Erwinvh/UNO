@@ -79,7 +79,6 @@ namespace UNO
         }
         public void addCardToUI(Card card)
         {
-            Debug.WriteLine("Card added" + card.number);
             hand.Add(card);
         }
 

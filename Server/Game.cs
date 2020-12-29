@@ -10,6 +10,7 @@ namespace Server
     {
         private List<User> players;
         private bool isClockwise = false;
+        private bool needseffect = true;
         private int index = 0;
         private List<Card> deck { get; set; }
         private List<Card> pile { get; set; }
@@ -224,14 +225,19 @@ namespace Server
             {
                 return false;
             }
-            if (playedCard.color == lastPlayedCard.color || playedCard.number == lastPlayedCard.number || playedCard.number == Wild || playedCard.number == Plus4)
-            {
+            if (playedCard.color == lastPlayedCard.color || 
+                playedCard.number == lastPlayedCard.number || 
+                playedCard.number == Wild || 
+                playedCard.number == Plus4 || 
+                lastPlayedCard.color == Card.Color.BLACK
+                ) {
                 if (!compareHandToCard(server.getClient(name).hand, playedCard))
                 {
                     return false;
                 }
                 server.getClient(name).RemoveCard(playedCard.number, playedCard.color);
                 lastPlayedCard = playedCard;
+                needseffect = true;
                 
                 pile.Add(playedCard);
                 return true;
@@ -389,13 +395,15 @@ namespace Server
   {
       string lastplayer = players[index].name;
       List<Card> addedCards = new List<Card>();
-      if (!isForfeitTurn)
+      if (!isForfeitTurn && needseffect)
       {
           List<Card> newCards = ProcessEffect();
           if (newCards!=null)
           {
               addedCards = newCards;
           }
+
+          needseffect = false;
       }
        
             nextTurn();
