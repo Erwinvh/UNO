@@ -17,7 +17,7 @@ namespace Server
         }
     }
 
-    class Server
+     public class Server
     {
         //
         //--Coms related--
