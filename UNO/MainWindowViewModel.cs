@@ -24,6 +24,7 @@ namespace UNO
         private NetworkCommunication networkCommunication;
         public AsyncObservableCollection<User> observableUsers { get; set; }
         public AsyncObservableCollection<Score> Scoreboard { get; set; }
+        public string lobbyCode { get; set; }
 
         public MainWindowViewModel(App app, NetworkCommunication networkCommunication)
         {
@@ -56,6 +57,11 @@ namespace UNO
         public void sendReadyMessage()
         {
             networkCommunication.sendToggleReady();
+        }
+
+        public void setLobbyCode(string lobbyCode)
+        {
+            this.lobbyCode = "UNO Lobby: " + lobbyCode;
         }
 
         public void readyPlayer(string username)

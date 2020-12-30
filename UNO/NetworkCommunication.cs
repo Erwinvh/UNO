@@ -159,6 +159,7 @@ namespace UNO
                             isLobbyReady = true;
                             Thread.Sleep(30);
                             mainWindowViewModel.AddPlayer(user.name);
+                            mainWindowViewModel.setLobbyCode(lobby);
                             break;
                         case 201:
                             LoginViewModel.MakeMessageBox("Username already in use");

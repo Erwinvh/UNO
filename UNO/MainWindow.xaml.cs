@@ -16,7 +16,6 @@ namespace UNO
             this.NetworkCommunication = networkCommunication;
             MainWindowViewModel mainWindowViewModel = new MainWindowViewModel(app, networkCommunication);
             this.DataContext = mainWindowViewModel;
-            
         }
 
         public void window_Close(object sender, CancelEventArgs e)
