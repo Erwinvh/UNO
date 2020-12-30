@@ -2,14 +2,10 @@
 using SharedDataClasses;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Text;
-using System.Windows.Automation;
 using System.Windows.Input;
-using SharedDataClasses;
 using System.Diagnostics;
-using System.Windows.Threading;
+
 
 
 namespace UNO
@@ -20,7 +16,7 @@ namespace UNO
         readonly App app;
         public ICommand ReadyPlayerCommand { get; set; }
         public ICommand LeaveLobbyCommand { get; set; }
-        public ICommand Addplayer { get; set; }
+        //public ICommand Addplayer { get; set; }
         private NetworkCommunication networkCommunication;
         public AsyncObservableCollection<User> observableUsers { get; set; }
         public AsyncObservableCollection<Score> Scoreboard { get; set; }

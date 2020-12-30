@@ -32,9 +32,9 @@ namespace UNO
 
         }
 
-        public async Task AfterSuccesfullLogin()
+        public void AfterSuccesfullLogin()
         {
-            if (NetworkCommunication.isLobbyReady ?? true)
+            if (NetworkCommunication.isLobbyReady == true)
             {
                 Debug.WriteLine("Main lobby opened");
                 main.Show();

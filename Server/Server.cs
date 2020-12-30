@@ -8,11 +8,11 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Server
 {
+    //This is the program class to start the server
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
             Server server = new Server();
         }
     }
@@ -60,6 +60,7 @@ namespace Server
             listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
         }
 
+        //This method broadcasts messages to all clients
         internal void Broadcast(string Data)
         {
             foreach (Client client in clients)
@@ -75,6 +76,7 @@ namespace Server
             Console.WriteLine("Client disconnected");
         }
 
+        //This method finds and returns a specific client based on their name
         internal Client getClient(string name)
         {
             foreach (Client client in clients)
@@ -88,6 +90,7 @@ namespace Server
             return null;
         }
 
+        //This method sends a message to a specific client
         internal void SendClientMessage(string username, string message)
         {
             foreach (Client client in clients)
@@ -100,6 +103,7 @@ namespace Server
             }
         }
 
+        //this method checks whether a username is already taken
         internal bool CheckUsers(string username)
         {
             return !UserDictionary.ContainsKey(username);
@@ -109,12 +113,14 @@ namespace Server
         //
         //--Lobby related--
         //
-        
+
+        //This method checks if the lobbycode already exists
         internal bool LobbyExist(string lobbyCode)
         {
             return GetLobbybyCode(lobbyCode) != null;
         }
 
+        //This method retrieves the lobby with the given lobbyCode
         public Lobby GetLobbybyCode(string LobbyCode)
         {
             foreach (Lobby lobby in lobbyList)
@@ -127,11 +133,13 @@ namespace Server
             return null;
         }
 
+        //This method checks whether a certain lobby is filled
         internal bool LobbyFill(string lobbyCode)
         {
-            return GetLobbybyCode(lobbyCode).players.Count>4;
+            return GetLobbybyCode(lobbyCode).players.Count>=4;
         }
 
+        //
         internal void addUsertoLobby(string username, string lobbyCode)
         {
             Lobby lobby = GetLobbybyCode(lobbyCode);
