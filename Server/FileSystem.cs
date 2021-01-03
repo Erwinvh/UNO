@@ -8,7 +8,7 @@ using static SharedDataClasses.Encryption;
 
 namespace Server
 {
-    class FileSystem
+    public class FileSystem
     {
         public Scoreboard scoreBoard { get; set; }
 

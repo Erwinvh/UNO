@@ -6,8 +6,8 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Server
 {
-    class Game
-    {
+     public class Game
+     {
         private List<User> players;
         private bool isClockwise = false;
         private bool needseffect = true;

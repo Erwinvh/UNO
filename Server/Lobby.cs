@@ -7,7 +7,7 @@ using SharedDataClasses;
 
 namespace Server
 {
-    class Lobby
+    public class Lobby
     {
         public string LobbyCode { get; set; }
         public List<User> players { get; set; }

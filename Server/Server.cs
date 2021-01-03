@@ -8,16 +8,16 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Server
 {
+    //This is the program class to start the server
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
             Server server = new Server();
         }
     }
 
-    class Server
+     public class Server
     {
         //
         //--Coms related--
@@ -153,7 +153,7 @@ namespace Server
         //
         internal bool LobbyFill(string lobbyCode)
         {
-            return GetLobbybyCode(lobbyCode).players.Count>4;
+            return GetLobbybyCode(lobbyCode).players.Count>=4;
         }
 
         //

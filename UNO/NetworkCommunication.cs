@@ -9,6 +9,7 @@ using SharedDataClasses;
 using static SharedDataClasses.Encryption;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace UNO
 {
@@ -22,11 +23,11 @@ namespace UNO
 
         //--GUI related--
         public App app { get; set; }
-        public bool? isLobbyReady { get; set; }
+        public bool? isLobbyReady { get; set; } = null;
         public LoginViewModel LoginViewModel { get; set; }
 
         //--LobbyRelated--
-        public string lobby;
+        public string lobby { get; set; } = "";
         public MainWindowViewModel mainWindowViewModel { get; set; }
 
   //--Game related--
@@ -107,7 +108,7 @@ namespace UNO
                 pakket = JObject.Parse(packetData);
                 Enum.TryParse((string)pakket.GetValue("MessageID"), out messageId);
                 messageUsername = (string)pakket.GetValue("Username");
-            } catch (Exception e)
+            } catch (Exception)
             {
                 pakket = null;
                 messageId = MessageID.VOID;
@@ -320,6 +321,15 @@ namespace UNO
             }
             LobbyMessage LM = new LobbyMessage(user.name, LobbyCode);
             write(JsonSerializer.Serialize(LM));
+        }
+
+        public async Task untilLobbyReadyAsync()
+        {
+            while (isLobbyReady == null)
+            {
+                await Task.Delay(25);
+            }
+
         }
 
         public void sendToggleReady()

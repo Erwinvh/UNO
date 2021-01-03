@@ -29,7 +29,7 @@ namespace SharedDataClasses
     }
 
 
-    class TurnMessage
+    public class TurnMessage
     {
         //This message dictates the turning of the player turn, who was the last player and who is the next. and it also adds the 
         public MessageID MessageID { get; }
@@ -49,7 +49,7 @@ namespace SharedDataClasses
 
     }
 
-    class MoveMessage
+    public class MoveMessage
     {
         public MessageID MessageID { get; }
         public Card playedCard { get; set; }
@@ -66,7 +66,7 @@ namespace SharedDataClasses
         }
     }
 
-    class GameMessage
+    public class GameMessage
     {
         public MessageID MessageID { get; }
 
@@ -106,7 +106,7 @@ namespace SharedDataClasses
         }
     }
 
-    class SystemMessage
+    public class SystemMessage
     {
         public MessageID MessageID { get; }
 
@@ -119,7 +119,7 @@ namespace SharedDataClasses
         }
     }
 
-    class LobbyMessage
+    public class LobbyMessage
     {
         public MessageID MessageID { get; }
 

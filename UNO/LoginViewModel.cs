@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows;
 
@@ -53,7 +54,7 @@ namespace UNO
 
                 Debug.WriteLine(UserName);
 
-                Login();
+                LoginAsync();
             } else
             {
                 MakeMessageBox("Name = System or\n" +
@@ -69,11 +70,11 @@ namespace UNO
             MessageBox.Show(message);
         }
 
-        private void Login()
+        private async Task LoginAsync()
         {
             //Send username and await ack. (((SERVER)))
             networkCommunication.sendLobby(UserName, LobbyCode);
-            
+            await networkCommunication.untilLobbyReadyAsync();
             App.AfterSuccesfullLogin();
         }
 

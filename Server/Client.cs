@@ -9,7 +9,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Server
 {
-    class Client
+    public class Client
     {
         private TcpClient tcpClient;
         private NetworkStream stream;
@@ -53,8 +53,10 @@ namespace Server
                 Console.WriteLine("Received packet!");                  //TODO!!
                 handleData(Encoding.ASCII.GetString(bytebuffer));
             }
-            stream.Close();
-            tcpClient.Close();
+            stream.Close();
+
+            tcpClient.Close();
+
             server.clients.Remove(this);
         }
 
@@ -208,7 +210,8 @@ namespace Server
                 // Case handles system messages
                 case MessageID.SYSTEM:
                     SystemMessage SM = pakket.ToObject<SystemMessage>();
-                    int code = SM.status;                    Console.WriteLine("We are removing a player from the lobby" + code);
+                    int code = SM.status;
+                    Console.WriteLine("We are removing a player from the lobby" + code);
                     if (code == 200)
                     {
                         
@@ -296,17 +299,28 @@ namespace Server
             ScoreMessage ScoreMess = new ScoreMessage(scores);
             Write(JsonSerializer.Serialize(ScoreMess));
             Console.WriteLine("sentScoreboard!!!!!!" + scores.Count);
-        }
-
-
-
-
-
-
-        //
-        //--Outgoing data
-        //
-
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //
+
+        //--Outgoing data
+
+        //
+
+
+
         public void Broadcast(string pakketdata)
         {
             foreach (User player in lobby.players)
@@ -348,7 +362,8 @@ namespace Server
         }
 
         public void disconnect()
-        {
+        {
+
             server.UserDictionary.Remove(user.name);
             Lobby enteredLobby = null;
             foreach (Lobby lobby in server.lobbyList)
@@ -365,7 +380,8 @@ namespace Server
             }
 
             
-            running = false;
+            running = false;
+
         }
     }
 }
