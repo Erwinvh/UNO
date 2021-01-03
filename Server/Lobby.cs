@@ -22,6 +22,9 @@ namespace Server
             this.server = server;
         }
 
+        //
+        //--Resets player's ready state to false--
+        //
         public void resetReady()
         {
             foreach(User player in players)
@@ -32,6 +35,9 @@ namespace Server
             gameSession = null;
         }
 
+        //
+        //--Starts a new game from lobby--
+        //
         public bool startGame()
         {
             if (players.Count>=2)
@@ -42,11 +48,17 @@ namespace Server
             return false;
         }
 
+        //
+        //--Adds player to the lobby--
+        //
         public void playerJoin(string username)
         {
             players.Add(new User(username));
         }
 
+        //
+        //--Handles a player quitting the lobby--
+        //
         public void playerQuit(string username)
         {
             Console.WriteLine("We are removing a player from the lobby");
@@ -56,7 +68,6 @@ namespace Server
                 gameSession.playerQuitCase(username);
             }
             players.Remove(getUser(username));
-            //TODO: remove all player stuff
             if (players.Count==0)
             {
                 server.lobbyList.Remove(this);
@@ -70,6 +81,9 @@ namespace Server
             }
         }
 
+        //
+        //--Send a message to all clients currentle joined in the lobby--
+        //
         public void sendToAll(string message)
         {
             foreach (User player in players)
@@ -78,6 +92,9 @@ namespace Server
             }
         }
 
+        //
+        //--Gets a user from the lobbys player list--
+        //
         public User getUser(string username)
         {
             foreach (User user in players)
@@ -91,6 +108,9 @@ namespace Server
             return null;
         }
 
+        //
+        //--Sets a player's ready state to true--
+        //
         public void ToggleReady(string name)
         {
             getUser(name).isReady = !getUser(name).isReady;
@@ -100,6 +120,9 @@ namespace Server
             }
         }
 
+        //
+        //--Checks if all players in lobby are ready--
+        //
         private bool checkGameReady()
         {
             foreach (User player in players)

@@ -48,9 +48,13 @@ namespace Server
             firstTurn();
         }
 
+        //
+        //--Handles player quitting the game--
+        //
         internal void playerQuitCase(string name)
         {
             int _player = -1;
+
             foreach (User player in players) {
                 if (player.name.Equals(name)) {
                     _player = players.IndexOf(player);
@@ -59,7 +63,6 @@ namespace Server
 
             if (_player != -1)
             {
-
                 if (players[_player].name.Equals(name))
                 {
                     Console.WriteLine("LOSER");
@@ -79,11 +82,9 @@ namespace Server
                             TurnMessage turn = new TurnMessage(name, players[indexCounter].name, addedCards);
                             server.SendClientMessage(player.name, JsonSerializer.Serialize(turn));
                         }
-
                     }
                     else
                     {
-                        
                         nextTurn();
                         foreach (User player in players)
                         {
@@ -97,16 +98,14 @@ namespace Server
                 {
                     index = players.Count - 1;
                 }
-
-                Console.WriteLine(players);
             }
 
             if (players.Count == 1) 
             {
-                Console.WriteLine("WINNEN OF NIET");
                 win(players[0].name);
                 server.fileSystem.WritetoFile();
-            } else if(players.Count == 0)
+            } 
+            else if(players.Count == 0)
             {
                 //TODO Close game, no winner
             }
@@ -122,6 +121,9 @@ namespace Server
             
         }
 
+        //
+        //--Handles player winning a game--
+        //
         public void win(string name)
         {
             server.fileSystem.getScoreByUser(name).increaseWinAmount();
@@ -147,6 +149,9 @@ namespace Server
             }
         }
 
+        //
+        //--Fills the games card deck with the correct cards--
+        //
         public void fillDeck()
         {
             for (int i = 0; i < 13; i++)
@@ -166,6 +171,9 @@ namespace Server
             }
         }
 
+        //
+        //--Handles the event of a game beginning--
+        //
         public void beginGame()
         {            
             foreach (User player in players)
@@ -188,6 +196,9 @@ namespace Server
             }
         }
 
+        //
+        //--Generates a gamemessage for the status of a player--
+        //
         public GameMessage GeneratePlayerStatusMessage()
         {
             Dictionary<string, int> statusses = new Dictionary<string, int>();
@@ -199,12 +210,18 @@ namespace Server
             return GM;
         }
 
+        //
+        //--Used for the first turn in the game--
+        //
         public void firstTurn()
         {
             TurnMessage firstTurn = new TurnMessage("System", players[0].name, new List<Card>());
             lobby.sendToAll(JsonSerializer.Serialize(firstTurn));
         }
 
+        //
+        //--Compares cards for possible turns--
+        //
         public bool compareHandToCard(List<Card> hand, Card card)
         {
             foreach (Card ownedCard in hand)
@@ -220,6 +237,9 @@ namespace Server
             return false;
         }
 
+        //
+        //--Checks if a player's move is valid--
+        //
         public bool checkMove(Card playedCard, string name)
         {
             if (playedCard==null)
@@ -246,30 +266,23 @@ namespace Server
             return false;
         }
 
+        //
+        //--Handles drawing a card from the deck when a player is not able to play a valid moive--
+        //
         public Card drawCard(string player)
         {
             DeckCheck();
             Card drawedCard = deck[deck.Count - 1];
             deck.Remove(drawedCard);
-            Console.WriteLine("Hand:"+server.getClient(player).hand);
+            Console.WriteLine("Hand:" + server.getClient(player).hand);
             server.getClient(player).hand.Add(drawedCard);
             Shuffle();
             return drawedCard;
         }
 
-        private int findIndexofPLayer(string player)
-        {
-            foreach (User gameplayer in players)
-            {
-                if (gameplayer.name==player)
-                {
-                    return players.IndexOf(gameplayer);
-                }
-            }
-
-            return -1;
-        }
-
+        //
+        //--Handles the effects of special cards eg. plus 2/4 and skip turn--
+        //
         public List<Card> ProcessEffect()
         {
             List<Card> addCards = new List<Card>();
@@ -338,6 +351,9 @@ namespace Server
             return null;
         }
 
+        //
+        //--Checks a player's hand for card count--
+        //
         internal bool Checkhand()
         {
             if (server.getClient(players[index].name).hand.Count==0)
@@ -348,6 +364,9 @@ namespace Server
             return false;
         }
 
+        //
+        //--Checks if a player has UNO(1 card left in hand)--
+        //
         internal bool checkUNO()
         {
             if (server.getClient(players[index].name).hand.Count == 1)
@@ -357,7 +376,11 @@ namespace Server
             return false;
         }
 
-      public void DeckCheck()
+        //
+        //--Checks the amount of cards left in the deck. If deck is empty it will shuffle the pile
+        //  and put the played cards of the pile back in the deck--
+        //
+        public void DeckCheck()
         {
             if (deck.Count==0)
             {
@@ -378,6 +401,9 @@ namespace Server
             }
         }
 
+        //
+        //--Shuffles the deck--
+        //
         public void Shuffle()
         {
             Random RN = new Random();
@@ -392,26 +418,30 @@ namespace Server
             }
         }
 
-  internal TurnMessage GenerateTurn(bool isForfeitTurn)
-  {
-      string lastplayer = players[index].name;
-      List<Card> addedCards = new List<Card>();
-      if (!isForfeitTurn && needseffect)
-      {
-          List<Card> newCards = ProcessEffect();
-          if (newCards!=null)
-          {
-              addedCards = newCards;
-          }
-
-          needseffect = false;
-      }
-       
+        //
+        //--Processes a turn--
+        //
+        internal TurnMessage GenerateTurn(bool isForfeitTurn)
+        {
+            string lastplayer = players[index].name;
+            List<Card> addedCards = new List<Card>();
+            if (!isForfeitTurn && needseffect)
+            {
+                List<Card> newCards = ProcessEffect();
+                if (newCards!=null)
+                {
+                    addedCards = newCards;
+                }
+                needseffect = false;
+            }
             nextTurn();
             TurnMessage turn = new TurnMessage(lastplayer,players[index].name, addedCards);
             return turn;
-  }
+        }
 
+        //
+        //--Handles the games next turn, checks whether the game is going clockwise or anti-clokcwise--
+        //
         public void nextTurn()
         {
             if (isClockwise)

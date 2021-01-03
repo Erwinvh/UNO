@@ -49,9 +49,7 @@ namespace Server
             string filepath = GetFilePath(true);
             if (!File.Exists(filepath))
             {
-                //File.Create(filepath);
                 File.WriteAllText(filepath, JsonSerializer.Serialize(new Scoreboard(new List<Score>())));
-               // File.
             }
         }
 
