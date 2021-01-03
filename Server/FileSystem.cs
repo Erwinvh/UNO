@@ -15,11 +15,11 @@ namespace Server
         public FileSystem()
         {
             ReadFile();
-            //scoreBoard = new Scoreboard(new List<Score>());
-            //scoreBoard.scoreboard.Add(new Score("tester", 10,20));
-            //WritetoFile();
         }
 
+        //
+        //--Writes scoreboard to local file--
+        //
         public void WritetoFile()
         {
             directoryExists();
@@ -28,6 +28,9 @@ namespace Server
             File.WriteAllText(path,data);
         }
 
+        //
+        //--Checks if directory exists, if not it creates the desired directory.--
+        //
         public void directoryExists()
         {
             string Dirpath = GetFilePath(false);
@@ -38,6 +41,9 @@ namespace Server
             FileExists();
         }
 
+        //
+        //--Checks if file already exists, if not it writes to a new file--
+        //
         public void FileExists()
         {
             string filepath = GetFilePath(true);
@@ -49,6 +55,9 @@ namespace Server
             }
         }
 
+        //
+        //--Gets the filepath for writing players scoreboard--
+        //
         public string GetFilePath(bool isFile)
         {
             string path;
@@ -66,6 +75,9 @@ namespace Server
             return path;
         }
 
+        //
+        //--Reads the local scoreboard file--
+        //
         public void ReadFile()
         {
             directoryExists();
@@ -77,6 +89,9 @@ namespace Server
             
         }
 
+        //
+        //--Returns the score for one user only.--
+        //
         public Score getScoreByUser(string Username)
         {
             foreach (Score score in scoreBoard.scoreboard)
@@ -91,6 +106,9 @@ namespace Server
             return addedScore;
         }
 
+        //
+        //--Updates the scoreboard--
+        //
         public void updateScore(Score Upadatescore)
         {
             foreach (Score score in scoreBoard.scoreboard)
