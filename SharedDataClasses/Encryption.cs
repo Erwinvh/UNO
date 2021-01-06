@@ -8,6 +8,10 @@ namespace SharedDataClasses
     {
         private static byte[] key = { 1, 2, 3, 4, 5, 6, 7, 8 };
         private static byte[] iv = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+        //
+        //--Encodes a string text
+        //
         public static string Encode(string text)
         {
             SymmetricAlgorithm algorithm = DES.Create();
@@ -17,6 +21,9 @@ namespace SharedDataClasses
             return Convert.ToBase64String(outputBuffer);
         }
 
+        //
+        //--Decodes an encoded string
+        //
         public static string Decode(string text)
         {
             SymmetricAlgorithm algorithm = DES.Create();

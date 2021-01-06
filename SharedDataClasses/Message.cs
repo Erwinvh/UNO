@@ -14,7 +14,6 @@ namespace SharedDataClasses
         SCORE,
         VOID
     }
-
    
     public class ScoreMessage
     {
@@ -27,7 +26,6 @@ namespace SharedDataClasses
         }
 
     }
-
 
     public class TurnMessage
     {
