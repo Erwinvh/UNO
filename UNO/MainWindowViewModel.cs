@@ -35,6 +35,9 @@ namespace UNO
             observableUsers = new AsyncObservableCollection<User>();
         }
 
+        //
+        //--resets the ready status of every player--
+        //
         public void resetReady()
         {
             foreach(User player in observableUsers)
@@ -43,6 +46,9 @@ namespace UNO
             }
         }
 
+        //
+        //--starts the proccess to leave the lobby--
+        //
         public void LeaveLobby()
         {
             networkCommunication.sendLobby(networkCommunication.user.name, "");
@@ -60,6 +66,9 @@ namespace UNO
             this.lobbyCode = "UNO Lobby: " + lobbyCode;
         }
 
+        //
+        //--readies a player by name and checks if everybody is ready--
+        //
         public void readyPlayer(string username)
         {
             foreach (User player in observableUsers)

@@ -31,6 +31,9 @@ namespace UNO
         public string UserName { get; set; }
         public string LobbyCode { get; set; }
 
+        //
+        //--checks whethger the player can login on certain usernames and lobbycodes--
+        //
         private bool CanLogin(string userName, string lobbycode)
         {
             bool output = false;

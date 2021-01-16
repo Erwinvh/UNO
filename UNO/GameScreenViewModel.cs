@@ -77,6 +77,7 @@ namespace UNO
                 networkCommunication.sendEmptyMove();
             }
         }
+
         public void addCardToUI(Card card)
         {
             hand.Add(card);
@@ -107,8 +108,10 @@ namespace UNO
         {
             imageSource = card.SourcePath;
         }
-       
 
+        //
+        //--prepares the correct move to be sent to the server--
+        //
         public void sendMove(string playedCard)
         {
             if (isPlaying)
@@ -121,18 +124,12 @@ namespace UNO
                         movedCard = card;
                     }
                 }
-                //TODO: add wildcard logic
+
                 if ((movedCard.number == 13 || movedCard.number == 14) && movedCard != null)
                 {
 
                     ChooseColor chooseColor = new ChooseColor(this);
                     chooseColor.ShowDialog();
-
-
-                    //while (chooseColor.color == null)
-                    //{
-
-                    //}
 
                     if (colorPicker == null)
                     {
@@ -174,18 +171,12 @@ namespace UNO
             
         }
 
-
         public void clearData()
         {
             hand.Clear();
             ChatCollection.Clear();
         }
-
-        internal void EmptyHand()
-        {
-            
-        }
-
+        
 
         //
         //--Chat related--

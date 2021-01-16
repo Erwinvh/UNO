@@ -96,6 +96,10 @@ namespace UNO
             client.Close();
         }
 
+
+        //
+        //--Handles data coming into the client application--
+        //
         private void handleData(string packetData)
         {
             Debug.WriteLine($"Got a packet: {packetData}");
@@ -117,6 +121,7 @@ namespace UNO
 
             switch (messageId)
             {
+                //Case handles a move sent by the server which dictates the cards that are sent to the pile or player that is playing
                 case MessageID.MOVE:
                     MoveMessage MM = pakket.ToObject<MoveMessage>();
                     bool isvoid = MM.isVoidMove;
@@ -147,6 +152,7 @@ namespace UNO
                         GameScreenViewModel.editPlayerCardsInfo(MM.UserName, 1);
                     }
                     break;
+                //Case handles system messages for logging in
                 case MessageID.SYSTEM:
                     int code = (int)pakket.GetValue("status");
                     Debug.WriteLine(code);
@@ -176,6 +182,7 @@ namespace UNO
                             break;
                     }
                     break;
+                //Case handles game messages such as win statements, Uno and players leaving
                 case MessageID.GAME:
                     string gamemessage = (string)pakket.GetValue("gameMessage");
                     if (gamemessage == "Win")
@@ -224,10 +231,12 @@ namespace UNO
                     }
 
                     break;
+                //Case handles chatmessages in a room
                 case MessageID.CHAT:
                     ChatMessage message = pakket.ToObject<ChatMessage>();
                     GameScreenViewModel.receiverChatMessage(message);
                     break;
+                //Case handles turns in a single game and dictates the cards that need to be added
                 case MessageID.TURN:
                     string name = (string) pakket.GetValue("nextplayer");
                     GameScreenViewModel.changePlayerPlayingName(name);
@@ -258,6 +267,7 @@ namespace UNO
                         }
                     }
                     break;
+                //Case handles lobby messages for new players and leaving players
                 case MessageID.LOBBY:
                     string lobbyCode = (string)pakket.GetValue("LobbyCode");
                     if (lobbyCode != lobby)
@@ -271,6 +281,7 @@ namespace UNO
                         mainWindowViewModel.AddPlayer(messageUsername);
                     }
                     break;
+                //Case handles the scores and scoreboard
                 case MessageID.SCORE:
                     ScoreMessage score = pakket.ToObject<ScoreMessage>();
                     mainWindowViewModel.updateScoreboard(score.Scores);
@@ -278,12 +289,17 @@ namespace UNO
             }
         }
 
-
+        //
+        //--empty method for possible extension in the program when the application needs to be reset to the lobby--
+        //
         public void resetToLobby()
         {
            
         }
 
+        //
+        //--resets the values so the player can easily start a different lobby--
+        //
         public void resetToLogin()
         { 
             lobby = "";
@@ -294,7 +310,6 @@ namespace UNO
         //
         //--Outgoing data--
         //
-
         public void sendMove(Card playedCard)
         {
             MoveMessage MM = new MoveMessage(playedCard, user.name, false); 
