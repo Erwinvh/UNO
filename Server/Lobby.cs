@@ -123,7 +123,7 @@ namespace Server
         //
         //--Checks if all players in lobby are ready--
         //
-        private bool checkGameReady()
+        public bool checkGameReady()
         {
             foreach (User player in players)
             {
