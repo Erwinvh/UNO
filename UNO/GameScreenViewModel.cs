@@ -8,39 +8,68 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using System.Diagnostics;
 using System.Windows.Media;
+using System.Windows;
 
 namespace UNO
 {
     public class GameScreenViewModel : INotifyPropertyChanged
     {
         public AsyncObservableCollection<Card> hand { get; set; }
+        public AsyncObservableCollection<ChatMessage> ChatCollection { get; set; }
+        public AsyncObservableCollection<User> userList { get; set; }
         public ICommand ChatCommand { get; set; }
         public ICommand DeckCommand { get; set; }
         public ICommand MoveCommand { get; set; }
+        public ICommand quitGameCommand { get; set; }
         readonly App app;
         private NetworkCommunication networkCommunication;
         public string imageSource { get; set; }
+        public string Message { get; set; } = "";
+        public string PlayerPlayingName { get; set; }
+        public string colorPicker { get; set; } = null;
+        
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public string Message { set; get; }
         public bool isPlaying { get; set; }
+        public Card pileCard { get; set; }
+        public bool gameover = false;
 
         public GameScreenViewModel(App app, NetworkCommunication networkCommunication)
         {
             this.networkCommunication = networkCommunication;
             this.networkCommunication.GameScreenViewModel = this;
-            //this.LeaveLobbyCommand = new RelayCommand(() => { LeaveLobby(); }); 
-            //this.LaunchGameCommand = new RelayCommand(() => { LaunchGame(); }); 
             this.app = app;
+            isPlaying = false;
             hand = new AsyncObservableCollection<Card>();
+            ChatCollection = new AsyncObservableCollection<ChatMessage>();
+            userList = new AsyncObservableCollection<User>();
             ChatCommand = new RelayCommand(() => { sendChatmessage(Message); });
             DeckCommand = new RelayCommand(() => { pullFromDeck(); });
             MoveCommand = new RelayCommand<string>(sendMove);
+            quitGameCommand = new RelayCommand(quitGame);
+            imageSource = $@"/Cards/uno.png";
         }
 
         // 
-        //--UI to Netrwerkcom-- 
+        //--Game related-- 
         // 
+        public void gameOver()
+        {
+            gameover = true;
+        }
+
+        public void RemovePlayer(string username)
+        {
+            foreach (User u in userList)
+            {
+                if (u.name.Equals(username))
+                {
+                    userList.Remove(u);
+                    return;
+                }
+            }
+        }
+
         public void pullFromDeck()
         {
             if (isPlaying)
@@ -49,11 +78,40 @@ namespace UNO
             }
         }
 
-        public void sendChatmessage(string message)
+        public void addCardToUI(Card card)
         {
-            networkCommunication.sendChat(message);
+            hand.Add(card);
         }
 
+        public void removeCardFromUI(Card removeCard)
+        {
+            int removingindex = -1;
+            foreach (Card card in hand)
+            {
+                if (card.number == removeCard.number && removeCard.color == card.color)
+                {
+                    removingindex = hand.IndexOf(card);
+                }
+                else if (card.number == removeCard.number && card.color == Card.Color.BLACK)
+                {
+                    removingindex = hand.IndexOf(card);
+                }
+            }
+
+            if (removingindex != -1)
+            {
+                hand.RemoveAt(removingindex);
+            }
+        }
+
+        public void changePileCard(Card card)
+        {
+            imageSource = card.SourcePath;
+        }
+
+        //
+        //--prepares the correct move to be sent to the server--
+        //
         public void sendMove(string playedCard)
         {
             if (isPlaying)
@@ -66,54 +124,147 @@ namespace UNO
                         movedCard = card;
                     }
                 }
-                //TODO: add wildcard logic
-            //if (playedCard.number == 13 || playedCard.number == 14)
-            //{
-            //    playedCard.color = color;
-            //}
-            networkCommunication.sendMove(movedCard); 
+
+                if ((movedCard.number == 13 || movedCard.number == 14) && movedCard != null)
+                {
+
+                    ChooseColor chooseColor = new ChooseColor(this);
+                    chooseColor.ShowDialog();
+
+                    if (colorPicker == null)
+                    {
+                        return;
+                    }
+                    
+                    switch (colorPicker)
+                    {
+                        case "red":
+                            movedCard.setColor(Card.Color.RED);
+                            MessageBox.Show(movedCard.SourcePath);
+                            break;
+                        case "blue":
+                            movedCard.setColor(Card.Color.BLUE);
+                            break;
+                        case "green":
+                            movedCard.setColor(Card.Color.GREEN);
+                            break;
+                        case "yellow":
+                            movedCard.setColor(Card.Color.YELLOW);
+                            break;
+                    }
+                    colorPicker = null;
+                }
+                networkCommunication.sendMove(movedCard); 
 
             }
         }
 
-
-        // 
-        //--netwerkcom to UI-- 
-        // 
-        public void addCardToUI(Card card)
+        internal void AddMultpileCards(List<Card> added)
         {
-            //TODO: add card to UI 
-            Debug.WriteLine("Card added" + card.number);
-            hand.Add(card);
+            if (added!=null)
+            {
+                foreach (Card card in added)
+                {
+                    addCardToUI(card);
+                }
+            }
+            
         }
 
-        public void removeCardFromUI(Card card)
+        public void clearData()
         {
-            //TODO: try via index or via card 
-            hand.Remove(card);
+            hand.Clear();
+            ChatCollection.Clear();
+        }
+        
+
+        //
+        //--Chat related--
+        //
+
+ public void receiverChatMessage(ChatMessage message)
+        {
+            if (message.sender == networkCommunication.user.name)
+            {
+                message.sender = null;
+            }
+            ChatCollection.Add(message);
         }
 
-        public void changePileCard(Card card)
+        public void sendChatmessage(string Message)
         {
-            //TODO: change pileCard 
+            networkCommunication.sendChat(Message);
+            this.Message = "";
+        }
+
+        public void quitGame()
+        {
+            clearData();
+            if (gameover)
+            {
+                
+                networkCommunication.resetToLobby();
+                if (!app.Dispatcher.CheckAccess())
+                {
+                    app.Dispatcher.InvokeAsync(new Action(app.ReturnToLobby));
+                }
+                return;
+            }
+            networkCommunication.resetToLogin();
+            app.ReturnToLogin();
+            
+        }
+
+        //
+        //--Other UI elements related--
+        //
+        public void transportPlayers(AsyncObservableCollection<User> players)
+        {
+            userList = players;
         }
 
         public void setPlayingState(bool isPlaying)
         {
             this.isPlaying = isPlaying;
         }
-
-        internal void AddMultpileCards(List<Card> added)
+        
+        public void changePlayerPlayingName(string name)
         {
-            foreach (Card card in added)
+            if (name == networkCommunication.user.name)
             {
-                addCardToUI(card);
+                name = "You";
+            }
+            PlayerPlayingName = name;
+        }
+
+        public void editPlayerCardsInfo(string name, int amount)
+        {
+            foreach (User player in userList)
+            {
+                if (player.name == name)
+                {
+                    player.amountOfCards += amount;
+                }
             }
         }
 
-        internal void EmptyHand()
+        public void MakeMessageBox(string message)
         {
-            hand.Clear();
+            MessageBox.Show(message);
+        }
+
+
+        public void ResetCardAmounts()
+        {
+            foreach (User user in userList)
+            {
+                if (user.amountOfCards!=7)
+                {
+                    user.amountOfCards = 7;
+                }
+            }
+
+            gameover = false;
         }
     }
 }

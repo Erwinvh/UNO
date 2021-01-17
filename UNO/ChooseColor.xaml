@@ -1,0 +1,35 @@
+﻿<Window x:Class="UNO.ChooseColor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UNO"
+        mc:Ignorable="d"
+        Title="ChooseColor" Height="200" Width="400">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Button Name="RED" Content="RED!" Click="RED_Click" Grid.Column="0" Grid.Row="0" Background="#FFF02828" BorderBrush="{x:Null}" FontFamily="Arial Black"/>
+
+        <Button Name="BLUE" Content="BLUE!" Click="BLUE_Click" Grid.Column="0" Grid.Row="1" FontFamily="Arial Black" Background="#FF2867F0" BorderBrush="{x:Null}">
+            
+        </Button>
+        
+        <Button Name="YELLOW" Content="YELLOW!" Click="YELLOW_Click" Grid.Column="1" Grid.Row="0" FontWeight="Normal" FontFamily="Arial Black" Background="#FFF0F032" BorderBrush="{x:Null}">
+
+        </Button>
+
+        <Button Name="GREEN" Content="GREEN!" Click="GREEN_Click" Grid.Column="1" Grid.Row="1" FontFamily="Arial Black" Background="#FF34F168" BorderBrush="{x:Null}">
+
+        </Button>
+
+    </Grid>
+</Window>

@@ -32,20 +32,11 @@ namespace UNO
 
         }
 
-        public async Task AfterSuccesfullLogin()
+        public void AfterSuccesfullLogin()
         {
-            Debug.WriteLine("logincheck:" + NetworkCommunication.isLobbyReady);
-            while (NetworkCommunication.isLobbyReady == null)
-            {
-                
-                Thread.Sleep(100);
-                Debug.WriteLine("logincheck loop:" + NetworkCommunication.isLobbyReady);
-            }
-            Debug.WriteLine("logincheck:" + NetworkCommunication.isLobbyReady);
-            if (NetworkCommunication.isLobbyReady ?? true)
+            if (NetworkCommunication.isLobbyReady == true)
             {
                 Debug.WriteLine("Main lobby opened");
-               // main = new MainWindow(this, NetworkCommunication);
                 main.Show();
                 loginScreen.Hide();
             }
@@ -69,5 +60,18 @@ namespace UNO
         {
             NetworkCommunication.disconnect();
         }
+
+        internal void ReturnToLogin()
+        {
+            gameScreen.Hide();
+            loginScreen.Show();
+        }
+
+        internal void ReturnToLobby()
+        {
+            gameScreen.Hide();
+                main.Show();
+        }
+
     }
 }

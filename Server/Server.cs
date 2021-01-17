@@ -8,16 +8,16 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Server
 {
+    //This is the program class to start the server
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
             Server server = new Server();
         }
     }
 
-    class Server
+     public class Server
     {
         //
         //--Coms related--
@@ -50,16 +50,20 @@ namespace Server
             
         }
 
-        //The callback method to connect the clients
+        //
+        //--The callback method to connect the clients--
+        //
         private void OnConnect(IAsyncResult ar)
         {
-            //TODO: if in game user has to wait to connect, seperate list of clients
             var tcpClient = listener.EndAcceptTcpClient(ar);
             Console.WriteLine($"Client connected from {tcpClient.Client.RemoteEndPoint}");
             clients.Add(new Client(tcpClient, this));
             listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
         }
 
+        //
+        //--Broadcasts to all clients connected--
+        //
         internal void Broadcast(string Data)
         {
             foreach (Client client in clients)
@@ -68,13 +72,18 @@ namespace Server
             }
         }
 
-        //The disconnect method for the clients
+        //
+        //--The disconnect method for the clients--
+        //
         internal void Disconnect(Client client)
         {
             clients.Remove(client);
             Console.WriteLine("Client disconnected");
         }
 
+        //
+        //--Gets a client from all clients connected--
+        //
         internal Client getClient(string name)
         {
             foreach (Client client in clients)
@@ -88,17 +97,24 @@ namespace Server
             return null;
         }
 
+        //
+        //--Sends message to one connected client--
+        //
         internal void SendClientMessage(string username, string message)
         {
             foreach (Client client in clients)
             {
                 if (client.user.name == username)
                 {
+                    Console.WriteLine("were here with player:" + username);
                     client.Write(message);
                 }
             }
         }
 
+        //
+        //--Checks for a user--
+        //
         internal bool CheckUsers(string username)
         {
             return !UserDictionary.ContainsKey(username);
@@ -108,12 +124,18 @@ namespace Server
         //
         //--Lobby related--
         //
-        
+
+        //
+        //--Checks if lobby(code) exists--
+        //
         internal bool LobbyExist(string lobbyCode)
         {
             return GetLobbybyCode(lobbyCode) != null;
         }
 
+        //
+        //--Gets a lobby using the lobbycode--
+        //
         public Lobby GetLobbybyCode(string LobbyCode)
         {
             foreach (Lobby lobby in lobbyList)
@@ -126,11 +148,17 @@ namespace Server
             return null;
         }
 
+        //
+        //--Fills the lobby--
+        //
         internal bool LobbyFill(string lobbyCode)
         {
-            return GetLobbybyCode(lobbyCode).players.Count>4;
+            return GetLobbybyCode(lobbyCode).players.Count>=4;
         }
 
+        //
+        //--Adds a user to the lobby--
+        //
         internal void addUsertoLobby(string username, string lobbyCode)
         {
             Lobby lobby = GetLobbybyCode(lobbyCode);

@@ -9,7 +9,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Server
 {
-    class Client
+    public class Client
     {
         private TcpClient tcpClient;
         private NetworkStream stream;
@@ -42,7 +42,6 @@ namespace Server
                 for (int i = 0; i < 2; i++)
                 {
                     lengtebytes[i] = (byte)stream.ReadByte();
-                    //Console.WriteLine(lengtebytes[i]);
                 }
                 uint bytes = BitConverter.ToUInt16(lengtebytes);
                 bytes += 2;
@@ -50,16 +49,20 @@ namespace Server
                 for (int i = 0; i < bytes; i++)
                 {
                     bytebuffer[i] = (byte)stream.ReadByte();
-                    //Console.WriteLine(bytebuffer[i]);
                 }
-                Console.WriteLine("Received packet");
+                Console.WriteLine("Received packet!");                  //TODO!!
                 handleData(Encoding.ASCII.GetString(bytebuffer));
             }
             stream.Close();
+
             tcpClient.Close();
+
             server.clients.Remove(this);
         }
 
+        //
+        //--Handles data coming into the server--
+        //
         public void handleData(string packetData)
         {
             Console.WriteLine($"Got a packet: {packetData}");
@@ -70,12 +73,10 @@ namespace Server
             Console.WriteLine("username has been set to:" + username + " for message" + messageId.ToString());
             switch (messageId)
             {
+                //Case handles player wants to enter a lobby
                 case MessageID.LOBBY:
-                    
                     string LobbyCode = (string) pakket.GetValue("LobbyCode");
 
-                        //Leaving old lobby to loginscreen
-                        //Only sent to Client bij own app
                     if (LobbyCode == "")
                     {
                         foreach (User player in lobby.players)
@@ -90,6 +91,7 @@ namespace Server
                         Console.WriteLine("Amount of remaining players = " + lobby.players.Count);
                         lobby.playerQuit(user.name);
                         Console.WriteLine("Amount of remaining players = " + lobby.players.Count);
+
                         if (lobby.players.Count == 0)
                         {
                             server.lobbyList.Remove(lobby);
@@ -98,13 +100,13 @@ namespace Server
                         server.UserDictionary[user.name] = "";
                         break;
                     }
-                    //left old lobby to join new lobby
+
                     if (user.name == username && server.UserDictionary[username].Equals(""))
                     {
                         GoToLobby(LobbyCode);
                         break;
                     }
-                    //name change and name add
+                    
                     if (server.CheckUsers(username))
                     {
                         if (user.name!=null)
@@ -122,49 +124,56 @@ namespace Server
                         sendSystemMessage(201);
                     }
                     break;
+
+                //Case handles player sends a chatmessage.
                 case MessageID.CHAT:
                     Broadcast(packetData);
                     sendSystemMessage(103);
                     break;
+                
+                //Case handles player setting state to ready or leaving the game
                 case MessageID.GAME:
                     string gamemessage = (string) pakket.GetValue("gameMessage");
                     switch (gamemessage)
                     {
+                        //case "game finished":
+                        //    //TODO Game finished? Fill case?
+                        //    break;
+
+                        //Case handles player leaving game
                         case "left Game":
                             if (username == user.name)
                             {
                                 Broadcast(JsonSerializer.Serialize(new GameMessage(user.name, "left Game")));
-                                //TODO: fix player in game
-                                lobby.gameSession.playerQuitCase(user.name);
-                                server.Disconnect(this);
+                                lobby.playerQuit(user.name);
+                                server.UserDictionary[user.name] = "";
                             }
                             else
                             {
                                 Console.WriteLine(username + " player has left");
-                                
-
                             }
                             break;
+
+                        //Case handles player setting state to ready
                         case "ToggleReady":
-
-                                GameMessage GM = new GameMessage(user.name, "ToggleReady");
-                                Broadcast(JsonSerializer.Serialize(GM));
-                            
-
-                            break;
-                        case "Game begin":
-                            server.GetLobbybyCode(lobby.LobbyCode).startGame();
-
+                            lobby.ToggleReady(user.name);
+                            GameMessage GM = new GameMessage(user.name, "ToggleReady");
+                            Broadcast(JsonSerializer.Serialize(GM));
                             break;
                     }
-                    //TODO: switch case: startgame, left game, ready
-
                     break;
+
+                //Case handles players move in-game.
                 case MessageID.MOVE:
-                    JObject JCard = (JObject)pakket.GetValue("playedCard");
-                    Card playedCard = JCard.ToObject<Card>();
+                    MoveMessage MM = pakket.ToObject<MoveMessage>();
                     MoveMessage move;
-                    if (!lobby.gameSession.checkMove(playedCard))
+                    Card playedCard = MM.playedCard;
+                    if (playedCard != null)
+                    {
+                        Console.WriteLine("This card has been spotted in the movemessage:" + playedCard.SourcePath);
+                    }
+
+                    if (!lobby.gameSession.checkMove(playedCard, MM.UserName))
                     {
                         move = new MoveMessage(lobby.gameSession.drawCard(user.name), user.name, true);
                     }
@@ -172,30 +181,24 @@ namespace Server
                     {
                         move = new MoveMessage(playedCard, user.name, false);
                     }
+
                     sendSystemMessage(101);
                     Broadcast(JsonSerializer.Serialize(move));
+                    Console.WriteLine("This Card has been spotted to send to the user:" + move.playedCard.SourcePath + "With void: " + move.isVoidMove);
                     Broadcast(JsonSerializer.Serialize(lobby.gameSession.GeneratePlayerStatusMessage()));
+                    
                     if (lobby.gameSession.Checkhand())
                     {
-                            GameMessage EGM = new GameMessage(user.name, "Win");
-                            Broadcast(JsonSerializer.Serialize(EGM));
-                            foreach (Client client in server.clients)
-                            {
-                                Score score = server.fileSystem.getScoreByUser(client.user.name);
-                                score.gameAmount++;
-                                if (score.username == user.name)
-                                {
-                                    score.winAmount++;
-                                }
-                                server.fileSystem.updateScore(score);
-                            }
+                        lobby.gameSession.win(user.name);
                             server.fileSystem.WritetoFile();
+                            break;
                     }else if (lobby.gameSession.checkUNO())
                     {
                             GameMessage gm = new GameMessage(user.name, "UNO!");
                             Broadcast(JsonSerializer.Serialize(gm));
                     }
                     TurnMessage turn = lobby.gameSession.GenerateTurn(false);
+                    Console.WriteLine("This is the turn message: " + JsonSerializer.Serialize(turn));
                     Broadcast(JsonSerializer.Serialize(turn));
                     if (turn.addedCards.Count>0)
                     {
@@ -203,23 +206,60 @@ namespace Server
                         Broadcast(JsonSerializer.Serialize(forfeitTurnMessage));
                     }
                     break;
+
+                // Case handles system messages
                 case MessageID.SYSTEM:
-                    int code = (int)pakket.GetValue("status");
+                    SystemMessage SM = pakket.ToObject<SystemMessage>();
+                    int code = SM.status;
+                    Console.WriteLine("We are removing a player from the lobby" + code);
                     if (code == 200)
                     {
+                        
                         disconnect();
                     }
                     break;
             }
         }
 
-        private void GoToLobby(string LobbyCode)
+        //
+        //--When called this method will take care of removing a card from a players hand--
+        //  Method takes a cards number and color to identify
+        //
+        internal void RemoveCard(int number, Card.Color color)
+        {
+            int removingindex = -1;
+            foreach (Card card in hand)
+            {
+                if (card.number == number && color == card.color)
+                {
+                    removingindex = hand.IndexOf(card);
+                } else if (card.number == number && card.color == Card.Color.BLACK)
+                {
+                    removingindex = hand.IndexOf(card);
+                }
+            }
+
+            if (removingindex!=-1)
+            {
+                hand.RemoveAt(removingindex);
+            }
+        }
+
+        //
+        //--This method handles players entering lobby using the lobby used to login--
+        //
+        private void GoToLobby(string LobbyCode)
         {
             if (server.LobbyExist(LobbyCode))
             {
                 if (server.LobbyFill(LobbyCode))
                 {
                     sendSystemMessage(202);
+                    return;
+                }
+                if (server.GetLobbybyCode(LobbyCode).gameSession != null)
+                {
+                    sendSystemMessage(203);
                     return;
                 }
                 server.addUsertoLobby(user.name, LobbyCode);
@@ -233,26 +273,32 @@ namespace Server
                     {
                         Console.WriteLine("Player sent to new player: " + user.name);
                         LobbyMessage LM = new LobbyMessage(user.name, lobby.LobbyCode);
+
                         Write(JsonSerializer.Serialize(LM));
+                        if (user.isReady)
+                        {
+                            GameMessage GM = new GameMessage(user.name, "ToggleReady");
+                            Write(JsonSerializer.Serialize(GM));
+                        }
                     }
                 }
                 return;
-            }
-
-            //Lobby is new
+            }
             lobby = new Lobby(user.name, LobbyCode, server);
             server.lobbyList.Add(lobby);
             sendScoreboard();
             sendSystemMessage(102);
             Console.WriteLine("LOBBY OK!");
-        }
-
+        }
+        //
+        //--Handles sending players' scoreboard to the game, so that this can be displayed to other players!--
+        //
         private void sendScoreboard()
         {
             List<Score> scores = server.fileSystem.scoreBoard.scoreboard;
             ScoreMessage ScoreMess = new ScoreMessage(scores);
             Write(JsonSerializer.Serialize(ScoreMess));
-            Console.WriteLine("sent");
+            Console.WriteLine("sentScoreboard!!!!!!" + scores.Count);
         }
 
 
@@ -260,15 +306,27 @@ namespace Server
 
 
 
+
+
+
+
+
+
+
         //
+
         //--Outgoing data
+
         //
+
+
 
         public void Broadcast(string pakketdata)
         {
             foreach (User player in lobby.players)
             {
                 server.SendClientMessage(player.name, pakketdata);
+                
             }
         }
         
@@ -305,9 +363,25 @@ namespace Server
 
         public void disconnect()
         {
+
             server.UserDictionary.Remove(user.name);
-            //lobby.playerQuit(user.name);
+            Lobby enteredLobby = null;
+            foreach (Lobby lobby in server.lobbyList)
+            {
+                if (lobby.getUser(user.name)!=null)
+                {
+                    enteredLobby = lobby;
+                    
+                }
+            }
+            if (enteredLobby!=null)
+            {
+                enteredLobby.playerQuit(user.name);
+            }
+
+            
             running = false;
+
         }
     }
 }

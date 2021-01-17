@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UNO"
         mc:Ignorable="d"
-        Title="GameScreen" Height="1080" Width="1920" WindowState="Maximized" WindowStyle="None" ResizeMode="CanMinimize">
+        Title="GameScreen" WindowState="Maximized" WindowStyle="None" ResizeMode="CanMinimize"
+        Closing="window_Close">
     
     
     <Grid>
@@ -29,14 +30,23 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
+        <Label Grid.Column="1" Grid.ColumnSpan="2" Background="White" Width="600" Height="50" Content="{Binding Path= PlayerPlayingName}" ContentStringFormat="Player playing: {0}" FontSize="28" VerticalAlignment="Top" Margin="20" FontWeight="Bold" Foreground="#FFD83C3C"
+            ></Label>
         <StackPanel Orientation="Vertical" Grid.RowSpan="2">
             <Border BorderThickness="1" Grid.Column="0" Grid.Row="0" Width="170" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top" Background="White" CornerRadius="15,15,15,15" Margin="10,10,0,0">
-                <Button x:Name="LeaveLobby" Command="{Binding Path=LeaveLobbyCommand}" Content="LEAVE LOBBY" Background="{x:Null}" BorderBrush="{x:Null}" FontWeight="Bold" FontFamily="Arial Black" FontSize="20" Foreground="#FFD83C3C"/>
+                <Button x:Name="LeaveLobby" Command="{Binding Path=quitGameCommand}" Content="LEAVE LOBBY" Background="{x:Null}" BorderBrush="{x:Null}" FontWeight="Bold" FontFamily="Arial Black" FontSize="20" Foreground="#FFD83C3C"/>
             </Border>
-
+            
             <Border Height="500" Margin="12,20,0,0" CornerRadius="20,20,20,20" Background="White">
-                <ListView Background="{x:Null}" BorderBrush="{x:Null}">
-
+                <ListView ItemsSource="{Binding  userList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Background="{x:Null}" BorderBrush="{x:Null}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate >
+                            <WrapPanel>
+                                <Label Content="{Binding name}" FontSize="18" FontWeight="Bold" />
+                                <Label Content="{Binding amountOfCards}" FontSize="18" FontWeight="Bold" />
+                            </WrapPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
             </Border>
         </StackPanel>
@@ -47,24 +57,34 @@
             </Button.Background>
         </Button>
 
-        <Canvas Width="240" Height="360" Grid.Column="2" Margin="120,177,120,172" Grid.RowSpan="2">
+        <Canvas  Width="240" Height="360" Grid.Column="2" Margin="120,177,120,172" Grid.RowSpan="2" AutomationProperties.Name="Pile">
             <Canvas.Background>
-                <ImageBrush ImageSource="/Cards/blue6.png"/>
+                <ImageBrush  ImageSource="{Binding imageSource}"/>
             </Canvas.Background>
         </Canvas>
 
         <StackPanel Orientation="Vertical" Grid.RowSpan="2" Grid.Column="3" Margin="0,0,10,0">
 
             <Border Height="500" Margin="12,20,0,0" CornerRadius="20,20,20,20" Background="White">
-                <ListView x:Name="ChatBox" Background="{x:Null}" BorderBrush="{x:Null}">
-
+                <ListView ItemsSource="{Binding  ChatCollection, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" x:Name="ChatBox" Background="{x:Null}" BorderBrush="{x:Null}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate >
+                            <WrapPanel>
+                                <Label Content="{Binding sender}" FontSize="18" FontWeight="Bold" />
+                                <Label Content="{Binding message}" FontSize="18" FontWeight="Bold" />
+                            </WrapPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
             </Border>
 
             <StackPanel Orientation="Horizontal">
                 <Border CornerRadius="20,20,20,20" Background="White" Width="350" Margin="10,10,0,0">
-                    <TextBox FontSize="24" Text="{Binding Path=Message}" Background="{x:Null}" BorderBrush="{x:Null}">
-                        
+                    <TextBox FontSize="24" Text="{Binding Path= Message, UpdateSourceTrigger=PropertyChanged}" Background="{x:Null}" BorderBrush="{x:Null}" MaxLength="150">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Return" 
+                                        Command="{Binding Path= ChatCommand}"/>
+                        </TextBox.InputBindings>
                     </TextBox>
                 </Border>
 

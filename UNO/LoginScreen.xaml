@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UNO"
         mc:Ignorable="d"
-        Title="LoginScreen" Height="600" Width="1000" ResizeMode="CanMinimize">
+        Title="Login" Height="600" Width="1000" ResizeMode="CanMinimize"
+        Closing="window_Close">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>

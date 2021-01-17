@@ -8,6 +8,12 @@ using System.Threading;
 
 namespace UNO
 {
+    //
+    // Code by: Thomas Levesque, Paris
+    // Date: April 17, 2009
+    // Link to webpage: https://thomaslevesque.com/2009/04/17/wpf-binding-to-an-asynchronous-collection/
+    //
+
     public class AsyncObservableCollection<T> : ObservableCollection<T>
     {
         private SynchronizationContext _synchronizationContext = SynchronizationContext.Current;

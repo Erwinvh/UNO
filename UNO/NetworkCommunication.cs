@@ -1,20 +1,15 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Media.Animation;
 using SharedDataClasses;
 using static SharedDataClasses.Encryption;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using System.Diagnostics;
-using System.IO;
-using System.Runtime.Serialization.Json;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace UNO
 {
@@ -28,16 +23,15 @@ namespace UNO
 
         //--GUI related--
         public App app { get; set; }
-        public bool? isLobbyReady { get; set; }
+        public bool? isLobbyReady { get; set; } = null;
+        public LoginViewModel LoginViewModel { get; set; }
 
         //--LobbyRelated--
-        private string lobby;
-        public List<Score> Scoreboard { get; set; }
-
+        public string lobby { get; set; } = "";
+        public MainWindowViewModel mainWindowViewModel { get; set; }
 
   //--Game related--
-  public MainWindowViewModel mainWindowViewModel { get; set; }
-        public GameScreenViewModel GameScreenViewModel { get; set; }
+  public GameScreenViewModel GameScreenViewModel { get; set; }
 
 
         public NetworkCommunication(string hostname, int port)
@@ -59,14 +53,8 @@ namespace UNO
         {
             SystemMessage sm = new SystemMessage(200);
             write(JsonSerializer.Serialize(sm));
+            Debug.WriteLine("Final statement");
             running = false;
-            //stream.Close();
-            //client.Close();
-        }
-
-        public void updateUI()
-        {
-            //TODO: implement method
         }
 
 
@@ -108,12 +96,10 @@ namespace UNO
             client.Close();
         }
 
-        internal void SendGameStart()
-        {
-            GameMessage GM = new GameMessage(user.name, "Game begin");
-            write(JsonSerializer.Serialize(GM));
-        }
 
+        //
+        //--Handles data coming into the client application--
+        //
         private void handleData(string packetData)
         {
             Debug.WriteLine($"Got a packet: {packetData}");
@@ -126,7 +112,7 @@ namespace UNO
                 pakket = JObject.Parse(packetData);
                 Enum.TryParse((string)pakket.GetValue("MessageID"), out messageId);
                 messageUsername = (string)pakket.GetValue("Username");
-            } catch (Exception e)
+            } catch (Exception)
             {
                 pakket = null;
                 messageId = MessageID.VOID;
@@ -135,19 +121,24 @@ namespace UNO
 
             switch (messageId)
             {
+                //Case handles a move sent by the server which dictates the cards that are sent to the pile or player that is playing
                 case MessageID.MOVE:
-                    bool isvoid = (bool)pakket.GetValue("isVoidMove");
                     MoveMessage MM = pakket.ToObject<MoveMessage>();
+                    bool isvoid = MM.isVoidMove;
                     Card cardmoved = MM.playedCard;
-                    if (messageUsername == user.name)
+                    if (MM.UserName == user.name)
                     {
-                        if (!isvoid)
+                        if (isvoid)
                         {
-                            GameScreenViewModel.removeCardFromUI(cardmoved);
+                            GameScreenViewModel.addCardToUI(cardmoved);
+                            GameScreenViewModel.editPlayerCardsInfo(user.name, 1);
+                           
                         }
                         else
                         {
-                            GameScreenViewModel.addCardToUI(cardmoved);
+                            GameScreenViewModel.removeCardFromUI(cardmoved);
+                            GameScreenViewModel.editPlayerCardsInfo(user.name, -1);
+                            GameScreenViewModel.changePileCard(cardmoved);
                         }
                     }
                     else
@@ -155,11 +146,14 @@ namespace UNO
                         if (!isvoid)
                         {
                             GameScreenViewModel.changePileCard(cardmoved);
+                            GameScreenViewModel.editPlayerCardsInfo(MM.UserName,-1);
+                            break;
                         }
+                        GameScreenViewModel.editPlayerCardsInfo(MM.UserName, 1);
                     }
                     break;
+                //Case handles system messages for logging in
                 case MessageID.SYSTEM:
-                    //TODO: Implement SYSTEM
                     int code = (int)pakket.GetValue("status");
                     Debug.WriteLine(code);
                     switch (code)
@@ -172,37 +166,51 @@ namespace UNO
                             isLobbyReady = true;
                             Thread.Sleep(30);
                             mainWindowViewModel.AddPlayer(user.name);
+                            mainWindowViewModel.setLobbyCode(lobby);
                             break;
                         case 201:
-                            Console.WriteLine("Username already in use");
+                            LoginViewModel.MakeMessageBox("Username already in use");
                             isLobbyReady = false;
-                            //TODO: show on screen via popup
                             break;
                         case 202:
-                            Console.WriteLine("Lobby full");
+                            LoginViewModel.MakeMessageBox("Lobby full");
                             isLobbyReady = false;
-                            //TODO: show on screen via popup
+                            break;
+                        case 203: 
+                            LoginViewModel.MakeMessageBox("Lobby is in a game");
+                            isLobbyReady = false;
                             break;
                     }
                     break;
+                //Case handles game messages such as win statements, Uno and players leaving
                 case MessageID.GAME:
-                    //TODO: Implement GAME
                     string gamemessage = (string)pakket.GetValue("gameMessage");
                     if (gamemessage == "Win")
                     {
-                        //TODO: show win message
-                        GameScreenViewModel.EmptyHand();
-                        //TODO: return to the lobby
-                    }
-                    else if (gamemessage == "lose")
-                    {
-                        //TODO: show lose message
-                        GameScreenViewModel.EmptyHand();
-                        //TODO: return to the lobby
+                        string username = (string)pakket.GetValue("Username");
+                        if (user.name.Equals(username))
+                        {
+                            GameScreenViewModel.MakeMessageBox("You Won!");
+                        } else
+                        {
+                            GameScreenViewModel.MakeMessageBox("You lost!");
+                        }
+                        GameScreenViewModel.gameOver();
+                        GameScreenViewModel.quitGame();
+                        mainWindowViewModel.resetReady();
                     }
                     else if (gamemessage == "UNO!")
                     {
-                        //TODO: display onto screen who has uno
+
+                        string username = (string)pakket.GetValue("Username");
+                        if (user.name.Equals(username))
+                        {
+                            GameScreenViewModel.MakeMessageBox("UNO!");
+                        }
+                        else
+                        {
+                            GameScreenViewModel.MakeMessageBox(username + " has UNO!");
+                        }
                     }
                     else if (gamemessage == "statusUpdate")
                     {
@@ -210,31 +218,56 @@ namespace UNO
                     }
                     else if (gamemessage == "ToggleReady")
                     {
-                        getUserObsColl(messageUsername).isReady = !getUserObsColl(messageUsername).isReady;
+                        mainWindowViewModel.readyPlayer(messageUsername);
+                    }
+                    else if(gamemessage == "left Game")
+                    {
+                        string username = (string) pakket.GetValue("Username");
+                        if (!user.name.Equals(username))
+                        {
+                            mainWindowViewModel.RemovePlayer(username);
+                            GameScreenViewModel.RemovePlayer(username);
+                        }
                     }
 
                     break;
+                //Case handles chatmessages in a room
                 case MessageID.CHAT:
-                    //TODO: Implement CHAT
-                    //TODO: show chatmessage on chat area
-
+                    ChatMessage message = pakket.ToObject<ChatMessage>();
+                    GameScreenViewModel.receiverChatMessage(message);
                     break;
+                //Case handles turns in a single game and dictates the cards that need to be added
                 case MessageID.TURN:
-                    //TODO: Implement TURN
                     string name = (string) pakket.GetValue("nextplayer");
+                    GameScreenViewModel.changePlayerPlayingName(name);
+                    TurnMessage turn = pakket.ToObject<TurnMessage>();
                     Debug.WriteLine(user.name + " and " + name);
                     if (user.name.Equals(name))
                     {Debug.WriteLine("HERE!! ");
-                        TurnMessage turn = pakket.ToObject<TurnMessage>();
                         List<Card> added = turn.addedCards;
                         GameScreenViewModel.AddMultpileCards(added);
                         GameScreenViewModel.setPlayingState(true);
+                        GameScreenViewModel.editPlayerCardsInfo(name, added.Count);
                     }
-                    else if (user.name == (string)pakket.GetValue("lastPlayer"))
+                    else if (name == "System")
                     {
                         GameScreenViewModel.setPlayingState(false);
+                        List<Card> pile = turn.addedCards;
+                        Card startPileCard = pile[0];
+                        Debug.WriteLine("This is the first pilecard:"+startPileCard.SourcePath);
+                        GameScreenViewModel.changePileCard(startPileCard);
+                        GameScreenViewModel.ResetCardAmounts();
+                    }
+                    else
+                    {
+                        GameScreenViewModel.setPlayingState(false);
+                        if (turn.addedCards.Count >= 2)
+                        {
+                            GameScreenViewModel.editPlayerCardsInfo(name, turn.addedCards.Count);
+                        }
                     }
                     break;
+                //Case handles lobby messages for new players and leaving players
                 case MessageID.LOBBY:
                     string lobbyCode = (string)pakket.GetValue("LobbyCode");
                     if (lobbyCode != lobby)
@@ -248,30 +281,35 @@ namespace UNO
                         mainWindowViewModel.AddPlayer(messageUsername);
                     }
                     break;
+                //Case handles the scores and scoreboard
                 case MessageID.SCORE:
                     ScoreMessage score = pakket.ToObject<ScoreMessage>();
-                    Scoreboard = score.Scores;
+                    mainWindowViewModel.updateScoreboard(score.Scores);
                     break;
             }
         }
 
-        public User getUserObsColl(string username)
+        //
+        //--empty method for possible extension in the program when the application needs to be reset to the lobby--
+        //
+        public void resetToLobby()
         {
-            foreach (User player in mainWindowViewModel.observableUsers)
-            {
-                if (player.name == username)
-                {
-                    return player;
-                }
-            }
-            return null;
+           
         }
 
+        //
+        //--resets the values so the player can easily start a different lobby--
+        //
+        public void resetToLogin()
+        { 
+            lobby = "";
+            sendQuitGame();
+            mainWindowViewModel.emptyObservableUsers();
+        }
 
         //
         //--Outgoing data--
         //
-
         public void sendMove(Card playedCard)
         {
             MoveMessage MM = new MoveMessage(playedCard, user.name, false); 
@@ -280,6 +318,7 @@ namespace UNO
 
         public void sendChat(string message)
         {
+            Debug.WriteLine("Chatmessage sendt:" + message);
             ChatMessage CM = new ChatMessage(user.name, message, DateTime.Now);
             write(JsonSerializer.Serialize(CM));
         }
@@ -299,6 +338,15 @@ namespace UNO
             write(JsonSerializer.Serialize(LM));
         }
 
+        public async Task untilLobbyReadyAsync()
+        {
+            while (isLobbyReady == null)
+            {
+                await Task.Delay(25);
+            }
+
+        }
+
         public void sendToggleReady()
         {
             GameMessage GM = new GameMessage(user.name, "ToggleReady");
@@ -307,7 +355,7 @@ namespace UNO
 
         public void sendEmptyMove()
         {
-            MoveMessage MS = new MoveMessage(null, user.name,false);
+            MoveMessage MS = new MoveMessage(null, user.name,true);
             write(JsonSerializer.Serialize(MS));
         }
 
@@ -322,6 +370,12 @@ namespace UNO
             Byte[] z = lengteBytes.Concat(dataAsBytes).ToArray();
             stream.Write(z, 0, z.Length);
             stream.Flush();
+        }
+
+        public void sendQuitGame() 
+        {
+            GameMessage gm = new GameMessage(user.name, "left Game");
+            write(JsonSerializer.Serialize(gm));
         }
         
     }
